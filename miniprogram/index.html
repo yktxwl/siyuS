@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>寺语S · 大觉禅寺</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- ===== 页面容器 ===== -->
+<div id="app">
+
+  <!-- 首页 -->
+  <div id="page-home" class="page active">
+    <!-- 顶部标题 -->
+    <div class="home-header">
+      <div class="header-overlay"></div>
+      <div class="header-content">
+        <h1 class="temple-name">大觉禅寺</h1>
+        <p class="temple-slogan">一方净土 · 万般自在</p>
+        <div class="header-stats">
+          <span>🙏 供奉 <b id="stat-offering">0</b></span>
+          <span>❤️ 功德 <b id="stat-merit">0</b></span>
+          <span>🕊️ 放生 <b id="stat-release">0</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 轮播公告 -->
+    <div class="banner-section">
+      <div class="banner-slider" id="banner-slider"></div>
+      <div class="banner-dots" id="banner-dots"></div>
+    </div>
+
+    <!-- 快捷入口 -->
+    <div class="quick-entries">
+      <div class="entry-item" onclick="navigateTo('offering')">
+        <div class="entry-icon"><img src="/images/icons/offering.png" alt="供奉"></div>
+        <span>供奉</span>
+      </div>
+      <div class="entry-item" onclick="navigateTo('tablet')">
+        <div class="entry-icon"><img src="/images/icons/tablet.png" alt="牌位"></div>
+        <span>牌位</span>
+      </div>
+      <div class="entry-item" onclick="navigateTo('prayer')">
+        <div class="entry-icon"><img src="/images/icons/prayer.png" alt="祈愿"></div>
+        <span>祈愿</span>
+      </div>
+      <div class="entry-item" onclick="navigateTo('release')">
+        <div class="entry-icon"><img src="/images/icons/release.png" alt="放生"></div>
+        <span>放生</span>
+      </div>
+      <div class="entry-item" onclick="navigateTo('merit')">
+        <div class="entry-icon"><img src="/images/icons/merit.png" alt="行善"></div>
+        <span>行善</span>
+      </div>
+    </div>
+
+    <!-- 法讯公告 -->
+    <div class="section-card">
+      <div class="section-title">
+        <span>📢 法讯公告</span>
+        <a class="more-link" onclick="switchTab('activities')">更多 ›</a>
+      </div>
+      <div class="announcement-list" id="home-announcements"></div>
+    </div>
+
+    <!-- 功德排行榜 -->
+    <div class="section-card">
+      <div class="section-title">
+        <span>🏆 功德榜</span>
+        <a class="more-link" onclick="navigateTo('merit')">更多 ›</a>
+      </div>
+      <div class="rank-list" id="home-rank"></div>
+    </div>
+
+    <!-- 最新活动 -->
+    <div class="section-card">
+      <div class="section-title">
+        <span>🎊 近期法会</span>
+        <a class="more-link" onclick="switchTab('activities')">更多 ›</a>
+      </div>
+      <div class="activity-mini-list" id="home-activities"></div>
+    </div>
+  </div>
+
+  <!-- 活动页 -->
+  <div id="page-activities" class="page">
+    <div class="page-header">
+      <h2>法会活动</h2>
+    </div>
+    <div class="page-content">
+      <div class="activity-list" id="activity-list"></div>
+    </div>
+  </div>
+
+  <!-- 商城页 -->
+  <div id="page-shop" class="page">
+    <div class="page-header">
+      <h2>法物流通</h2>
+    </div>
+    <div class="page-content">
+      <div class="category-tabs" id="category-tabs">
+        <span class="cat-tab active" data-cat="">全部</span>
+        <span class="cat-tab" data-cat="念珠">念珠</span>
+        <span class="cat-tab" data-cat="香品">香品</span>
+        <span class="cat-tab" data-cat="供具">供具</span>
+        <span class="cat-tab" data-cat="经书">经书</span>
+        <span class="cat-tab" data-cat="文创">文创</span>
+        <span class="cat-tab" data-cat="饰品">饰品</span>
+      </div>
+      <div class="shop-grid" id="shop-grid"></div>
+    </div>
+  </div>
+
+  <!-- 导览页 -->
+  <div id="page-tour" class="page">
+    <!-- 区域列表视图 -->
+    <div id="tour-list-view">
+      <div class="tour-hero" id="tour-hero">
+        <div class="tour-hero-overlay">
+          <h2 id="tour-hero-title">寺院导览</h2>
+          <p id="tour-hero-sub">云游寺院，心随境转</p>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="tour-map" id="tour-map"></div>
+      </div>
+    </div>
+    <!-- 殿堂详情视图 -->
+    <div id="tour-detail-view" style="display:none">
+      <div class="detail-hero" id="detail-hero">
+        <div class="detail-hero-nav" onclick="prevHeroImage()" id="detail-hero-prev" style="display:none">‹</div>
+        <div class="detail-hero-nav" onclick="nextHeroImage()" id="detail-hero-next" style="display:none">›</div>
+        <div class="detail-hero-back" onclick="backToTourList()">← 返回</div>
+        <div class="detail-hero-dots" id="detail-hero-dots"></div>
+        <div class="detail-hero-info">
+          <h1 id="detail-title"></h1>
+          <div class="detail-tags" id="detail-tags"></div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-reminder" id="detail-reminder">
+          <span>📅 开放信息</span>
+          <span id="detail-open-info">每日开放，敬请参观</span>
+        </div>
+        <div class="detail-audio-bar" id="detail-audio-bar" style="display:none">
+          <button class="audio-play-btn" onclick="toggleAudio()" id="audio-btn">▶</button>
+          <div class="audio-track">
+            <div class="audio-progress" id="audio-progress"></div>
+          </div>
+          <span class="audio-label">语音导览</span>
+        </div>
+        <div class="detail-desc-section">
+          <p id="detail-desc-text"></p>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="tts-btn" onclick="speakText(document.getElementById('detail-desc-text').textContent, 'tour-tts-btn')" id="tour-tts-btn">🔊 语音讲解</button>
+            <button class="detail-expand-btn" onclick="toggleDesc()" id="detail-expand-btn">展开阅读全文</button>
+          </div>
+        </div>
+        <div class="detail-tabs">
+          <span class="detail-tab active" onclick="switchDetailTab('intro')">详细介绍</span>
+          <span class="detail-tab" onclick="switchDetailTab('buddhas')">供奉佛像</span>
+          <span class="detail-tab" onclick="switchDetailTab('tips')">参拜须知</span>
+        </div>
+        <div class="detail-tab-content" id="detail-tab-content"></div>
+        <div style="height:80px"></div>
+      </div>
+      <div class="detail-bottom-bar">
+        <button class="detail-bottom-btn" onclick="toggleDetailFav()"><span id="detail-fav-icon">🤍</span> 收藏</button>
+        <button class="detail-bottom-btn primary" onclick="detailNavigate('offering')">🙏 供奉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 佛像详情页 -->
+  <div id="page-buddha" class="page">
+    <div class="buddha-detail-bg" id="buddha-detail-bg"></div>
+    <div class="buddha-detail-back" onclick="backFromBuddha()">← 返回</div>
+    <div class="buddha-hero">
+      <div class="buddha-hero-img" id="buddha-hero-img"></div>
+      <div class="buddha-hero-dots" id="buddha-hero-dots"></div>
+      <div class="buddha-hero-nav l" onclick="prevBuddhaImg()" id="buddha-prev">‹</div>
+      <div class="buddha-hero-nav r" onclick="nextBuddhaImg()" id="buddha-next">›</div>
+      <div class="buddha-hero-info">
+        <h1 id="buddha-name-display"></h1>
+      </div>
+    </div>
+    <div class="buddha-body">
+      <div class="buddha-calligraphy" id="buddha-intro-display"></div>
+      <div class="buddha-video-section" id="buddha-video-section" style="display:none">
+        <div class="buddha-section-title">🎬 影音供养</div>
+        <video id="buddha-video-player" controls style="width:100%;border-radius:12px;max-height:220px"></video>
+      </div>
+      <div class="buddha-section-title">📿 佛像介绍</div>
+      <div class="buddha-desc-card">
+        <p id="buddha-desc-display"></p>
+        <div style="text-align:center;margin-top:10px">
+          <button class="tts-btn" onclick="speakText(document.getElementById('buddha-desc-display').textContent, 'buddha-tts-btn')" id="buddha-tts-btn">🔊 语音讲解</button>
+        </div>
+      </div>
+      <div class="buddha-section-title">🙏 在线供奉</div>
+      <div class="buddha-offering-card">
+        <div class="offering-options" id="buddha-offering-options"></div>
+        <button class="btn-offering" onclick="buddhaQuickOffering()">随缘供奉 · 功德无量</button>
+      </div>
+      <div style="height:80px"></div>
+    </div>
+    <div class="buddha-bottom-bar">
+      <button class="buddha-bottom-btn" onclick="buddhaToggleFav()"><span id="buddha-fav-icon">🤍</span> 礼敬</button>
+      <button class="buddha-bottom-btn primary" onclick="buddhaQuickOffering()">🙏 供奉祈福</button>
+    </div>
+  </div>
+
+  <!-- 我的页 -->
+  <div id="page-mine" class="page">
+    <div class="page-header">
+      <h2>我的</h2>
+    </div>
+    <div class="page-content">
+      <!-- 用户卡片 -->
+      <div class="user-card" id="user-card">
+        <div class="user-card-top">
+          <div class="user-avatar-wrap" onclick="showProfileModal()">
+            <div class="user-avatar" id="user-avatar">👤</div>
+            <div class="avatar-badge">✎</div>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="user-name" onclick="currentUser?showProfileModal():showLoginModal()">点击登录</div>
+            <div class="user-phone" id="user-phone" style="display:none"></div>
+            <div class="user-merit">
+              <span class="merit-icon">🏆</span>
+              <span>累计功德值：<b id="user-merit">0</b></span>
+            </div>
+          </div>
+          <div class="user-edit-btn" onclick="currentUser?showProfileModal():showLoginModal()">
+            <span id="edit-btn-icon">📝</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的供奉 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('offering')">
+          <span class="mine-icon">🙏</span>
+          <span class="mine-title">我的供奉</span>
+          <span class="mine-count" id="count-offering">0</span>
+          <span class="mine-arrow" id="arrow-offering">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-offering" style="display:none">
+          <div class="mine-list" id="list-offering"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+
+      <!-- 我的牌位 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('tablet')">
+          <span class="mine-icon">🪷</span>
+          <span class="mine-title">我的牌位</span>
+          <span class="mine-count" id="count-tablet">0</span>
+          <span class="mine-arrow" id="arrow-tablet">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-tablet" style="display:none">
+          <div class="mine-list" id="list-tablet"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+
+      <!-- 我的祈愿 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('prayer')">
+          <span class="mine-icon">🏮</span>
+          <span class="mine-title">我的祈愿</span>
+          <span class="mine-count" id="count-prayer">0</span>
+          <span class="mine-arrow" id="arrow-prayer">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-prayer" style="display:none">
+          <div class="mine-list" id="list-prayer"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+
+      <!-- 放生记录 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('release')">
+          <span class="mine-icon">🕊️</span>
+          <span class="mine-title">放生记录</span>
+          <span class="mine-count" id="count-release">0</span>
+          <span class="mine-arrow" id="arrow-release">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-release" style="display:none">
+          <div class="mine-list" id="list-release"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+
+      <!-- 功德记录 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('merit')">
+          <span class="mine-icon">❤️</span>
+          <span class="mine-title">功德记录</span>
+          <span class="mine-count" id="count-merit">0</span>
+          <span class="mine-arrow" id="arrow-merit">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-merit" style="display:none">
+          <div class="mine-list" id="list-merit"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+
+      <!-- 订单记录 -->
+      <div class="mine-section">
+        <div class="mine-section-header" onclick="toggleMineSection('order')">
+          <span class="mine-icon">💰</span>
+          <span class="mine-title">订单记录</span>
+          <span class="mine-count" id="count-order">0</span>
+          <span class="mine-arrow" id="arrow-order">▼</span>
+        </div>
+        <div class="mine-section-content" id="content-order" style="display:none">
+          <div class="mine-list" id="list-order"><div class="mine-empty">暂无记录</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 子页面 ===== -->
+
+  <!-- 供奉页 -->
+  <div id="page-offering" class="page">
+    <div class="page-header with-back">
+      <span class="back-btn" onclick="goBack()">‹ 返回</span>
+      <h2>供奉佛像</h2>
+    </div>
+    <div class="page-content">
+      <div class="offering-types" id="offering-types"></div>
+      <h3 class="sub-title">选择佛像</h3>
+      <div class="buddha-grid" id="buddha-grid"></div>
+    </div>
+  </div>
+
+  <!-- 牌位页 -->
+  <div id="page-tablet" class="page">
+    <div class="page-header with-back">
+      <span class="back-btn" onclick="goBack()">‹ 返回</span>
+      <h2>牌位登记</h2>
+    </div>
+    <div class="page-content">
+      <div class="tablet-type-tabs">
+        <span class="tablet-tab active" data-type="ancestor">往生牌位</span>
+        <span class="tablet-tab" data-type="living">延生牌位</span>
+      </div>
+      <form class="form-card tablet-card" id="tablet-form" onsubmit="submitTablet(event)">
+        <input type="hidden" id="tablet-type" value="">
+        <input type="hidden" id="tablet-type-display" value="">
+
+        <!-- 基本信息区 -->
+        <div id="tablet-info-area"></div>
+
+        <div class="form-group">
+          <label id="tablet-name-label">逝者姓名 *</label>
+          <input type="text" id="tablet-deceased" placeholder="请输入姓名" required>
+        </div>
+
+        <div class="form-group" id="tablet-duration-group" style="display:none">
+          <label>祈福年限</label>
+          <select id="tablet-duration" onchange="updateTabletAmount()">
+            <option value="1">一年</option>
+            <option value="3">三年</option>
+            <option value="5">五年</option>
+            <option value="10">十年</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>您的姓名 *</label>
+          <input type="text" id="tablet-sponsor" placeholder="请输入您的姓名" required>
+        </div>
+        <div class="form-group">
+          <label>联系电话</label>
+          <input type="tel" id="tablet-phone" placeholder="请输入联系电话">
+        </div>
+        <div class="form-group">
+          <label>到期日期</label>
+          <input type="text" id="tablet-date-display" readonly style="background:#f5f0e8;font-size:14px">
+          <input type="hidden" id="tablet-date">
+        </div>
+        <div class="form-group">
+          <label>留言</label>
+          <textarea id="tablet-message" placeholder="请输入留言..." rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>登记金额（元）</label>
+          <input type="text" id="tablet-amount" value="0" readonly style="font-weight:700;font-size:20px;border:none;background:transparent">
+        </div>
+        <button type="submit" class="btn-primary btn-lg btn-block" id="tablet-submit-btn">确认登记</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 祈愿页（全屏沉浸模式） -->
+  <div id="page-prayer" class="page">
+    <div class="prayer-lantern-area" id="prayer-lantern-area">
+      <span class="prayer-back-btn" onclick="goBack()">‹ 返回</span>
+      <div class="lanterns-container" id="lanterns-container"></div>
+      <div class="prayer-trigger" onclick="showPrayerModal()">
+        <div class="lantern-main">🏮</div>
+        <p>点一盏心灯，许一个心愿</p>
+      </div>
+      <div class="prayer-scroll-hint">▼ 向下滑动查看祈愿墙</div>
+    </div>
+    <div class="prayer-list" id="prayer-list-section">
+      <h3 class="sub-title">祈愿墙</h3>
+      <div id="prayer-wall"></div>
+    </div>
+  </div>
+
+  <!-- 放生页 -->
+  <div id="page-release" class="page">
+    <div class="page-header with-back">
+      <span class="back-btn" onclick="goBack()">‹ 返回</span>
+      <h2>放生</h2>
+    </div>
+    <div class="page-content">
+      <div class="release-intro">
+        <div class="release-banner">🕊️</div>
+        <p>尊重生命，慈悲护生</p>
+        <p class="sub-text">放生是佛教重要的修行方式之一，通过救护物命，长养慈悲心，积累福德资粮。</p>
+      </div>
+      <div class="release-animals" id="release-animals"></div>
+    </div>
+  </div>
+
+  <!-- 行善页 -->
+  <div id="page-merit" class="page">
+    <div class="page-header with-back">
+      <span class="back-btn" onclick="goBack()">‹ 返回</span>
+      <h2>行善积德</h2>
+    </div>
+    <div class="page-content">
+      <div class="merit-projects" id="merit-projects"></div>
+    </div>
+  </div>
+
+  <!-- ===== 底部 tab 栏 ===== -->
+  <div class="tab-bar" id="tab-bar">
+    <div class="tab-item active" data-tab="home" onclick="switchTab('home')">
+      <img src="/images/icons/tab-home.png" class="tab-icon-img" alt="首页">
+      <span class="tab-label">首页</span>
+    </div>
+    <div class="tab-item" data-tab="activities" onclick="switchTab('activities')">
+      <img src="/images/icons/tab-activity.png" class="tab-icon-img" alt="活动">
+      <span class="tab-label">活动</span>
+    </div>
+    <div class="tab-item" data-tab="tour" onclick="switchTab('tour')">
+      <img src="/images/icons/tab-tour.png" class="tab-icon-img" alt="导览">
+      <span class="tab-label">导览</span>
+    </div>
+    <div class="tab-item" data-tab="shop" onclick="switchTab('shop')">
+      <img src="/images/icons/tab-shop.png" class="tab-icon-img" alt="法物流通">
+      <span class="tab-label">法物流通</span>
+    </div>
+    <div class="tab-item" data-tab="mine" onclick="switchTab('mine')">
+      <img src="/images/icons/tab-mine.png" class="tab-icon-img" alt="我的">
+      <span class="tab-label">我的</span>
+    </div>
+  </div>
+
+  <!-- ===== 模态层 ===== -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" id="modal-content" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

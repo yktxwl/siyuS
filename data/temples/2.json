@@ -1,0 +1,506 @@
+{
+  "nextId": {
+    "buddha": 4,
+    "offering_record": 0,
+    "tablet": 0,
+    "prayer": 0,
+    "release": 4,
+    "donation": 0,
+    "activity": 3,
+    "activity_reg": 0,
+    "shop_item": 6,
+    "order": 0,
+    "cart": 0,
+    "user": 0,
+    "announcement": 2,
+    "tour_spot": 8,
+    "area": 2,
+    "hall": 3,
+    "media": 0
+  },
+  "temple": {
+    "name": "普陀寺",
+    "slogan": "海天佛国，观音道场",
+    "intro": "普陀寺坐落于海天佛国普陀山，是观音菩萨应化道场，千百年来香火不绝，信众如织。面朝大海，背倚青山，梵音缭绕。",
+    "address": "浙江省舟山市普陀山",
+    "phone": "0580-66666666",
+    "open_time": "05:30 - 17:30",
+    "banner": [
+      "/uploads/1781164292422_1vpzquf6l.png",
+      "/uploads/1781304640613_c6peqi9si.webp",
+      "/uploads/1781304650776_e58u0q2tw.webp"
+    ]
+  },
+  "buddhas": [
+    {
+      "id": 1,
+      "name": "南海观音",
+      "hall": "南海观音圣像",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "intro": "普陀山标志，33米高观音立像",
+      "offering_price": [
+        20,
+        50,
+        100,
+        200,
+        500
+      ],
+      "images": [
+        "/uploads/1781305147991_cdf1guc44.webp"
+      ],
+      "description": "普陀山标志，33米高观音立像",
+      "video": "",
+      "location": "南海观音圣像",
+      "sort": 1
+    },
+    {
+      "id": 2,
+      "name": "千手观音",
+      "hall": "观音宝殿",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "intro": "千手千眼，普度众生",
+      "offering_price": [
+        20,
+        50,
+        100,
+        200,
+        500
+      ],
+      "images": [
+        "/uploads/1781305148002_rsnyj5qub.webp"
+      ],
+      "description": "千手千眼，普度众生",
+      "video": "",
+      "location": "观音宝殿",
+      "sort": 2
+    },
+    {
+      "id": 3,
+      "name": "普贤菩萨",
+      "hall": "普贤殿",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "intro": "大行普贤，十大愿王",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781304640613_c6peqi9si.webp"
+      ],
+      "description": "大行普贤，十大愿王",
+      "video": "",
+      "location": "普贤殿",
+      "sort": 3
+    },
+    {
+      "id": 4,
+      "name": "韦陀菩萨",
+      "hall": "天王殿",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "intro": "护法韦陀，守护伽蓝",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781304655208_z1b31qjka.webp"
+      ],
+      "description": "护法韦陀，守护伽蓝",
+      "video": "",
+      "location": "天王殿",
+      "sort": 4
+    }
+  ],
+  "offering_types": [
+    {
+      "id": 1,
+      "name": "供灯",
+      "icon": "🕯️",
+      "desc": "点燃智慧之灯"
+    },
+    {
+      "id": 2,
+      "name": "供花",
+      "icon": "💐",
+      "desc": "以花供佛"
+    },
+    {
+      "id": 3,
+      "name": "供果",
+      "icon": "🍎",
+      "desc": "供养鲜果"
+    },
+    {
+      "id": 4,
+      "name": "供香",
+      "icon": "🪔",
+      "desc": "一炷心香"
+    }
+  ],
+  "offering_records": [],
+  "tablets": [],
+  "prayers": [],
+  "releases": [
+    {
+      "id": 1,
+      "name": "海龟",
+      "animal": "龟",
+      "image": "🐢",
+      "price": 100,
+      "desc": "放生海龟，回归大海"
+    },
+    {
+      "id": 2,
+      "name": "海鱼",
+      "animal": "鱼",
+      "image": "🐟",
+      "price": 60,
+      "desc": "放生海鱼，重获自由"
+    },
+    {
+      "id": 3,
+      "name": "海螺",
+      "animal": "贝类",
+      "image": "🐚",
+      "price": 30,
+      "desc": "放生海螺，还其生命"
+    },
+    {
+      "id": 4,
+      "name": "海鸟",
+      "animal": "鸟",
+      "image": "🕊️",
+      "price": 40,
+      "desc": "放生海鸟，翱翔天际"
+    }
+  ],
+  "release_records": [],
+  "merit_projects": [
+    {
+      "id": 1,
+      "name": "观音像维护",
+      "image": "🏗️",
+      "desc": "维护南海观音圣像，让佛法光辉永驻",
+      "target": 1000000,
+      "current": 352000,
+      "price_options": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 2,
+      "name": "海潮音课堂",
+      "image": "📚",
+      "desc": "弘扬佛法教育，开设公益佛学课程",
+      "target": 300000,
+      "current": 87400,
+      "price_options": [
+        30,
+        60,
+        100,
+        300,
+        500
+      ]
+    },
+    {
+      "id": 3,
+      "name": "海边放生护生",
+      "image": "🌊",
+      "desc": "定期组织海边放生活动，救护海洋生命",
+      "target": 500000,
+      "current": 196000,
+      "price_options": [
+        30,
+        50,
+        100,
+        200,
+        500
+      ]
+    }
+  ],
+  "donations": [],
+  "merit_rank": [
+    {
+      "name": "林**",
+      "amount": 80000,
+      "project": "观音像维护"
+    },
+    {
+      "name": "郑**",
+      "amount": 45000,
+      "project": "海边放生护生"
+    },
+    {
+      "name": "吴**",
+      "amount": 30000,
+      "project": "海潮音课堂"
+    },
+    {
+      "name": "许**",
+      "amount": 20000,
+      "project": "观音像维护"
+    }
+  ],
+  "activities": [
+    {
+      "id": 1,
+      "title": "观音诞辰祈福法会",
+      "date": "2026-07-19",
+      "time": "05:00-17:00",
+      "location": "南海观音广场",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "desc": "观音菩萨诞辰日，举行大型祈福法会和海上供灯",
+      "status": "upcoming",
+      "participants": 87,
+      "max_participants": 1000
+    },
+    {
+      "id": 2,
+      "title": "海上放生活动",
+      "date": "2026-08-01",
+      "time": "08:00-11:00",
+      "location": "普陀山码头",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "desc": "乘船出海放生海洋生物，救护生命",
+      "status": "upcoming",
+      "participants": 0,
+      "max_participants": 200
+    },
+    {
+      "id": 3,
+      "title": "禅修体验营",
+      "date": "2026-08-15",
+      "time": "全天",
+      "location": "禅堂",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "desc": "三日禅修体验，由法师带领禅坐、经行、开示",
+      "status": "upcoming",
+      "participants": 45,
+      "max_participants": 100
+    }
+  ],
+  "activity_registrations": [],
+  "shop_items": [
+    {
+      "id": 1,
+      "name": "普陀山沉香手串",
+      "category": "念珠",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "price": 588,
+      "stock": 30,
+      "desc": "普陀山特产沉香，108颗，海天佛国加持"
+    },
+    {
+      "id": 2,
+      "name": "南海观音铜像",
+      "category": "供具",
+      "image": "/uploads/1781304640613_c6peqi9si.webp",
+      "price": 1288,
+      "stock": 10,
+      "desc": "纯铜精铸，33cm高，南海观音缩小版"
+    },
+    {
+      "id": 3,
+      "name": "海潮音香薰炉",
+      "category": "供具",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "price": 398,
+      "stock": 20,
+      "desc": "海浪纹饰香炉，陶瓷手工烧制"
+    },
+    {
+      "id": 4,
+      "name": "普门品抄经本",
+      "category": "经书",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "price": 68,
+      "stock": 150,
+      "desc": "观世音菩萨普门品楷书描红"
+    },
+    {
+      "id": 5,
+      "name": "贝雕观音挂件",
+      "category": "饰品",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "price": 268,
+      "stock": 40,
+      "desc": "天然贝壳雕刻观音像，配红绳"
+    },
+    {
+      "id": 6,
+      "name": "海盐祈福灯",
+      "category": "文创",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "price": 128,
+      "stock": 60,
+      "desc": "普陀山天然海盐，配莲花蜡烛灯"
+    }
+  ],
+  "carts": [],
+  "orders": [],
+  "users": [
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_2_1781159646189",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781159646202
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_2_1781161913998",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161914003
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_2_1781422139707",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781422139737
+    }
+  ],
+  "announcements": [
+    {
+      "id": 1,
+      "title": "观音诞辰法会预告",
+      "content": "农历六月十九观音菩萨诞辰，本寺将举行大型祈福法会和海上供灯活动。",
+      "time": "2026-07-10"
+    },
+    {
+      "id": 2,
+      "title": "寺院修缮公告",
+      "content": "观音宝殿屋顶修缮工程即将开始，施工期间部分区域暂停开放，请信众谅解。",
+      "time": "2026-06-08"
+    }
+  ],
+  "tour_spots": [
+    {
+      "id": 1,
+      "name": "山门",
+      "hall": "山门广场",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "desc": "普陀寺坐落于海天佛国普陀山，是观音菩萨应化道场，千百年来香火"
+    },
+    {
+      "id": 2,
+      "name": "钟楼",
+      "hall": "钟楼",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "desc": "晨钟暮鼓，警醒世人"
+    },
+    {
+      "id": 3,
+      "name": "鼓楼",
+      "hall": "鼓楼",
+      "image": "/uploads/1781304640613_c6peqi9si.webp",
+      "desc": "法鼓声声，催人精进"
+    },
+    {
+      "id": 4,
+      "name": "藏经楼",
+      "hall": "藏经楼",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "desc": "法宝荟萃，智慧宝藏"
+    },
+    {
+      "id": 5,
+      "name": "南海观音",
+      "hall": "南海观音圣像",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "desc": "普陀山标志，33米高观音立像"
+    },
+    {
+      "id": 6,
+      "name": "千手观音",
+      "hall": "观音宝殿",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "desc": "千手千眼，普度众生"
+    },
+    {
+      "id": 7,
+      "name": "普贤菩萨",
+      "hall": "普贤殿",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "desc": "大行普贤，十大愿王"
+    },
+    {
+      "id": 8,
+      "name": "韦陀菩萨",
+      "hall": "天王殿",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "desc": "护法韦陀，守护伽蓝"
+    }
+  ],
+  "areas": [
+    {
+      "id": 1,
+      "name": "前山景区",
+      "desc": "普陀山入口景观区域",
+      "sort": 0,
+      "halls": [
+        {
+          "id": 1,
+          "name": "码头牌坊",
+          "desc": "海天佛国入口",
+          "image": "/uploads/1781164292422_1vpzquf6l.png",
+          "video": "",
+          "buddha_ids": [],
+          "sort": 0,
+          "images": [
+            "/uploads/1781304640613_c6peqi9si.webp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "主殿区",
+      "desc": "观音道场核心区",
+      "sort": 1,
+      "halls": [
+        {
+          "id": 2,
+          "name": "南海观音圣像",
+          "desc": "33米高观音立像",
+          "image": "/uploads/1781304650776_e58u0q2tw.webp",
+          "video": "",
+          "buddha_ids": [
+            1
+          ],
+          "sort": 0,
+          "images": [
+            "/uploads/1781304655208_z1b31qjka.webp"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "普贤殿",
+          "desc": "十大愿王普贤菩萨",
+          "image": "/uploads/1781305147991_cdf1guc44.webp",
+          "video": "",
+          "buddha_ids": [
+            3
+          ],
+          "sort": 1,
+          "images": [
+            "/uploads/1781305147998_pla5z5r7o.webp"
+          ]
+        }
+      ]
+    }
+  ],
+  "media": []
+}

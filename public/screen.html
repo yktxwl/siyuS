@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寺语·智慧大屏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"PingFang SC","Microsoft YaHei","SimSun",serif;background:#0d0806;color:#f5e6d0;user-select:none;font-size:16px}
+:root{--gold:#D4A017;--gold-light:#FFD54F;--gold-dark:#8D6E00;--bg-dark:#0d0806;--bg-panel:rgba(26,16,11,0.92);--bg-card:rgba(35,22,15,0.85);--border:rgba(201,169,110,0.15);--text:#f5e6d0;--text-muted:#a09078;--red:#C62828;--red-bg:rgba(198,40,40,0.12);--yellow:#F9A825;--yellow-bg:rgba(249,168,37,0.12)}
+.kiosk{display:flex;width:100%;height:100%}
+/* 左侧导航 */
+.kiosk-nav{width:300px;background:linear-gradient(180deg,#1a1010 0%,#0d0806 40%,#1a1010 100%);display:flex;flex-direction:column;border-right:1px solid var(--border);flex-shrink:0;box-shadow:2px 0 30px rgba(0,0,0,0.5)}
+.kiosk-nav-header{padding:36px 28px 28px;border-bottom:1px solid var(--border);text-align:center}
+.kiosk-nav-header .logo{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px;box-shadow:0 4px 20px rgba(212,160,23,0.3)}
+.kiosk-nav-header h1{font-size:30px;color:var(--gold);font-weight:900;letter-spacing:4px;text-shadow:0 2px 12px rgba(212,160,23,0.25)}
+.kiosk-nav-header .slogan{font-size:13px;color:var(--text-muted);margin-top:8px;letter-spacing:2px}
+.kiosk-nav-menu{flex:1;overflow-y:auto;padding:12px 0}
+.kiosk-nav-item{display:flex;align-items:center;gap:16px;padding:20px 28px;cursor:pointer;font-size:17px;color:var(--text-muted);transition:all 0.3s;border-left:4px solid transparent;position:relative;letter-spacing:1px}
+.kiosk-nav-item::after{content:'';position:absolute;right:28px;width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:0;transition:opacity 0.3s}
+.kiosk-nav-item:hover{background:rgba(212,160,23,0.06);color:var(--gold-light)}
+.kiosk-nav-item.active{background:linear-gradient(90deg,rgba(212,160,23,0.1),transparent);color:var(--gold-light);border-left-color:var(--gold);font-weight:700}
+.kiosk-nav-item.active::after{opacity:1}
+.kiosk-nav-item .icon{font-size:28px;width:40px;text-align:center}
+.kiosk-nav-divider{margin:8px 28px;height:1px;background:var(--border)}
+.kiosk-nav-footer{padding:24px 28px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);text-align:center;letter-spacing:2px}
+
+/* 右侧主内容 */
+.kiosk-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:radial-gradient(ellipse at center,#1a1010 0%,#0d0806 70%)}
+.kiosk-topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:linear-gradient(180deg,rgba(26,16,11,0.98),rgba(13,8,6,0.95));border-bottom:1px solid var(--border);z-index:10}
+.kiosk-topbar .title{font-size:28px;font-weight:700;color:var(--gold-light);letter-spacing:2px}
+.kiosk-topbar .time{font-size:20px;color:var(--text-muted);letter-spacing:1px}
+.kiosk-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:28px 48px;scroll-behavior:smooth}
+.kiosk-content::-webkit-scrollbar{width:6px}
+.kiosk-content::-webkit-scrollbar-track{background:transparent}
+.kiosk-content::-webkit-scrollbar-thumb{background:rgba(201,169,110,0.3);border-radius:3px}
+
+/* 共享卡片 */
+.panel{background:var(--bg-panel);border-radius:20px;padding:32px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.3);backdrop-filter:blur(10px)}
+.panel-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:22px;font-weight:700;color:var(--gold-light);letter-spacing:2px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.panel-header .icon{font-size:28px}
+
+/* 导览区 */
+.area-card{background:var(--bg-card);border-radius:18px;margin-bottom:18px;border:1px solid var(--border);overflow:hidden;transition:all 0.3s}
+.area-card:hover{border-color:rgba(212,160,23,0.3)}
+.area-header{display:flex;align-items:center;gap:14px;padding:22px 28px;cursor:pointer;font-size:20px;font-weight:700;color:var(--gold-light);background:linear-gradient(180deg,rgba(212,160,23,0.06),transparent);letter-spacing:1px}
+.area-header .count{margin-left:auto;font-size:13px;color:var(--text-muted);font-weight:400;background:rgba(0,0,0,0.3);padding:4px 14px;border-radius:20px}
+.area-halls{padding:16px 28px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.hall-card{background:rgba(0,0,0,0.25);border-radius:14px;padding:24px;cursor:pointer;border:1px solid transparent;transition:all 0.3s}
+.hall-card:hover,.hall-card.selected{border-color:var(--gold);background:rgba(212,160,23,0.06);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.hall-card .hall-thumb{width:100%;height:140px;border-radius:10px;object-fit:cover;margin-bottom:14px;background:rgba(0,0,0,0.3)}
+.hall-card .hall-name{font-size:18px;font-weight:700;color:var(--gold-light);margin-bottom:6px;letter-spacing:1px}
+.hall-card .hall-desc{font-size:13px;color:var(--text-muted);line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hall-card .hall-buddhas{font-size:12px;color:var(--text-muted);margin-top:12px;background:rgba(212,160,23,0.08);display:inline-block;padding:3px 12px;border-radius:12px}
+
+/* 殿堂详情 */
+.hall-detail{animation:fadeIn 0.3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.hall-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.back-btn{width:52px;height:52px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);color:var(--gold-light);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.back-btn:hover{background:rgba(212,160,23,0.15);border-color:var(--gold)}
+.hall-detail-header h2{font-size:30px;color:var(--gold-light);font-weight:900;letter-spacing:3px;flex:1}
+.hall-detail .hero{position:relative;height:420px;border-radius:18px;overflow:hidden;margin-bottom:28px;background:rgba(0,0,0,0.3);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.hall-detail .hero img{width:100%;height:100%;object-fit:cover}
+.hall-detail .hero .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;cursor:pointer;z-index:2;transition:all 0.3s;backdrop-filter:blur(4px)}
+.hall-detail .hero .nav-btn:hover{background:rgba(0,0,0,0.7);border-color:#fff}
+.hall-detail .hero .nav-btn.prev{left:20px}
+.hall-detail .hero .nav-btn.next{right:20px}
+.hall-detail .desc{font-size:17px;line-height:2;color:var(--text-muted);margin-bottom:32px;letter-spacing:0.5px}
+.buddha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.buddha-card{background:var(--bg-card);border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:all 0.3s}
+.buddha-card:hover{border-color:var(--gold);background:rgba(212,160,23,0.06);transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,0.4)}
+.buddha-card img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(212,160,23,0.2);margin-bottom:14px;transition:all 0.3s}
+.buddha-card:hover img{border-color:var(--gold)}
+.buddha-card .name{font-size:18px;font-weight:700;color:var(--gold-light);letter-spacing:1px}
+.buddha-card .intro{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5}
+
+/* 供奉/牌位/放生表单 */
+.form-panel{max-width:1000px;margin:0 auto}
+.form-wide-layout{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.form-wide-left{padding-right:24px;border-right:1px solid var(--border)}
+.form-wide-right{padding-left:24px;display:flex;flex-direction:column;justify-content:center}
+.amount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.amount-btn{background:var(--bg-card);border:2px solid var(--border);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;font-size:32px;font-weight:900;color:var(--gold-light);transition:all 0.3s;letter-spacing:1px}
+.amount-btn:hover,.amount-btn.active{border-color:var(--gold);background:rgba(212,160,23,0.1);transform:scale(1.03);box-shadow:0 8px 24px rgba(212,160,23,0.15)}
+.amount-btn small{display:block;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px}
+.form-input{width:100%;padding:18px 20px;background:var(--bg-card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-size:17px;outline:none;transition:all 0.3s;font-family:inherit;letter-spacing:0.5px}
+.form-input:focus{border-color:var(--gold);background:rgba(212,160,23,0.05)}
+.form-input::placeholder{color:var(--text-muted)}
+.form-select{width:100%;padding:18px 20px;background:var(--bg-card);border:2px solid var(--border);border-radius:14px;color:var(--text);font-size:17px;outline:none;cursor:pointer;font-family:inherit;appearance:none;-webkit-appearance:none;letter-spacing:0.5px}
+.form-select:focus{border-color:var(--gold)}
+.form-label{font-size:15px;color:var(--text-muted);margin-bottom:8px;display:block;letter-spacing:1px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:20px}
+.pay-btn{width:100%;padding:22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1010;border:none;border-radius:14px;font-size:22px;font-weight:900;cursor:pointer;transition:all 0.3s;letter-spacing:4px;font-family:inherit;box-shadow:0 8px 32px rgba(212,160,23,0.3)}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,160,23,0.4)}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.pay-btn.tablet-yellow{background:linear-gradient(135deg,#F9A825,#FFD54F)}
+.pay-btn.tablet-red{background:linear-gradient(135deg,#C62828,#EF5350);color:#fff}
+.pay-btn.release{background:linear-gradient(135deg,#4FC3F7,#0288D1);color:#fff}
+.pay-btn.merit{background:linear-gradient(135deg,#E91E63,#F48FB1);color:#fff}
+
+/* 支付弹窗 */
+.pay-mask{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px);animation:fadeIn 0.3s}
+.pay-box{background:#1e1510;border-radius:24px;padding:48px;text-align:center;max-width:520px;width:90%;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.pay-box h2{font-size:28px;color:var(--gold-light);margin-bottom:8px;font-weight:900;letter-spacing:3px}
+.pay-box .amount{font-size:48px;font-weight:900;color:var(--gold);margin:20px 0;letter-spacing:2px}
+.pay-box .qr-wrap{display:inline-block;padding:24px;background:#fff;border-radius:16px;margin-bottom:20px}
+.pay-box .tip{font-size:18px;color:var(--text-muted);margin-top:16px;letter-spacing:1px}
+.pay-box .tip small{font-size:13px;opacity:0.7;display:block;margin-top:4px}
+.pay-close{position:absolute;top:20px;right:20px;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:22px;cursor:pointer;transition:all 0.3s}
+.pay-close:hover{background:rgba(255,255,255,0.2)}
+
+/* 牌位类型卡片 */
+.tablet-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.tablet-type-card{padding:28px 24px;border-radius:16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all 0.3s;font-size:22px;font-weight:700;letter-spacing:2px}
+.tablet-type-card.ancestor{background:rgba(249,168,37,0.08);color:#F9A825;border-color:rgba(249,168,37,0.2)}
+.tablet-type-card.ancestor:hover,.tablet-type-card.ancestor.active{border-color:#F9A825;background:rgba(249,168,37,0.15);box-shadow:0 8px 24px rgba(249,168,37,0.15)}
+.tablet-type-card.living{background:rgba(198,40,40,0.08);color:#EF5350;border-color:rgba(198,40,40,0.2)}
+.tablet-type-card.living:hover,.tablet-type-card.living.active{border-color:#EF5350;background:rgba(198,40,40,0.15);box-shadow:0 8px 24px rgba(198,40,40,0.15)}
+.tablet-type-card small{display:block;font-size:13px;font-weight:400;opacity:0.7;margin-top:6px}
+
+/* 放生动物卡片 */
+.animal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.animal-card{padding:28px 20px;border-radius:16px;text-align:center;cursor:pointer;border:2px solid var(--border);transition:all 0.3s;background:var(--bg-card)}
+.animal-card:hover,.animal-card.active{border-color:#4FC3F7;background:rgba(79,195,247,0.08);box-shadow:0 8px 24px rgba(79,195,247,0.15)}
+.animal-card .emoji{font-size:48px;margin-bottom:12px}
+.animal-card .name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.animal-card .price{font-size:14px;color:#4FC3F7;font-weight:700}
+
+/* 活动列表 */
+.activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:20px}
+.activity-card{background:var(--bg-card);border-radius:18px;overflow:hidden;border:1px solid var(--border);transition:all 0.3s}
+.activity-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.activity-card img{width:100%;height:200px;object-fit:cover}
+.activity-card .body{padding:24px}
+.activity-card h3{font-size:22px;color:var(--gold-light);font-weight:700;margin-bottom:12px;letter-spacing:1px}
+.activity-card .meta{font-size:15px;color:var(--text-muted);margin-bottom:10px;line-height:1.8}
+
+/* 功德项目 */
+.merit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.merit-card{background:var(--bg-card);border-radius:18px;padding:28px;cursor:pointer;border:1px solid var(--border);transition:all 0.3s}
+.merit-card:hover{border-color:#E91E63;transform:translateY(-3px);box-shadow:0 8px 24px rgba(233,30,99,0.15)}
+.merit-card .emoji{font-size:44px;margin-bottom:16px}
+.merit-card h3{font-size:22px;color:var(--text);font-weight:700;margin-bottom:8px}
+.merit-card .desc{font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px}
+.merit-card .progress{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.merit-card .progress-inner{height:100%;background:var(--gold);border-radius:3px;transition:width 0.5s}
+.merit-card .stats{font-size:13px;color:var(--text-muted)}
+
+/* 信息卡片 */
+.info-banner{background:linear-gradient(135deg,rgba(212,160,23,0.1),rgba(212,160,23,0.03));border-radius:16px;padding:24px 28px;margin-bottom:24px;border:1px solid rgba(212,160,23,0.15);font-size:16px;line-height:2;color:var(--text-muted);letter-spacing:0.5px}
+
+/* 功德榜 */
+.rank-header{text-align:center;margin-bottom:32px}
+.rank-header h2{font-size:36px;color:var(--gold-light);font-weight:900;letter-spacing:6px;margin-bottom:12px}
+.rank-header .sub{font-size:16px;color:var(--text-muted);letter-spacing:2px}
+.rank-list{display:flex;flex-direction:column;gap:12px;max-width:900px;margin:0 auto}
+.rank-item{display:flex;align-items:center;gap:20px;padding:20px 28px;background:var(--bg-card);border-radius:16px;border:1px solid var(--border);transition:all 0.3s}
+.rank-item:hover{border-color:var(--gold);transform:translateX(4px)}
+.rank-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;flex-shrink:0}
+.rank-num.r1{background:linear-gradient(135deg,#FFD700,#FFA000);color:#5D3A1A;box-shadow:0 4px 16px rgba(255,215,0,0.3)}
+.rank-num.r2{background:linear-gradient(135deg,#C0C0C0,#9E9E9E);color:#333;box-shadow:0 4px 12px rgba(192,192,192,0.3)}
+.rank-num.r3{background:linear-gradient(135deg,#CD7F32,#8D6E63);color:#fff;box-shadow:0 4px 12px rgba(205,127,50,0.3)}
+.rank-num.rn{background:rgba(255,255,255,0.08);color:var(--text-muted)}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:18px;font-weight:700;color:var(--text);letter-spacing:1px}
+.rank-project{font-size:13px;color:var(--text-muted);margin-top:2px}
+.rank-amount{font-size:24px;font-weight:900;color:var(--gold-light);flex-shrink:0;letter-spacing:1px}
+.rank-empty{text-align:center;padding:60px;color:var(--text-muted);font-size:18px}
+
+/* 响应式 */
+@media(min-width:1800px){.kiosk-nav{width:340px}.kiosk-content{padding:36px 64px}.hall-detail .hero{height:540px}.form-panel{max-width:1200px}.amount-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:2200px){.form-panel{max-width:1400px}.amount-grid{grid-template-columns:repeat(4,1fr)}.area-halls{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}}
+@media(max-width:1400px){.kiosk-nav{width:260px}.kiosk-content{padding:24px 28px}.area-halls{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.form-wide-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="kiosk">
+<aside class="kiosk-nav">
+  <div class="kiosk-nav-header">
+    <div class="logo">🛕</div>
+    <h1 id="ks-temple-name">寺语</h1>
+    <div class="slogan" id="ks-slogan"></div>
+  </div>
+  <nav class="kiosk-nav-menu">
+    <div class="kiosk-nav-item active" onclick="switchKioskTab('tour')"><span class="icon">🗺️</span><span>导览参拜</span></div>
+    <div class="kiosk-nav-divider"></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('offering')"><span class="icon">🙏</span><span>在线供奉</span></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('tablet')"><span class="icon">📿</span><span>牌位登记</span></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('release')"><span class="icon">🕊️</span><span>放生护生</span></div>
+    <div class="kiosk-nav-divider"></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('merit')"><span class="icon">❤️</span><span>行善功德</span></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('activity')"><span class="icon">🎊</span><span>法会活动</span></div>
+    <div class="kiosk-nav-divider"></div>
+    <div class="kiosk-nav-item" onclick="switchKioskTab('rank')"><span class="icon">🏆</span><span>功德榜</span></div>
+  </nav>
+  <div class="kiosk-nav-footer">寺语 · 智慧寺院大屏 · 扫码即虔</div>
+</aside>
+<main class="kiosk-main">
+  <div class="kiosk-topbar">
+    <span class="title" id="ks-page-title">🗺️ 导览参拜</span>
+    <span class="time" id="ks-clock"></span>
+  </div>
+  <div class="kiosk-content" id="ks-content"></div>
+</main>
+</div>
+
+<div id="pay-modal" style="display:none"><div class="pay-mask"><div class="pay-box">
+  <h2>💰 扫码支付</h2>
+  <div class="amount" id="pay-amount-display"></div>
+  <div class="qr-wrap"><div id="pay-qr"></div></div>
+  <div class="tip">📱 请用微信扫码支付<small>支付成功后自动刷新</small></div>
+</div><button class="pay-close" onclick="closePayModal()">✕</button></div></div>
+
+<!-- 支付成功弹窗 -->
+<div id="success-modal" style="display:none"><div class="pay-mask"><div class="pay-box">
+  <div style="font-size:72px;margin-bottom:16px">✅</div>
+  <h2 style="font-size:32px">支付成功！</h2>
+  <div class="amount" style="font-size:36px;margin:12px 0" id="success-amount"></div>
+  <div class="tip">功德无量，随喜赞叹 🙏<small id="success-countdown">3秒后返回导览页</small></div>
+</div></div></div>
+
+<script>
+var TEMPLE_ID=1,TEMPLE_SLUG='dajue',TEMPLE_NAME='寺语',API_BASE='';
+var currentTab='tour',_payTimer=null,_payOrderNo='';
+var _areasData=[],_selectedHall=null,_selectedBuddha=null;
+var _tabletConfigs=[],_releaseAnimals=[],_selectedAmount=50;
+
+(async function init(){
+  var p=new URLSearchParams(window.location.search);
+  TEMPLE_ID=parseInt(p.get('id')||1);TEMPLE_SLUG=p.get('slug')||'dajue';
+  API_BASE='/api/temple/'+TEMPLE_ID;
+  var res=await fAPI(API_BASE+'/info');
+  if(res.code===0){TEMPLE_NAME=res.data.name||'寺语';document.getElementById('ks-temple-name').textContent=TEMPLE_NAME;document.getElementById('ks-slogan').textContent=res.data.slogan||'';}
+  setInterval(updateClock,1000);updateClock();switchKioskTab('tour');
+})();
+
+function updateClock(){var d=new Date();document.getElementById('ks-clock').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());}
+function p(n){return String(n).padStart(2,'0');}
+
+function switchKioskTab(tab){
+  currentTab=tab;var sel=document.querySelectorAll('.kiosk-nav-item'),idx={tour:0,offering:1,tablet:2,release:3,merit:4,activity:5,rank:6}[tab]||0;
+  sel.forEach(function(e){e.classList.remove('active');});if(sel[idx])sel[idx].classList.add('active');
+  var t={tour:'🗺️ 导览参拜',offering:'🙏 在线供奉',tablet:'📿 牌位登记',release:'🕊️ 放生护生',merit:'❤️ 行善功德',rank:'🏆 功德榜',activity:'🎊 法会活动'};
+  document.getElementById('ks-page-title').textContent=t[tab]||tab;_selectedHall=null;_selectedBuddha=null;
+  if(tab==='tour')renderTour();else if(tab==='offering')renderOffering();else if(tab==='tablet')renderTablet();else if(tab==='release')renderRelease();else if(tab==='merit')renderMerit();else if(tab==='rank')renderRank();else if(tab==='activity')renderActivity();
+}
+
+// ===== 导览 =====
+async function renderTour(){var r=await fAPI(API_BASE+'/areas');_areasData=r.data||[];var h='';
+  _areasData.forEach(function(a){h+='<div class="area-card"><div class="area-header" onclick="toggleArea('+a.id+')">🏛️ '+a.name+'<span class="count">'+(a.halls||[]).length+' 殿 ▼</span></div><div class="area-halls" id="area-'+a.id+'">'+(a.halls||[]).sort(function(x,y){return(x.sort||0)-(y.sort||0)}).map(function(h){return'<div class="hall-card" onclick="selectHall('+a.id+','+h.id+')">'+(h.image?'<img class="hall-thumb" src="'+h.image+'" alt="'+h.name+'" loading="lazy">':'<div class="hall-thumb" style="display:flex;align-items:center;justify-content:center;font-size:48px">🏛️</div>')+'<div class="hall-name">'+h.name+'</div><div class="hall-desc">'+(h.desc||'')+'</div><div class="hall-buddhas">🙏 '+(h.buddha_ids||[]).length+' 尊佛像</div></div>';}).join('')+'</div></div>';});
+  document.getElementById('ks-content').innerHTML=h||'<div class="panel" style="text-align:center;padding:60px;color:var(--text-muted);font-size:18px">🏛️ 暂无导览数据</div>';
+}function toggleArea(id){var e=document.getElementById('area-'+id);if(e)e.style.display=e.style.display==='none'?'grid':'none';}
+
+async function selectHall(areaId,hallId){
+  var a=_areasData.find(function(x){return x.id==areaId});if(!a)return;var h=(a.halls||[]).find(function(x){return x.id==hallId});if(!h){renderTour();return}_selectedHall=h;
+  var imgs=h.images||(h.image?[h.image]:[]);var buds=h.buddha_ids||[];
+  var hero=imgs.length?'<img src="'+imgs[0]+'" id="hero-img">'+(imgs.length>1?'<button class="nav-btn prev" onclick="heroNav(-1)">‹</button><button class="nav-btn next" onclick="heroNav(1)">›</button>':''):'<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px">🏛️</div>';
+  var html='<div class="hall-detail"><div class="hall-detail-header"><button class="back-btn" onclick="renderTour()">←</button><h2>🏛️ '+h.name+'</h2></div><div class="hero">'+hero+'</div><div class="desc">'+(h.desc||'暂无详细介绍')+'</div>';
+  if(buds.length){var br=await fAPI(API_BASE+'/buddhas');var allB=br.data||[];html+='<h3 style="font-size:22px;color:var(--gold-light);margin-bottom:16px;letter-spacing:2px">🙏 殿内佛像</h3><div class="buddha-grid">';buds.forEach(function(bid){var b=allB.find(function(x){return x.id==bid});if(b)html+='<div class="buddha-card" onclick="selectBuddha('+b.id+',\''+(b.name||'').replace(/'/g,'\\\'')+'\')">'+(b.image?'<img src="'+b.image+'" alt="'+b.name+'" loading="lazy">':'<div style="font-size:52px">🙏</div>')+'<div class="name">'+b.name+'</div><div class="intro">'+(b.intro||'').substring(0,28)+'</div></div>';});html+='</div>';}html+='</div>';
+  document.getElementById('ks-content').innerHTML=html;window._heroImages=imgs;window._heroIndex=0;
+}function heroNav(dir){if(!window._heroImages||window._heroImages.length<=1)return;window._heroIndex=(window._heroIndex+dir+window._heroImages.length)%window._heroImages.length;var i=document.getElementById('hero-img');if(i)i.src=window._heroImages[window._heroIndex];}
+function selectBuddha(id,name){_selectedBuddha={id:id,name:name};switchKioskTab('offering');}
+
+// ===== 供奉 =====
+function renderOffering(){var bn=_selectedBuddha?_selectedBuddha.name:'';var amts=[50,100,200,500,1000,5000];
+  document.getElementById('ks-content').innerHTML='<div class="form-panel"><div class="panel">'+(bn?'<div class="info-banner">🕯️ 向 <b style="color:var(--gold-light)">'+bn+'</b> 供奉，一份虔诚，一份功德</div>':'<div class="info-banner">🙏 随喜供奉，功不唐捐。每一份虔诚，皆为福田。</div>')+'<div class="form-wide-layout"><div class="form-wide-left"><div class="amount-grid" id="offering-amounts">'+amts.map(function(a){return'<div class="amount-btn" onclick="selectAmount(this,'+a+')">¥'+a+'<small>随喜</small></div>';}).join('')+'</div><div class="form-group"><input id="custom-amount" class="form-input" type="number" placeholder="自定义金额（元）" min="1" onchange="selectCustomAmount()"></div></div><div class="form-wide-right"><button class="pay-btn" style="font-size:32px;padding:40px 32px;border-radius:20px" onclick="submitOffering()">💰 确认供奉</button></div></div></div></div>';_selectedAmount=50;}
+
+// ===== 牌位 =====
+async function renderTablet(){
+  var r=await fAPI(API_BASE+'/tablet-configs');_tabletConfigs=r.data||[];
+  var anc=_tabletConfigs.find(function(t){return t.type==='ancestor'})||{id:1,type:'ancestor',name:'往生牌位',price:100,duration:'一年'};_selectedTabletType='ancestor';_selectedTabletPrice=anc.price;
+  document.getElementById('ks-content').innerHTML='<div class="form-panel"><div class="panel"><div class="tablet-type-grid"><div class="tablet-type-card ancestor active" onclick="selectTabletType(\'ancestor\','+anc.price+')">🕯️ 往生牌位<small>为逝者祈福超度 · ¥'+anc.price+'/'+(anc.duration||'一年')+'</small></div><div class="tablet-type-card living" onclick="selectTabletType(\'living\','+(_tabletConfigs.find(function(t){return t.type==='living'})||{price:100}).price+')">🌸 延生牌位<small>为生者祈福消灾 · ¥'+(_tabletConfigs.find(function(t){return t.type==='living'})||{price:100}).price+'/'+((_tabletConfigs.find(function(t){return t.type==='living'})||{}).duration||'一年')+'</small></div></div><div id="tablet-info" class="info-banner">🕯️ <b>往生牌位</b> · 愿往生净土，离苦得乐</div><div class="form-wide-layout"><div class="form-wide-left"><div class="form-group"><label class="form-label" id="tablet-name-label">逝者姓名</label><input id="tablet-name" class="form-input" placeholder="请输入逝者姓名"></div><div class="form-row"><div class="form-group"><label class="form-label">您的姓名</label><input id="tablet-sponsor" class="form-input" placeholder="请输入您的姓名"></div><div class="form-group"><label class="form-label">联系电话</label><input id="tablet-phone" class="form-input" placeholder="请输入联系电话"></div></div><div class="form-group" id="tablet-yrs-group"><label class="form-label">祈福年限</label><select id="tablet-years" class="form-select" onchange="updateTabletTotal()"><option value="1">一年</option><option value="3">三年</option><option value="5">五年</option><option value="10">十年</option></select></div><div class="form-group"><label class="form-label">留言寄语</label><input id="tablet-msg" class="form-input" placeholder="请输入留言"></div></div><div class="form-wide-right"><div class="form-group"><label class="form-label">登记金额（元）</label><input id="tablet-amount" class="form-input" value="'+anc.price.toFixed(2)+'" readonly style="font-size:48px;font-weight:900;color:var(--gold-light);text-align:center;padding:32px 20px"></div><button class="pay-btn tablet-yellow" id="tablet-submit" style="font-size:24px;padding:28px 24px" onclick="submitTablet()">🕯️ 确认登记</button></div></div></div></div>';
+}function selectTabletType(type,price){_selectedTabletType=type;_selectedTabletPrice=price;document.querySelectorAll('.tablet-type-card').forEach(function(e){e.classList.remove('active');});document.querySelector('.tablet-type-card.'+type).classList.add('active');var info=document.getElementById('tablet-info'),label=document.getElementById('tablet-name-label'),yrs=document.getElementById('tablet-yrs-group'),submit=document.getElementById('tablet-submit'),inp=document.getElementById('tablet-name');if(type==='ancestor'){info.innerHTML='🕯️ <b>往生牌位</b> · 愿往生净土，离苦得乐，莲登九品';label.textContent='逝者姓名';inp.placeholder='请输入逝者姓名';yrs.style.display='block';submit.className='pay-btn tablet-yellow';submit.textContent='🕯️ 确认登记往生牌位';}else{info.innerHTML='🌸 <b>延生牌位</b> · 愿福寿康宁，吉祥如意，诸事顺遂';label.textContent='祈福者姓名';inp.placeholder='请输入祈福者姓名';yrs.style.display='block';submit.className='pay-btn tablet-red';submit.textContent='🌸 确认登记延生牌位';}updateTabletTotal();}
+function updateTabletTotal(){var y=parseInt(document.getElementById('tablet-years')?.value||1);document.getElementById('tablet-amount').value=(_selectedTabletPrice*y).toFixed(2);}
+async function submitTablet(){var name=document.getElementById('tablet-name').value;if(!name)return alert('请输入姓名');var amt=parseFloat(document.getElementById('tablet-amount').value);var yrs=parseInt(document.getElementById('tablet-years')?.value||1);var res=await pAPI(API_BASE+'/tablet',{type:_selectedTabletType,deceased_name:name,sponsor_name:document.getElementById('tablet-sponsor').value,sponsor_phone:document.getElementById('tablet-phone').value,date:'',message:document.getElementById('tablet-msg').value,amount:amt,years:yrs});if(res.code!==0)return alert(res.msg||'提交失败');if(amt>0){var pr=await pAPI(API_BASE+'/pay/unified-order',{user_id:0,order_type:'tablet',biz_ref_id:res.data?res.data.id:0,trade_type:'native',channel:'native',openid:'',amount:Math.round(amt*100),description:(_selectedTabletType==='ancestor'?'往生牌位':'延生牌位')+' · '+name,extra:{type:_selectedTabletType,years:yrs}});if(pr.code===0&&pr.data&&pr.data.code_url){showPayQR(pr.data.code_url,amt,pr.data.order_no);return}}alert('登记成功');switchKioskTab('tablet');}
+
+// ===== 放生 =====
+async function renderRelease(){
+  var r=await fAPI(API_BASE+'/releases');_releaseAnimals=r.data||[];
+  document.getElementById('ks-content').innerHTML='<div class="form-panel"><div class="panel"><div class="info-banner">🕊️ 放生护生，功德无量。每一份善念，皆为众生之福。</div>'+( _releaseAnimals.length?('<div class="form-wide-layout"><div class="form-wide-left"><div class="animal-grid" id="animal-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">'+_releaseAnimals.map(function(a,i){return'<div class="animal-card'+(i===0?' active':'')+'" onclick="selectAnimal(this,'+a.id+','+a.price+')"><div class="emoji">'+(a.animal||'🐟')+'</div><div class="name">'+a.name+'</div><div class="price">¥'+a.price+'/位</div></div>';}).join('')+'</div><div class="form-row"><div class="form-group"><label class="form-label">您的姓名</label><input id="release-name" class="form-input" placeholder="请输入姓名"></div><div class="form-group"><label class="form-label">联系电话</label><input id="release-phone" class="form-input" placeholder="请输入联系电话"></div></div></div><div class="form-wide-right"><div class="form-group"><label class="form-label">数量</label><input id="release-qty" class="form-input" type="number" value="1" min="1" onchange="updateReleaseTotal()" style="font-size:32px;text-align:center;padding:24px"></div><div class="form-group"><label class="form-label">总金额（元）</label><input id="release-total" class="form-input" value="0" readonly style="font-size:48px;font-weight:900;color:#4FC3F7;text-align:center;padding:32px 20px"></div><button class="pay-btn release" style="font-size:24px;padding:28px 24px" onclick="submitRelease()">🕊️ 确认放生</button></div></div>')+'</div></div>':'<div class="panel" style="text-align:center;padding:60px;color:var(--text-muted);font-size:18px">暂无放生项目</div>');if(_releaseAnimals.length){_selectedAnimal=_releaseAnimals[0];updateReleaseTotal();}
+}var _selectedAnimal=null;function selectAnimal(el,id,price){_selectedAnimal={id:id,price:price};document.querySelectorAll('.animal-card').forEach(function(e){e.classList.remove('active');});el.classList.add('active');updateReleaseTotal();}
+function updateReleaseTotal(){if(!_selectedAnimal)return;var q=parseInt(document.getElementById('release-qty')?.value||1);document.getElementById('release-total').value=(_selectedAnimal.price*q).toFixed(2);}
+async function submitRelease(){if(!_selectedAnimal)return alert('请选择放生动物');var q=parseInt(document.getElementById('release-qty')?.value||1);var amt=_selectedAnimal.price*q;var name=document.getElementById('release-name').value||'善信';var recRes=await pAPI(API_BASE+'/release',{animal_id:_selectedAnimal.id,quantity:q,amount:amt,name:name,phone:document.getElementById('release-phone').value,dedication:''});if(recRes.code!==0)return alert(recRes.msg||'提交失败');if(amt>0){var pr=await pAPI(API_BASE+'/pay/unified-order',{user_id:0,order_type:'release',biz_ref_id:recRes.data?recRes.data.id:0,trade_type:'native',channel:'native',openid:'',amount:Math.round(amt*100),description:'放生 · '+(_selectedAnimal.name||'护生')+' x'+q,extra:{animal_id:_selectedAnimal.id,quantity:q}});if(pr.code===0&&pr.data&&pr.data.code_url){showPayQR(pr.data.code_url,amt,pr.data.order_no);return}}alert('放生成功');switchKioskTab('release');}
+
+// ===== 行善功德 =====
+async function renderMerit(){var r=await fAPI(API_BASE+'/merit-projects');var ps=r.data||[];
+  document.getElementById('ks-content').innerHTML=ps.length?'<div class="panel"><div class="merit-grid">'+ps.map(function(p){var pc=p.target>0?Math.round((p.current||0)/p.target*100):0;return'<div class="merit-card" onclick="showMeritPay('+p.id+',\''+(p.name||'').replace(/'/g,'\\\'')+'\','+(p.price_options?JSON.stringify(p.price_options).replace(/"/g,'&quot;'):'[50,100,200]')+')"><div class="emoji">'+(p.image||'❤️')+'</div><h3>'+p.name+'</h3><div class="desc">'+(p.desc||'')+'</div><div class="progress"><div class="progress-inner" style="width:'+pc+'%"></div></div><div class="stats">目标 ¥'+(p.target||0).toLocaleString()+' / 已筹 ¥'+(p.current||0).toLocaleString()+' ('+pc+'%)</div></div>';}).join('')+'</div></div>':'<div class="panel" style="text-align:center;padding:60px;color:var(--text-muted);font-size:18px">暂无功德项目</div>';}
+function showMeritPay(id,name,prices){var opts=typeof prices==='string'?JSON.parse(prices):prices;
+  document.getElementById('ks-content').innerHTML='<div class="form-panel"><div class="panel"><div class="info-banner">'+name+'</div><div class="form-wide-layout"><div class="form-wide-left"><div class="amount-grid" id="offering-amounts">'+opts.map(function(a){return'<div class="amount-btn" onclick="selectAmount(this,'+a+')">¥'+a+'</div>';}).join('')+'</div></div><div class="form-wide-right"><button class="pay-btn merit" style="font-size:28px;padding:40px 32px;border-radius:20px" onclick="submitMerit('+id+')">❤️ 确认行善</button></div></div></div></div>';_selectedAmount=opts[0]||50;}
+async function renderRank(){
+  var r=await fAPI(API_BASE+'/merit-rank');
+  var ranks=(r.data||[]).sort(function(a,b){return(b.amount||0)-(a.amount||0);});
+  var html='<div class="panel"><div class="rank-header"><h2>🏆 功德榜</h2><div class="sub">随喜赞叹 · 功德无量</div></div><div class="rank-list">';
+  if(ranks.length===0){html+='<div class="rank-empty">暂无功德记录，期待您的善举</div>';}
+  else{ranks.forEach(function(item,i){
+    var cls=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    var icon=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    html+='<div class="rank-item"><div class="rank-num '+cls+'">'+(i<3?icon:(i+1))+'</div><div class="rank-info"><div class="rank-name">'+item.name+'</div><div class="rank-project">'+(item.project||'供奉')+'</div></div><div class="rank-amount">¥'+Number(item.amount||0).toFixed(0)+'</div></div>';
+  });}
+  html+='</div></div>';
+  document.getElementById('ks-content').innerHTML=html;
+}
+
+async function submitMerit(pid){var amt=_selectedAmount||50;var res=await pAPI(API_BASE+'/pay/unified-order',{user_id:0,order_type:'donation',biz_ref_id:pid,trade_type:'native',channel:'native',openid:'',amount:Math.round(amt*100),description:'行善功德',extra:{project_id:pid}});if(res.code===0&&res.data&&res.data.code_url){showPayQR(res.data.code_url,amt,res.data.order_no);}else{alert(res.msg||'下单失败');}}
+
+// ===== 法会活动 =====
+async function renderActivity(){var r=await fAPI(API_BASE+'/activities');var acts=r.data||[];
+  document.getElementById('ks-content').innerHTML='<div class="panel">'+(acts.length?'<div class="activity-grid">'+acts.map(function(a){var sm={upcoming:'即将开始',ongoing:'进行中',ended:'已结束'};return'<div class="activity-card">'+(a.image?'<img src="'+a.image+'" alt="'+a.title+'" loading="lazy">':'')+'<div class="body"><h3>'+a.title+'</h3><div class="meta">📅 '+a.date+'<br>🕐 '+a.time+'<br>📍 '+a.location+'</div><div class="meta">👥 '+(a.participants||0)+'/'+(a.max_participants||100)+'人 · '+(a.price?'<span style="color:var(--gold-light);font-weight:700">¥'+a.price+'/人</span>':'<span style="color:#4CAF50">免费</span>')+' · <span style="color:var(--gold)">'+sm[a.status]+'</span></div></div></div>';}).join('')+'</div>':'<div style="text-align:center;padding:60px;color:var(--text-muted);font-size:18px">暂无活动</div>')+'</div>';}
+
+// ===== 支付公用 =====
+function selectAmount(el,amount){_selectedAmount=amount;document.querySelectorAll('#offering-amounts .amount-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');var ci=document.getElementById('custom-amount');if(ci)ci.value='';}
+function selectCustomAmount(){var v=parseFloat(document.getElementById('custom-amount').value);if(v>0){_selectedAmount=v;document.querySelectorAll('#offering-amounts .amount-btn').forEach(function(b){b.classList.remove('active');});}}
+async function submitOffering(){var amt=_selectedAmount||50;var desc='供奉';if(_selectedBuddha)desc+=' · '+_selectedBuddha.name;
+  var res=await pAPI(API_BASE+'/pay/unified-order',{user_id:0,order_type:'offering',biz_ref_id:_selectedBuddha?_selectedBuddha.id:0,trade_type:'native',channel:'native',openid:'',amount:Math.round(amt*100),description:desc,extra:{}});
+  if(res.code===0&&res.data&&res.data.code_url){showPayQR(res.data.code_url,amt,res.data.order_no);}else{alert(res.msg||'下单失败，请重试');}}
+
+function showPayQR(codeUrl,amount,orderNo){_payOrderNo=orderNo;document.getElementById('pay-amount-display').textContent='¥'+amount.toFixed(2);document.getElementById('pay-modal').style.display='block';document.getElementById('pay-qr').innerHTML='';
+  if(typeof QRCode!=='undefined'){new QRCode(document.getElementById('pay-qr'),{text:codeUrl,width:256,height:256,colorDark:'#000000',colorLight:'#ffffff'});}
+  clearInterval(_payTimer);_payTimer=setInterval(async function(){var r=await fAPI(API_BASE+'/pay/order/'+orderNo);if(r.code===0&&r.data&&r.data.status==='paid'){clearInterval(_payTimer);closePayModal();showSuccessOverlay(amount);}},3000);}
+function closePayModal(){document.getElementById('pay-modal').style.display='none';clearInterval(_payTimer);}
+function showSuccessOverlay(amount){
+  document.getElementById('success-amount').textContent='¥'+amount.toFixed(2);
+  document.getElementById('success-modal').style.display='block';
+  var s=3,el=document.getElementById('success-countdown');
+  el.textContent=s+'秒后返回导览页';
+  var t=setInterval(function(){s--;el.textContent=s+'秒后返回导览页';if(s<=0){clearInterval(t);document.getElementById('success-modal').style.display='none';_selectedBuddha=null;switchKioskTab('tour');}},1000);
+}
+
+async function fAPI(url){var r=await fetch(url,{headers:{'Accept':'application/json'}});return await r.json();}
+async function pAPI(url,b){var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});return await r.json();}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</body>
+</html>

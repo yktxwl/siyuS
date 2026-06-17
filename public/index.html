@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寺语 · 智慧寺院管理平台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'PingFang SC', 'STSong', 'Songti SC', 'Noto Serif SC', serif;
+  background: linear-gradient(180deg, #FFF8E7 0%, #FAF0E6 50%, #F5EDE0 100%);
+  min-height: 100vh;
+  color: #3E2723;
+  -webkit-font-smoothing: antialiased;
+}
+.hero {
+  background: linear-gradient(135deg, #3E2723 0%, #5D3A1A 50%, #8B0000 100%);
+  padding: 50px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(201,169,110,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 50%, rgba(201,169,110,0.1) 0%, transparent 60%);
+}
+.hero * { position: relative; z-index: 1; }
+.platform-name {
+  font-size: 36px; font-weight: 700; color: #E0C78A;
+  letter-spacing: 8px; margin-bottom: 8px;
+}
+.platform-slogan {
+  font-size: 16px; color: rgba(255,255,255,0.7);
+  letter-spacing: 6px; margin-bottom: 16px;
+}
+.platform-desc {
+  font-size: 14px; color: rgba(255,255,255,0.5);
+  max-width: 500px; margin: 0 auto;
+  line-height: 1.6;
+}
+.divider {
+  width: 60px; height: 2px;
+  background: #C9A96E; margin: 20px auto;
+  border-radius: 1px;
+}
+.temples-section {
+  max-width: 900px; margin: -30px auto 40px;
+  padding: 0 16px; position: relative; z-index: 2;
+}
+.section-title {
+  text-align: center; font-size: 20px; font-weight: 600;
+  color: #5D3A1A; margin-bottom: 24px; letter-spacing: 4px;
+}
+.temples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.temple-card {
+  background: #FFFFFF;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(139,0,0,0.08);
+  transition: all 0.3s ease;
+  cursor: pointer; text-decoration: none; color: inherit;
+  display: block;
+  border: 1px solid #E0D5C1;
+}
+.temple-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(139,0,0,0.15);
+  border-color: #C9A96E;
+}
+.temple-card-header {
+  background: linear-gradient(135deg, #5D3A1A, #8B0000);
+  padding: 28px 20px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.temple-card-header::after {
+  content: '🛕'; position: absolute;
+  right: -10px; top: -10px; font-size: 60px;
+  opacity: 0.08; transform: rotate(15deg);
+}
+.temple-card-icon { font-size: 40px; margin-bottom: 8px; }
+.temple-card-name {
+  font-size: 20px; font-weight: 700; color: #E0C78A;
+  letter-spacing: 3px;
+}
+.temple-card-slogan {
+  font-size: 13px; color: rgba(255,255,255,0.7);
+  margin-top: 6px; letter-spacing: 2px;
+}
+.temple-card-body { padding: 16px 20px; }
+.temple-card-info {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: #6D4C41; margin-bottom: 6px;
+}
+.temple-card-info .icon { font-size: 14px; flex-shrink: 0; }
+.temple-card-arrow {
+  text-align: right; font-size: 14px; color: #C9A96E;
+  margin-top: 10px; font-weight: 600;
+}
+.admin-link {
+  text-align: center; margin: 40px 0 20px;
+}
+.admin-link a {
+  color: #8D6E63; font-size: 14px; text-decoration: none;
+  border-bottom: 1px dashed #8D6E63; padding-bottom: 2px;
+}
+.admin-link a:hover { color: #5D3A1A; border-color: #5D3A1A; }
+.footer {
+  text-align: center; padding: 30px 20px;
+  color: #8D6E63; font-size: 12px;
+}
+.status-badge {
+  display: inline-block; padding: 2px 10px;
+  border-radius: 12px; font-size: 11px; font-weight: 500;
+  margin-left: 8px;
+}
+.status-active { background: #E8F5E9; color: #2E7D32; }
+.status-inactive { background: #FFEBEE; color: #C62828; }
+.loading { text-align: center; padding: 60px; color: #8D6E63; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="platform-name" id="plat-name">寺 语</div>
+  <div class="platform-slogan" id="plat-slogan">智慧寺院管理平台</div>
+  <div class="divider"></div>
+  <div class="platform-desc" id="plat-desc">为各寺庙提供数字化祈福与管理解决方案，实现一寺一系统、数据完全隔离</div>
+</div>
+
+<div class="temples-section">
+  <div class="temples-grid" id="temples-grid">
+    <div class="loading">加载中...</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span id="footer-copyright">© 寺语 · 智慧寺院管理平台</span>
+  <span id="footer-icp" style="display:none;margin-left:12px"></span>
+</div>
+
+<script>
+async function loadPlatformInfo() {
+  try {
+    const res = await fetch('/api/platform/config');
+    const d = await res.json();
+    if (d.code === 0) {
+      const c = d.data;
+      if (c.platform_name) document.getElementById('plat-name').textContent = c.platform_name;
+      if (c.platform_slogan) document.getElementById('plat-slogan').textContent = c.platform_slogan;
+      if (c.platform_desc) document.getElementById('plat-desc').textContent = c.platform_desc;
+      if (c.copyright) document.getElementById('footer-copyright').textContent = c.copyright;
+      if (c.icp) {
+        const icp = document.getElementById('footer-icp');
+        icp.textContent = c.icp; icp.style.display = 'inline';
+      }
+    }
+  } catch(e) {}
+}
+
+async function loadTemples() {
+  try {
+    const res = await fetch('/api/platform/temples');
+    const data = await res.json();
+    if (data.code !== 0 || !data.data) {
+      document.getElementById('temples-grid').innerHTML = '<div class="loading">暂无入驻寺院</div>';
+      return;
+    }
+
+    const temples = data.data.filter(t => t.status === 'active');
+    if (temples.length === 0) {
+      document.getElementById('temples-grid').innerHTML = '<div class="loading" style="grid-column:1/-1">暂无活跃寺院</div>';
+      return;
+    }
+
+    document.getElementById('temples-grid').innerHTML = temples.map(t => `
+      <a class="temple-card" href="/t/${t.slug}">
+        <div class="temple-card-header">
+          <div class="temple-card-icon">🛕</div>
+          <div class="temple-card-name">${t.name}</div>
+          <div class="temple-card-slogan">${t.slogan || '一方净土，万般自在'}</div>
+        </div>
+        <div class="temple-card-body">
+          <div class="temple-card-info">
+            <span class="icon">📍</span>
+            <span>${t.province || ''}${t.city || ''} ${t.address || ''}</span>
+          </div>
+          <div class="temple-card-info">
+            <span class="icon">📞</span>
+            <span>${t.phone || '暂无'}</span>
+          </div>
+          <div class="temple-card-arrow">进入寺院 ›</div>
+        </div>
+      </a>
+    `).join('');
+  } catch (e) {
+    document.getElementById('temples-grid').innerHTML = '<div class="loading">加载失败，请刷新重试</div>';
+  }
+}
+
+loadPlatformInfo();
+loadTemples();
+</script>
+</body>
+</html>

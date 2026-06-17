@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寺语 · 寺庙管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC',sans-serif;background:#f5f0e8;color:#3e2723}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:200px;background:linear-gradient(180deg,#3e2723,#5d3a1a);color:#fff;padding:20px 0;flex-shrink:0}
+.sidebar h2{text-align:center;font-size:16px;color:#C9A96E;margin-bottom:4px;letter-spacing:3px}
+.sidebar h2 small{display:block;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;margin-bottom:20px}
+.sidebar a{display:block;padding:12px 20px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all 0.2s}
+.sidebar a:hover,.sidebar a.active{color:#C9A96E;background:rgba(201,169,110,0.1);border-left-color:#C9A96E}
+.main{flex:1;padding:24px;max-width:1100px}
+.panel{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.panel h3{font-size:16px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #e0d5c1;color:#5D3A1A}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s}
+.btn-primary{background:#C9A96E;color:#fff}.btn-danger{background:#C62828;color:#fff}.btn-sm{padding:4px 10px;font-size:12px}.btn+.btn{margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th,table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0ebe0}
+table th{background:#faf6f0;font-weight:600;color:#5D3A1A}table tr:hover{background:#faf6f0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;justify-content:center;align-items:center}
+.modal.show{display:flex}.modal-content{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:16px;color:#5D3A1A}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 24px;border-radius:25px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.stat-card .num{font-size:24px;font-weight:700;color:#8B0000}.stat-card .label{font-size:12px;color:#8D6E63;margin-top:2px}
+.section{display:none}.section.active{display:block}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;color:#6D4C41;font-weight:600;margin-bottom:4px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:8px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;background:#faf6f0}
+.form-row{display:flex;gap:10px}.form-row .form-group{flex:1}
+.login-box{max-width:380px;margin:100px auto;background:#fff;border-radius:12px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.login-box h2{text-align:center;margin-bottom:24px;color:#5D3A1A}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.banner-thumb{position:relative;width:140px;height:80px;border-radius:6px;overflow:hidden;border:2px solid transparent;cursor:grab;transition:all 0.2s;flex-shrink:0}.banner-thumb:hover{border-color:#C9A96E;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.banner-thumb img{width:100%;height:100%;object-fit:cover}.banner-thumb .del-btn{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(198,40,40,0.85);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:12px;line-height:20px;text-align:center;display:none}.banner-thumb:hover .del-btn{display:block}.banner-placeholder{width:140px;height:80px;border:2px dashed #e0d5c1;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#8D6E63;font-size:12px}
+
+/* Media Picker */
+.media-picker-wrap{display:flex;gap:0;min-height:460px;max-height:65vh;border:1px solid #e0d5c1;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+.media-picker-sidebar{width:175px;flex-shrink:0;background:linear-gradient(180deg, #fdfbf7 0%, #f5f1e8 100%);border-right:1px solid #e0d5c1;overflow-y:auto;padding:12px 0}
+.media-picker-sidebar-title{font-size:13px;color:#8D6E63;padding:4px 14px 10px;font-weight:600;letter-spacing:0.5px}
+.media-picker-cat{padding:9px 14px;cursor:pointer;font-size:13px;color:#5D3A1A;display:flex;justify-content:space-between;align-items:center;transition:all 0.15s;border-left:3px solid transparent;border-right:3px solid transparent}
+.media-picker-cat:hover{background:#f0ece0;border-left-color:#ddd5c5}
+.media-picker-cat.active{background:#fff;border-left-color:#C9A96E;color:#C9A96E;font-weight:600}
+.media-picker-cat .count{font-size:10px;color:#8D6E63;background:#e0d5c1;border-radius:10px;padding:1px 7px;min-width:20px;text-align:center}
+.media-picker-cat.active .count{background:#C9A96E;color:#fff}
+.media-picker-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.media-picker-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #e0d5c1;flex-wrap:wrap;background:linear-gradient(180deg, #fdfbf7, #f5f1e8)}
+.media-picker-tabs{display:flex;gap:0;flex-shrink:0}
+.media-picker-tab{padding:6px 14px;font-size:13px;cursor:pointer;border:1px solid #e0d5c1;background:#fff;color:#5D3A1A;transition:all 0.15s;font-weight:500}
+.media-picker-tab:first-child{border-radius:5px 0 0 5px}.media-picker-tab:last-child{border-radius:0 5px 5px 0}
+.media-picker-tab.active{background:#C9A96E;color:#fff;border-color:#C9A96E}
+.media-picker-search{flex:1;min-width:130px;padding:6px 12px;border:1px solid #e0d5c1;border-radius:5px;font-size:13px;background:#fff;outline:none;transition:border-color 0.2s}
+.media-picker-search:focus{border-color:#C9A96E;box-shadow:0 0 0 2px rgba(201,169,110,0.12)}
+.media-picker-grid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;align-content:start;background:#fdfbf7}
+.media-picker-item{position:relative;border:2px solid #e0d5c1;border-radius:8px;overflow:hidden;cursor:pointer;transition:all 0.2s;background:#fff}
+.media-picker-item:hover{border-color:#C9A96E;box-shadow:0 3px 12px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.media-picker-item.selected{border-color:#C9A96E;box-shadow:0 0 0 3px rgba(201,169,110,0.25)}
+.media-picker-item .thumb{width:100%;height:110px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#faf6f0}
+.media-picker-item .thumb img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s}
+.media-picker-item:hover .thumb img{transform:scale(1.03)}
+.media-picker-item .check{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.92);border:2px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1}
+.media-picker-item.selected .check{background:#C9A96E;border-color:#B8963D;color:#fff}
+.media-picker-item .info{padding:8px 10px}
+.media-picker-item .fname{font-size:12px;color:#5D3A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.media-picker-item .meta{font-size:10px;color:#8D6E63;margin-top:3px}
+.media-picker-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid #e0d5c1;background:#faf6f0}
+.media-picker-pages{display:flex;align-items:center;gap:5px;font-size:12px}
+.media-picker-pages button{padding:4px 10px;border:1px solid #e0d5c1;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;color:#5D3A1A;min-width:28px;transition:all 0.15s}
+.media-picker-pages button:hover{background:#C9A96E;color:#fff;border-color:#C9A96E}
+.media-picker-pages button.active{background:#C9A96E;color:#fff;border-color:#C9A96E}
+.media-picker-pages input{width:38px;text-align:center;border:1px solid #e0d5c1;border-radius:5px;padding:4px;font-size:12px}
+.media-picker-actions{display:flex;align-items:center;gap:12px}
+.media-picker-actions .sel-count{font-size:13px;color:#8D6E63;font-weight:500}
+.media-picker-list-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #f0ece0;cursor:pointer;transition:background 0.15s}
+.media-picker-list-item:hover{background:#faf6f0}
+.media-picker-list-item.selected{background:rgba(201,169,110,0.08)}
+.media-picker-list-item .lthumb{width:52px;height:52px;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#faf6f0;flex-shrink:0}
+.media-picker-list-item .lthumb img{width:100%;height:100%;object-fit:cover}
+.media-picker-list-item .linfo{flex:1;min-width:0}
+.media-picker-list-item .lname{font-size:13px;color:#5D3A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.media-picker-list-item .lmeta{font-size:11px;color:#8D6E63;margin-top:3px}
+
+/* Buddha cards in hall form */
+.buddha-card-list{display:flex;flex-wrap:wrap;gap:8px;max-height:180px;overflow-y:auto;padding:4px 0}
+.buddha-card{display:flex;align-items:center;gap:8px;padding:6px 10px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;transition:all 0.15s;background:#fff;flex-shrink:0;min-width:0}
+.buddha-card:hover{border-color:#C9A96E}
+.buddha-card.checked{background:rgba(201,169,110,0.08);border-color:#C9A96E;box-shadow:0 0 0 2px rgba(201,169,110,0.15)}
+.buddha-card input[type=checkbox]{display:none}
+.buddha-card img{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#faf6f0}
+.buddha-card-info{display:flex;flex-direction:column;min-width:0}
+.buddha-card-info b{font-size:13px;color:#5D3A1A;white-space:nowrap}
+.buddha-card-info span{font-size:11px;color:#8D6E63}
+.buddha-card::after{content:'○';font-size:16px;color:#ccc;flex-shrink:0}
+.buddha-card.checked::after{content:'●';color:#C9A96E}
+
+.top-bar h1{font-size:20px;color:#5D3A1A}
+.top-bar span{font-size:13px;color:#8D6E63}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<script>document.body.style.background='#f5f0e8';</script>
+
+<div class="login-box" id="login-box">
+  <h2>🔐 <span id="login-title">寺庙管理</span></h2>
+  <div class="form-group"><label>用户名</label><input type="text" id="login-user"></div>
+  <div class="form-group"><label>密码</label><input type="password" id="login-pass"></div>
+  <button class="btn btn-primary" style="width:100%;padding:12px;font-size:15px" onclick="login()">登录</button>
+  <p style="text-align:center;font-size:12px;color:#8D6E63;margin-top:12px"><a href="/" style="color:#C9A96E">返回首页</a></p>
+</div>
+
+<div class="layout" id="layout" style="display:none">
+  <aside class="sidebar">
+    <h2 id="sidebar-name">寺庙<small>管理后台</small></h2>
+    <a href="#dashboard" class="active" onclick="showSection('dashboard')">📊 数据面板</a>
+    <a href="#settings" onclick="showSection('settings')">🏛️ 基本信息</a>
+    <a href="#buddhas" onclick="showSection('buddhas')">🙏 佛像管理</a>
+    <a href="#announcements" onclick="showSection('announcements')">📢 法讯公告</a>
+    <a href="#activities" onclick="showSection('activities')">📅 法会活动</a>
+    <a href="#tablet-config" onclick="showSection('tablet-config')">📿 牌位管理</a>
+    <a href="#prayers" onclick="showSection('prayers')">🏮 祈愿管理</a>
+    <a href="#merit" onclick="showSection('merit')">❤️ 功德项目</a>
+    <a href="#releases" onclick="showSection('releases')">🕊️ 放生护生</a>
+    <a href="#areas" onclick="showSection('areas')">🗺️ 导览管理</a>
+    <a href="#members" onclick="showSection('members')">👥 善信管理</a>
+    <a href="#media" onclick="showSection('media')">🖼️ 素材管理</a>
+    <a href="#shop" onclick="showSection('shop')">🛍️ 法物流通</a>
+    <a href="#" onclick="logout()" style="margin-top:30px">🚪 退出登录</a>
+  </aside>
+  <main class="main">
+    <div class="toast" id="toast"></div>
+
+    <!-- Dashboard -->
+    <div class="section active" id="sec-dashboard">
+      <div class="top-bar"><h1>📊 数据面板</h1><span id="temple-name-display"></span></div>
+      <div class="stats-grid" id="dash-stats"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section" id="sec-settings">
+      <div class="top-bar"><h1>🏛️ 基本信息</h1></div>
+      <div class="panel"><form id="settings-form" onsubmit="saveSettings(event)">
+        <div class="form-row"><div class="form-group"><label>寺庙名称</label><input id="st-name" required></div><div class="form-group"><label>标语</label><input id="st-slogan"></div></div>
+        <div class="form-row"><div class="form-group"><label>地址</label><input id="st-address"></div><div class="form-group"><label>电话</label><input id="st-phone"></div></div>
+        <div class="form-row"><div class="form-group"><label>开放时间</label><input id="st-open_time"></div><div class="form-group"></div></div>
+        <div class="form-group">
+          <label>首页轮播图</label>
+          <div class="banner-manager" id="banner-manager" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;min-height:80px"></div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="addBannerFromMedia()" style="margin-top:8px">📁 从素材库选择</button>
+        </div>
+        <div class="form-group"><label>简介</label><textarea id="st-intro" rows="3"></textarea></div>
+        <button class="btn btn-primary" style="width:100%;padding:10px">保存设置</button>
+      </form></div>
+    </div>
+
+    <!-- Buddhas -->
+    <div class="section" id="sec-buddhas">
+      <div class="top-bar"><h1>🙏 佛像管理</h1><button class="btn btn-primary" onclick="showBuddhaForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>殿堂</th><th>简介</th><th>操作</th></tr></thead><tbody id="buddha-table"></tbody></table><div id="buddha-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+
+    <!-- Announcements -->
+    <div class="section" id="sec-announcements">
+      <div class="top-bar"><h1>📢 法讯公告</h1><button class="btn btn-primary" onclick="showAnnForm()">+ 发布</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>标题</th><th>内容</th><th>日期</th><th>操作</th></tr></thead><tbody id="ann-table"></tbody></table><div id="announcement-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+
+    <!-- Activities -->
+    <div class="section" id="sec-activities">
+      <div class="top-bar"><h1>📅 法会活动</h1><button class="btn btn-primary" onclick="showActForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>标题</th><th>日期</th><th>地点</th><th>状态</th><th>人数</th><th>操作</th></tr></thead><tbody id="act-table"></tbody></table><div id="activity-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+
+    <!-- Tablet Config -->
+    <div class="section" id="sec-tablet-config">
+      <div class="top-bar"><h1>📿 牌位管理</h1><button class="btn btn-primary" onclick="showTabletConfigForm()">+ 添加</button></div>
+      <div class="panel">
+        <table><thead><tr><th>ID</th><th>名称</th><th>类型</th><th>价格(元)</th><th>期限</th><th>操作</th></tr></thead>
+        <tbody id="tablet-config-table"><tr><td colspan="6" style="text-align:center;color:#999;padding:20px">加载中...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- Merit -->
+    <div class="section" id="sec-prayers">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0;border:none;padding:0">🏮 祈愿管理</h3>
+          <button class="btn btn-primary" onclick="showPrayerAdd()">+ 添加祈愿</button>
+        </div>
+        <table>
+          <thead><tr><th>ID</th><th>称呼</th><th>心愿内容</th><th>类型</th><th>时间</th><th>操作</th></tr></thead>
+          <tbody id="prayers-table"></tbody>
+        </table>
+        <div id="prayer-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-merit">
+      <div class="top-bar"><h1>❤️ 功德项目</h1><button class="btn btn-primary" onclick="showMeritForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>目标</th><th>已筹</th><th>进度</th><th>操作</th></tr></thead><tbody id="merit-table"></tbody></table><div id="merit-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+
+    <!-- Releases -->
+    <div class="section" id="sec-releases">
+      <div class="top-bar"><h1>🕊️ 放生护生</h1><button class="btn btn-primary" onclick="showReleaseForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>类型</th><th>价格</th><th>描述</th><th>操作</th></tr></thead><tbody id="rel-table"></tbody></table><div id="release-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+
+    <!-- Areas (导览管理) -->
+    <div class="section" id="sec-areas">
+      <div class="top-bar"><h1>🗺️ 导览管理</h1><button class="btn btn-primary" onclick="showAreaForm()">+ 添加区域</button></div>
+      <div id="areas-container"></div>
+    </div>
+
+    <!-- Members -->
+    <div class="section" id="sec-members">
+      <div class="top-bar"><h1>👥 善信管理</h1></div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <input id="tmember-search" placeholder="🔍 搜索昵称/手机号" onkeyup="debounceTMemberSearch()" style="padding:8px 12px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;flex:1;max-width:300px">
+        <span style="font-size:13px;color:#8D6E63" id="tmember-total">共 0 人</span>
+      </div>
+      <div class="panel" style="overflow-x:auto">
+        <table>
+          <thead><tr><th>头像</th><th>昵称</th><th>手机号</th><th>功德值</th><th>供奉次数</th><th>订单数</th><th>注册时间</th></tr></thead>
+          <tbody id="tmember-table"><tr><td colspan="7" style="padding:40px;text-align:center;color:#999">加载中...</td></tr></tbody>
+        </table>
+        <div id="tmember-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div>
+      </div>
+    </div>
+
+    <!-- Media Library -->
+    <div class="section" id="sec-media">
+      <div class="top-bar">
+        <h1>🖼️ 素材库</h1>
+        <div style="display:flex;gap:8px">
+          <select id="media-type-filter" onchange="loadMedia()" style="padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;background:#faf6f0">
+            <option value="">全部类型</option><option value="image">图片</option><option value="video">视频</option><option value="file">文件</option>
+          </select>
+          <input type="text" id="media-search" placeholder="搜索文件名..." oninput="loadMedia()" style="padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;width:160px">
+          <button class="btn btn-primary" onclick="triggerMediaUpload()">+ 上传素材</button>
+          <input type="file" id="media-upload-input" accept="image/*,video/*" multiple onchange="uploadMedia()" style="display:none">
+        </div>
+      </div>
+      <div class="panel">
+        <div id="media-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px"></div>
+        <div id="media-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div>
+      </div>
+    </div>
+
+    <!-- Shop -->
+    <div class="section" id="sec-shop">
+      <div class="top-bar"><h1>🛍️ 法物流通</h1><button class="btn btn-primary" onclick="showShopForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>价格</th><th>库存</th><th>操作</th></tr></thead><tbody id="shop-table"></tbody></table><div id="shop-pager" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:14px 0 6px;font-size:13px"></div></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="modal" onclick="closeModal(event)"><div class="modal-content" id="modal-content" onclick="event.stopPropagation()"></div></div>
+
+<!-- 独立素材选择器遮罩层 -->
+<div class="modal" id="picker-modal" onclick="closePicker()"><div class="modal-content" id="picker-content" onclick="event.stopPropagation()"></div></div>
+
+<script>
+const TID = window.ADMIN_TEMPLE_ID || 1;
+const TSLUG = window.ADMIN_TEMPLE_SLUG || 'dajue';
+const TNAME = window.ADMIN_TEMPLE_NAME || '寺庙';
+const API = '/api/temple/' + TID + '/admin';
+const BIZ_API = '/api/temple/' + TID;
+let token = localStorage.getItem('temple_token_' + TID) || '';
+
+document.getElementById('login-title').textContent = TNAME + ' · 管理后台';
+
+async function api(url, opt) {
+  opt = opt || {};
+  const res = await fetch(url, { headers: {'Content-Type':'application/json'}, ...opt });
+  return res.json();
+}
+function toast(msg) { 
+  var t = document.getElementById('toast'); 
+  t.textContent = msg; 
+  t.classList.add('show'); 
+  setTimeout(function(){ t.classList.remove('show'); }, 2000); 
+}
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById('sec-' + name);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(function(a){ a.classList.remove('active'); });
+  var al = document.querySelector('.sidebar a[href="#' + name + '"]');
+  if(al) al.classList.add('active');
+  var loaders = { dashboard:loadDashboard, settings:loadSettings, buddhas:loadBuddhas, announcements:loadAnnouncements, activities:loadActivities, 'tablet-config':loadTabletConfigs, prayers:loadPrayers, merit:loadMerit, releases:loadReleases, areas:loadAreas, members:loadTempleMembers, media:loadMedia, shop:loadShop };
+  if(loaders[name]) loaders[name]();
+}
+async function login() {
+  var user = document.getElementById('login-user').value;
+  var pass = document.getElementById('login-pass').value;
+  var res = await api('/api/temple/' + TID + '/admin/login', { method:'POST', body: JSON.stringify({ username: user, password: pass }) });
+  if(res.code === 0) {
+    token = res.data.token;
+    localStorage.setItem('temple_token_' + TID, token);
+    document.getElementById('login-box').style.display = 'none';
+    document.getElementById('layout').style.display = 'flex';
+    loadDashboard();
+  } else {
+    toast(res.msg || '登录失败');
+  }
+}
+function logout() {
+  token = '';
+  localStorage.removeItem('temple_token_' + TID);
+  document.getElementById('login-box').style.display = 'block';
+  document.getElementById('layout').style.display = 'none';
+}
+async function loadDashboard() {
+  var res = await api(API + '/stats');
+  if(res.code === 0) {
+    var d = res.data;
+    document.getElementById('dash-stats').innerHTML = 
+      '<div class="stat-card"><div class="num">' + d.total_offerings + '</div><div class="label">供奉次数</div></div>' +
+      '<div class="stat-card"><div class="num">' + d.total_tablets + '</div><div class="label">牌位登记</div></div>' +
+      '<div class="stat-card"><div class="num">' + d.total_prayers + '</div><div class="label">祈愿数量</div></div>' +
+      '<div class="stat-card"><div class="num">' + d.total_releases + '</div><div class="label">放生次数</div></div>' +
+      '<div class="stat-card"><div class="num">¥' + d.donation_amount.toLocaleString() + '</div><div class="label">功德总额</div></div>' +
+      '<div class="stat-card"><div class="num">' + d.total_users + '</div><div class="label">用户数量</div></div>';
+  }
+}
+if(token) {
+  document.getElementById('login-box').style.display = 'none';
+  document.getElementById('layout').style.display = 'flex';
+  loadDashboard();
+}
+document.getElementById('sidebar-name').innerHTML = TNAME + '<small>管理后台</small>';
+document.getElementById('temple-name-display') && (document.getElementById('temple-name-display').textContent = TNAME);
+
+var _bannerList = [];
+function renderBanners() {
+  var container = document.getElementById('banner-manager');
+  if (!container) return;
+  if (_bannerList.length === 0) {
+    container.innerHTML = '<div class="banner-placeholder">暂无轮播图</div>';
+  } else {
+    container.innerHTML = _bannerList.map(function(url, i) {
+      return '<div class="banner-thumb"><img src="'+url+'" alt="轮播图'+(i+1)+'" onerror="this.parentElement.remove()"><button class="del-btn" type="button" onclick="removeBanner('+i+')">✕</button></div>';
+    }).join('');
+  }
+}
+function addBanner(url) { _bannerList.push(url); renderBanners(); }
+function removeBanner(index) { _bannerList.splice(index, 1); renderBanners(); }
+function addBannerFromMedia() {
+  openMediaPicker(function(result) {
+    if (Array.isArray(result)) result.forEach(function(url) { addBanner(url); });
+    else addBanner(result);
+  }, 'image', true);
+}
+async function loadSettings() {
+  var res = await api(BIZ_API+'/info');
+  if(res.code===0){ var d=res.data;
+    document.getElementById('st-name').value=d.name||''; document.getElementById('st-slogan').value=d.slogan||'';
+    document.getElementById('st-address').value=d.address||''; document.getElementById('st-phone').value=d.phone||'';
+    document.getElementById('st-open_time').value=d.open_time||''; document.getElementById('st-intro').value=d.intro||'';
+    _bannerList = (d.banner || []).slice();
+    renderBanners();
+  }
+}
+async function saveSettings(e) {
+  e.preventDefault();
+  var body = {
+    name:document.getElementById('st-name').value, slogan:document.getElementById('st-slogan').value,
+    address:document.getElementById('st-address').value, phone:document.getElementById('st-phone').value,
+    open_time:document.getElementById('st-open_time').value, intro:document.getElementById('st-intro').value,
+    banner: _bannerList.slice()
+  };
+  var res = await api(API+'/temple', { method:'POST', body:JSON.stringify(body) });
+  toast(res.msg||'保存成功');
+  loadSettings();
+}
+
+// Buddhas
+var _buddhaImages = [];
+async function loadBuddhas() {
+  var res = await api(BIZ_API+'/buddhas');
+  if(res.code===0) {
+    document.getElementById('buddha-table').innerHTML = paginate('buddha', (res.data||[]), function(b) {
+      return '<tr><td>'+b.id+'</td><td>'+escHtml(b.name)+'</td><td>'+escHtml(b.hall||'')+'</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(b.intro||'')+'</td><td><button class="btn btn-primary btn-sm" onclick="showBuddhaForm('+b.id+')">编辑</button><button class="btn btn-danger btn-sm" onclick="delBuddha('+b.id+')">删除</button><button class="btn btn-sm" style="background:#17a2b8;color:#fff" onclick="showBuddhaQR('+b.id+')">📱 二维码</button></td></tr>';
+    }) || '<tr><td colspan="5" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('buddha');
+  }
+}
+
+function showBuddhaForm(id) {
+  _buddhaImages = [];
+  var h = [];
+  h.push('<div class="modal-title">' + (id ? '编辑' : '添加') + '佛像</div>');
+  h.push('<div class="form-group"><label>名称 *</label><input id="bf-name" required></div>');
+  h.push('<div class="form-group"><label>供奉位置</label><textarea id="bf-location-display" rows="2" style="background:#f9f7f2;color:#5D3A1A;font-weight:600;resize:none;line-height:1.8" readonly placeholder="从区域管理中自动关联"></textarea></div>');
+  h.push('<div class="form-group"><label>简介</label><input id="bf-intro" placeholder="一句话简介，主页展示用"></div>');
+  h.push('<div class="form-group"><label>详细介绍</label><textarea id="bf-desc" rows="3" placeholder="详细介绍佛像的历史、典故等"></textarea></div>');
+  h.push('<div class="form-group"><label>图片轮播 <small>(可多选)</small></label>');
+  h.push('<div id="bf-carousel" style="display:flex;gap:8px;overflow-x:auto;padding:6px 0;min-height:74px;align-items:center"><div class="banner-placeholder" style="min-width:140px">暂无图片</div></div>');
+  h.push('<button type="button" class="btn btn-primary btn-sm" style="margin-top:8px" onclick="pickBuddhaImages()">📁 从素材库选择</button></div>');
+  h.push('<div class="form-group"><label>视频</label><div style="display:flex;gap:8px"><input id="bf-video" placeholder="视频URL" style="flex:1"><button type="button" class="btn btn-sm" style="background:#faf6f0" onclick="pickBuddhaVideo()">从素材库选</button></div></div>');
+  h.push('<div class="form-group"><label>排序</label><input id="bf-sort" type="number" value="0"></div>');
+  h.push('<button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveBuddha('+(id||0)+')">保存</button>');
+  setModal(h.join(''));
+
+  if (id) {
+    api(BIZ_API+'/buddhas').then(function(r) {
+      var b = (r.data||[]).find(function(x) { return x.id == id; });
+      if (b) {
+        document.getElementById('bf-name').value = b.name || '';
+        document.getElementById('bf-intro').value = b.intro || '';
+        document.getElementById('bf-desc').value = b.description || '';
+        document.getElementById('bf-video').value = b.video || '';
+        document.getElementById('bf-sort').value = b.sort || 0;
+        _buddhaImages = (b.images && b.images.length) ? b.images.slice() : (b.image ? [b.image] : []);
+        renderBuddhaCarousel();
+      }
+    });
+  }
+  // Load area data to display buddha location
+  loadBuddhaLocationDisplay(id);
+}
+
+function renderBuddhaCarousel() {
+  var c = document.getElementById('bf-carousel'); if (!c) return;
+  if (_buddhaImages.length === 0) { c.innerHTML = '<div class="banner-placeholder" style="min-width:140px">暂无图片</div>'; return; }
+  var h = '';
+  _buddhaImages.forEach(function(url, i) {
+    h += '<div class="banner-thumb" style="width:100px;height:64px;border:2px solid #C9A96E"><img src="'+url+'"><button class="del-btn" onclick="rmBuddhaImg('+i+')">✕</button></div>';
+  });
+  h += '<div class="banner-placeholder" style="width:50px;min-width:50px">'+_buddhaImages.length+'张</div>';
+  c.innerHTML = h;
+}
+function pickBuddhaImages() {
+  openMediaPicker(function(result) {
+    var urls = Array.isArray(result) ? result : [result];
+    urls.forEach(function(url) { _buddhaImages.push(url); });
+    renderBuddhaCarousel();
+  }, 'image', true);
+}
+function rmBuddhaImg(i) { _buddhaImages.splice(i, 1); renderBuddhaCarousel(); }
+function pickBuddhaVideo() {
+  openMediaPicker(function(result) {
+    var url = Array.isArray(result) ? result[0] : result;
+    document.getElementById('bf-video').value = url;
+  }, 'video', false);
+}
+
+// Populate area/hall select dropdown for buddha form
+async function loadBuddhaLocationDisplay(buddhaId) {
+  var el = document.getElementById('bf-location-display');
+  if (!el) return;
+  try {
+    var res = await api(BIZ_API+'/areas');
+    if (res.code !== 0 || !res.data) { el.value = '加载区域数据失败'; return; }
+    var areas = res.data || [];
+    if (!buddhaId) { el.value = '🔔 新建佛像，保存后请在区域管理中关联'; return; }
+    // Collect all locations where this buddha is供奉ed
+    var locations = [];
+    for (var i = 0; i < areas.length; i++) {
+      var halls = areas[i].halls || [];
+      for (var j = 0; j < halls.length; j++) {
+        var hall = halls[j];
+        if ((hall.buddha_ids || []).indexOf(buddhaId) >= 0) {
+          locations.push('🏛️ ' + areas[i].name + ' · ' + hall.name);
+        }
+      }
+    }
+    // Fallback: buddha has hall field but not in buddha_ids
+    if (locations.length === 0) {
+      var buddhaRes = await api(BIZ_API+'/buddhas');
+      var buddha = (buddhaRes.data || []).find(function(x) { return x.id == buddhaId; });
+      if (!buddha || !buddha.hall) { el.value = '🔔 未关联（请先在区域管理中设置）'; return; }
+      // Try matching by hall name
+      for (var k = 0; k < areas.length; k++) {
+        var hs = areas[k].halls || [];
+        for (var l = 0; l < hs.length; l++) {
+          if (hs[l].name === buddha.hall) {
+            locations.push('🏛️ ' + areas[k].name + ' · ' + hs[l].name);
+          }
+        }
+      }
+      if (locations.length === 0) {
+        el.value = buddha.hall + '（区域信息未找到）';
+        return;
+      }
+    }
+    el.value = locations.join('\n');
+    el.rows = Math.min(locations.length + 1, 6);
+  } catch(e) { el.value = '加载失败'; }
+}
+
+async function saveBuddha(id) {
+  var body = {
+    name: document.getElementById('bf-name').value,
+    intro: document.getElementById('bf-intro').value,
+    description: document.getElementById('bf-desc').value,
+    images: _buddhaImages.slice(),
+    video: document.getElementById('bf-video').value,
+    sort: parseInt(document.getElementById('bf-sort').value) || 0,
+    offering_price: [10, 50, 100, 200]
+  };
+  if (id) body.id = id;
+  var res = await api(API+'/buddha', { method:'POST', body:JSON.stringify(body) });
+  toast(res.msg||'保存成功'); closeModal(); loadBuddhas();
+}
+async function delBuddha(id){ if(confirm('确定删除？')){ await api(API+'/buddha/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadBuddhas(); }}
+
+// Announcements
+async function loadAnnouncements() {
+  const res = await api(BIZ_API+'/announcements');
+  if(res.code===0) {
+    document.getElementById('ann-table').innerHTML = paginate('announcement', (res.data||[]), function(a) {
+      return '<tr><td>'+a.id+'</td><td>'+a.title+'</td><td>'+a.content+'</td><td>'+a.time+'</td><td><button class="btn btn-primary btn-sm" onclick="showAnnForm('+a.id+')">编辑</button><button class="btn btn-danger btn-sm" onclick="delAnn('+a.id+')">删除</button></td></tr>';
+    }) || '<tr><td colspan="5" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('announcement');
+  }
+}
+function showAnnForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'发布'}公告</div>
+    <div class="form-group"><label>标题</label><input id="af1"></div>
+    <div class="form-group"><label>内容</label><textarea id="af2" rows="3"></textarea></div>
+    <div class="form-group"><label>日期</label><input id="af3" type="date"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveAnn(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/announcements').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('af1').value=a.title; document.getElementById('af2').value=a.content; document.getElementById('af3').value=a.time; }});
+}
+async function saveAnn(id){ const body={ title:document.getElementById('af1').value, content:document.getElementById('af2').value, time:document.getElementById('af3').value }; if(id) body.id=id; await api(API+'/announcement',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadAnnouncements(); }
+async function delAnn(id){ if(confirm('确定删除？')){ await api(API+'/announcement/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadAnnouncements(); }}
+
+// Activities
+async function loadActivities() {
+  const res = await api(BIZ_API+'/activities');
+  if(res.code===0) {
+    document.getElementById('act-table').innerHTML = paginate('activity', (res.data||[]), function(a) {
+      var stMap = { upcoming: '即将开始', ongoing: '进行中', ended: '已结束' };
+      var stColor = { upcoming: '#856404', ongoing: '#155724', ended: '#666' };
+      var stBg = { upcoming: '#fff3cd', ongoing: '#d4edda', ended: '#e2e3e5' };
+      return '<tr><td>'+a.id+'</td><td>'+a.title+'</td><td>'+a.date+'</td><td>'+a.location+'</td>'+
+        '<td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:'+(stBg[a.status]||'#fff')+';color:'+(stColor[a.status]||'#333')+'">'+(stMap[a.status]||a.status)+'</span></td>'+
+        '<td>'+a.participants+'/'+a.max_participants+'</td>'+
+        '<td><button class="btn btn-primary btn-sm" onclick="showActForm('+a.id+')">编辑</button> '+
+        '<button class="btn btn-sm" style="background:#dc3545;color:#fff" onclick="delAct('+a.id+')">删除</button></td></tr>';
+    }) || '<tr><td colspan="7" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('activity');
+  }
+}
+function showActForm(id) {
+  setModal(
+    '<div class="modal-title">' + (id ? '编辑' : '添加') + '活动</div>' +
+    '<div class="form-group"><label>标题</label><input id="acf1"></div>' +
+    '<div class="form-row"><div class="form-group"><label>日期</label><input id="acf2" type="date"></div><div class="form-group"><label>时间</label><input id="acf3" placeholder="09:00-11:00"></div></div>' +
+    '<div class="form-group"><label>地点</label><input id="acf4"></div>' +
+    '<div class="form-group"><label>封面图片</label><div style="display:flex;gap:8px"><input id="acf5" placeholder="图片URL" style="flex:1"><button type="button" class="btn btn-sm" style="background:#faf6f0" onclick="pickActImage()">📁 素材库</button></div><div id="acf5-preview" style="margin-top:6px"></div></div>' +
+    '<div class="form-group"><label>描述</label><textarea id="acf6" rows="2"></textarea></div>' +
+    '<div class="form-row"><div class="form-group"><label>最大人数</label><input id="acf7" type="number" value="100"></div>' +
+    '<div class="form-group"><label>状态</label><select id="acf8"><option value="upcoming">即将开始</option><option value="ongoing">进行中</option><option value="ended">已结束</option></select></div></div>' +
+    '<div class="form-group"><label>报名金额（元，0=免费）</label><input id="acf9" type="number" value="0" min="0" step="0.01"></div>' +
+    '<button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveAct(' + (id || 0) + ')">保存</button>'
+  );
+  if (id) api(BIZ_API + '/activities').then(function(r) {
+    var a = r.data ? r.data.find(function(x) { return x.id == id; }) : null;
+    if (a) {
+      document.getElementById('acf1').value = a.title || '';
+      document.getElementById('acf2').value = a.date || '';
+      document.getElementById('acf3').value = a.time || '';
+      document.getElementById('acf4').value = a.location || '';
+      document.getElementById('acf5').value = a.image || '';
+      document.getElementById('acf6').value = a.desc || '';
+      document.getElementById('acf7').value = a.max_participants || 100;
+      document.getElementById('acf8').value = a.status || 'upcoming';
+      document.getElementById('acf9').value = a.price || 0;
+      previewActImage();
+    }
+  });
+}
+
+function pickActImage() {
+  openMediaPicker(function(result) {
+    var url = Array.isArray(result) ? result[0] : result;
+    document.getElementById('acf5').value = url;
+    previewActImage();
+  }, 'image', false);
+}
+
+function previewActImage() {
+  var url = document.getElementById('acf5').value;
+  var pv = document.getElementById('acf5-preview');
+  if (pv) pv.innerHTML = url ? '<img src="' + url + '" style="max-width:200px;max-height:120px;border-radius:8px;border:1px solid #e0d5c1" onerror="this.style.display=\'none\'">' : '';
+}
+async function saveAct(id){ var body={ title:document.getElementById('acf1').value, date:document.getElementById('acf2').value, time:document.getElementById('acf3').value, location:document.getElementById('acf4').value, image:document.getElementById('acf5').value, desc:document.getElementById('acf6').value, max_participants:parseInt(document.getElementById('acf7').value)||100, status:document.getElementById('acf8')?.value||'upcoming', price:parseFloat(document.getElementById('acf9')?.value)||0 }; if(id) body.id=id; await api(API+'/activity',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadActivities(); }
+async function delAct(id){ if(!confirm('确定删除此活动？'))return; await api(API+'/activity/delete',{method:'POST',body:JSON.stringify({id:id})}); toast('已删除'); loadActivities(); }
+
+// Merit
+async function loadMerit() {
+  const res = await api(BIZ_API+'/merit-projects');
+  if(res.code===0) {
+    document.getElementById('merit-table').innerHTML = paginate('merit', (res.data||[]), function(p) {
+      var pc = p.target > 0 ? Math.round(p.current/p.target*100) : 0;
+      return '<tr><td>'+p.id+'</td><td>'+p.name+'</td><td>¥'+p.target.toLocaleString()+'</td><td>¥'+p.current.toLocaleString()+'</td><td>'+pc+'%</td><td><button class="btn btn-primary btn-sm" onclick="showMeritForm('+p.id+')">编辑</button></td></tr>';
+    }) || '<tr><td colspan="6" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('merit');
+  }
+}
+function showMeritForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}功德项目</div>
+    <div class="form-group"><label>名称</label><input id="mrf1"></div>
+    <div class="form-group"><label>图标(emoji)</label><input id="mrf2"></div>
+    <div class="form-group"><label>描述</label><textarea id="mrf3" rows="2"></textarea></div>
+    <div class="form-row"><div class="form-group"><label>目标金额</label><input id="mrf4" type="number"></div><div class="form-group"><label>已筹金额</label><input id="mrf5" type="number"></div></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveMerit(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/merit-projects').then(r=>{ const m=r.data?.find(x=>x.id==id); if(m){ document.getElementById('mrf1').value=m.name; document.getElementById('mrf2').value=m.image; document.getElementById('mrf3').value=m.desc; document.getElementById('mrf4').value=m.target; document.getElementById('mrf5').value=m.current; }});
+}
+async function saveMerit(id){ const body={ name:document.getElementById('mrf1').value, image:document.getElementById('mrf2').value, desc:document.getElementById('mrf3').value, target:parseFloat(document.getElementById('mrf4').value)||0, current:parseFloat(document.getElementById('mrf5').value)||0, price_options:[50,100,200,500,1000] }; if(id) body.id=id; await api(API+'/merit-project',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadMerit(); }
+
+// Releases
+async function loadReleases() {
+  const res = await api(BIZ_API+'/releases');
+  if(res.code===0) {
+    document.getElementById('rel-table').innerHTML = paginate('release', (res.data||[]), function(r) {
+      return '<tr><td>'+r.id+'</td><td>'+r.name+'</td><td>'+r.animal+'</td><td>¥'+r.price+'</td><td>'+r.desc+'</td><td><button class="btn btn-primary btn-sm" onclick="showReleaseForm('+r.id+')">编辑</button></td></tr>';
+    }) || '<tr><td colspan="6" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('release');
+  }
+}
+function showReleaseForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}放生物种</div>
+    <div class="form-row"><div class="form-group"><label>名称</label><input id="rf1"></div><div class="form-group"><label>类型</label><input id="rf2"></div></div>
+    <div class="form-row"><div class="form-group"><label>图标</label><input id="rf3"></div><div class="form-group"><label>价格</label><input id="rf4" type="number"></div></div>
+    <div class="form-group"><label>描述</label><input id="rf5"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveRelease(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/releases').then(r=>{ const x=r.data?.find(z=>z.id==id); if(x){ document.getElementById('rf1').value=x.name; document.getElementById('rf2').value=x.animal; document.getElementById('rf3').value=x.image; document.getElementById('rf4').value=x.price; document.getElementById('rf5').value=x.desc; }});
+}
+async function saveRelease(id){ const body={ name:document.getElementById('rf1').value, animal:document.getElementById('rf2').value, image:document.getElementById('rf3').value, price:parseFloat(document.getElementById('rf4').value)||0, desc:document.getElementById('rf5').value }; if(id) body.id=id; await api(API+'/release',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadReleases(); }
+
+// Area Management
+let currentAreaId = null;
+
+async function loadAreas() {
+  currentAreaId = null;
+  const res = await api(BIZ_API+'/areas');
+  if(res.code===0){
+    const areas = res.data || [];
+    if(areas.length===0){ document.getElementById('areas-container').innerHTML='<div class="panel"><p style="text-align:center;color:#8D6E63;padding:20px">暂无区域，请添加</p></div>'; return; }
+    document.getElementById('areas-container').innerHTML = areas.map(a => `<div class="panel" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:8px 0" onclick="toggleArea(${a.id})">
+        <div><b style="font-size:15px;color:#5D3A1A">🏛️ ${a.name}</b><span style="font-size:12px;color:#8D6E63;margin-left:10px">${a.desc||''}</span><span style="font-size:12px;color:#C9A96E;margin-left:10px">${(a.halls||[]).length} 个大殿</span></div>
+        <div><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showAreaForm(${a.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delArea(${a.id})">删除</button></div>
+      </div>
+      <div id="area-halls-${a.id}" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-top:10px;border-top:1px solid #e0d5c1">
+          <b style="font-size:13px;color:#6D4C41">大殿列表</b>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showHallForm(${a.id})">+ 添加大殿</button>
+        </div>
+        <table><thead><tr><th>名称</th><th>描述</th><th>图片</th><th>视频</th><th>佛像</th><th>排序</th><th>操作</th></tr></thead><tbody>
+        ${(a.halls||[]).sort((x,y)=>(x.sort||0)-(y.sort||0)).map(h => `<tr>
+          <td>${h.name}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.desc||''}</td>
+          <td>${h.image?'<span style="color:green">✓</span>':'<span style="color:#ccc">—</span>'}</td>
+          <td>${h.video?'<span style="color:green">✓</span>':'<span style="color:#ccc">—</span>'}</td>
+          <td>${(h.buddha_ids||[]).length}尊</td><td>${h.sort||0}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showHallForm(${a.id},${h.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delHall(${a.id},${h.id})">删除</button><button class="btn btn-sm" style="background:#17a2b8;color:#fff" onclick="event.stopPropagation();window.showHallQR(${h.id})">📱</button></td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+    </div>`).join('');
+  }
+}
+function toggleArea(id){ const el=document.getElementById('area-halls-'+id); if(el) el.style.display=el.style.display==='block'?'none':'block'; }
+
+function showAreaForm(id) {
+  setModal(`<div class="modal-title">${id?'编辑':'添加'}区域</div>
+    <div class="form-group"><label>名称</label><input id="ar-name" required></div>
+    <div class="form-group"><label>描述</label><input id="ar-desc"></div>
+    <div class="form-group"><label>排序</label><input id="ar-sort" type="number" value="0"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveArea(${id||0})">保存</button>`);
+  if(id) api(BIZ_API+'/areas').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('ar-name').value=a.name; document.getElementById('ar-desc').value=a.desc||''; document.getElementById('ar-sort').value=a.sort||0; }});
+}
+async function saveArea(id){ const body={ name:document.getElementById('ar-name').value, desc:document.getElementById('ar-desc').value, sort:parseInt(document.getElementById('ar-sort').value)||0 }; if(id) body.id=id; await api(API+'/area',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadAreas(); }
+async function delArea(id){ if(!confirm('删除区域将同时删除其下所有大殿，确定？')) return; await api(API+'/area/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadAreas(); }
+
+var _hlImages = [];
+
+async function showHallForm(areaId, hallId) {
+  _hlImages = [];
+  var buddhaRes = await api(BIZ_API+'/buddhas');
+  var buddhas = buddhaRes.data || [];
+  var title = hallId ? '编辑大殿' : '添加大殿';
+  var html = '<div class="modal-title">' + title + '</div>' +
+    '<div class="form-group"><label>名称 *</label><input id="hl-name" required></div>' +
+    '<div class="form-group"><label>描述</label><textarea id="hl-desc" rows="2"></textarea></div>' +
+    '<div class="form-group"><label>图片轮播 <small style="color:#8D6E63">(可多选)</small></label>' +
+      '<div id="hl-carousel" style="display:flex;gap:8px;overflow-x:auto;padding:6px 0;min-height:74px;align-items:center">' +
+        '<div class="banner-placeholder" id="hl-carousel-empty" style="min-width:140px">暂无图片</div>' +
+      '</div>' +
+      '<button type="button" class="btn btn-primary btn-sm" style="margin-top:8px" onclick="pickHallImages()">📁 从素材库选择图片</button>' +
+    '</div>' +
+    '<div class="form-group"><label>视频</label>' +
+      '<div style="display:flex;gap:8px;align-items:center">' +
+        '<input id="hl-video" placeholder="输入视频URL" style="flex:1">' +
+        '<button type="button" class="btn btn-sm" style="background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1;white-space:nowrap" onclick="pickHallVideo()">从素材库选</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="form-group"><label>关联佛像</label>' +
+      '<div class="buddha-card-list" id="hl-buddha-list">' +
+        buddhas.map(function(b) {
+          return '<label class="buddha-card" data-bid="' + b.id + '">' +
+            '<input type="checkbox" value="' + b.id + '" class="hl-buddha" onchange="toggleBuddhaCard(this)">' +
+            '<img src="' + (b.image || 'https://picsum.photos/seed/buddha/80/80') + '" alt="' + b.name + '">' +
+            '<div class="buddha-card-info"><b>' + b.name + '</b><span>' + (b.hall || '') + '</span></div>' +
+          '</label>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="form-group"><label>排序</label><input id="hl-sort" type="number" value="0"></div>' +
+    '<input type="hidden" id="hl-area-id" value="' + areaId + '">' +
+    '<button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveHall(' + (hallId || 0) + ')">保存</button>';
+  setModal(html);
+
+  if (hallId) {
+    var r = await api(BIZ_API+'/areas');
+    var a = (r.data || []).find(function(x) { return x.id == areaId; });
+    var h = (a && a.halls) ? a.halls.find(function(x) { return x.id == hallId; }) : null;
+    if (h) {
+      document.getElementById('hl-name').value = h.name || '';
+      document.getElementById('hl-desc').value = h.desc || '';
+      document.getElementById('hl-video').value = h.video || '';
+      document.getElementById('hl-sort').value = h.sort || 0;
+      _hlImages = (h.images && h.images.length) ? h.images.slice() : (h.image ? [h.image] : []);
+      renderHallCarousel();
+      (h.buddha_ids || []).forEach(function(bid) {
+        var cb = document.querySelector('.hl-buddha[value="' + bid + '"]');
+        if (cb) { cb.checked = true; toggleBuddhaCard(cb); }
+      });
+    }
+  }
+}
+
+function renderHallCarousel() {
+  var container = document.getElementById('hl-carousel');
+  var empty = document.getElementById('hl-carousel-empty');
+  if (!container) return;
+  if (_hlImages.length === 0) {
+    container.innerHTML = '<div class="banner-placeholder" style="min-width:140px">暂无图片</div>';
+    return;
+  }
+  var html = '';
+  _hlImages.forEach(function(url, i) {
+    html += '<div class="banner-thumb" style="width:120px;height:72px;border:2px solid #C9A96E">' +
+      '<img src="' + url + '" alt="轮播图' + (i+1) + '">' +
+      '<button class="del-btn" type="button" onclick="removeHallImage(' + i + ')">✕</button>' +
+      '</div>';
+  });
+  html += '<div class="banner-placeholder" style="width:60px;min-width:60px">' + _hlImages.length + '张</div>';
+  container.innerHTML = html;
+}
+function pickHallImages() {
+  openMediaPicker(function(result) {
+    var urls = Array.isArray(result) ? result : [result];
+    urls.forEach(function(url) { _hlImages.push(url); });
+    renderHallCarousel();
+  }, 'image', true);
+}
+function removeHallImage(index) {
+  _hlImages.splice(index, 1);
+  renderHallCarousel();
+}
+function pickHallVideo() {
+  openMediaPicker(function(result) {
+    var url = Array.isArray(result) ? result[0] : result;
+    document.getElementById('hl-video').value = url;
+  }, 'video', false);
+}
+function toggleBuddhaCard(cb) {
+  var card = cb.closest('.buddha-card');
+  if (!card) return;
+  card.classList.toggle('checked', cb.checked);
+}
+
+async function saveHall(hallId) {
+  var areaId = parseInt(document.getElementById('hl-area-id').value);
+  var buddha_ids = [];
+  document.querySelectorAll('.hl-buddha:checked').forEach(function(cb) { buddha_ids.push(parseInt(cb.value)); });
+  var body = {
+    name: document.getElementById('hl-name').value,
+    desc: document.getElementById('hl-desc').value,
+    images: _hlImages.slice(),
+    video: document.getElementById('hl-video').value,
+    buddha_ids: buddha_ids,
+    sort: parseInt(document.getElementById('hl-sort').value) || 0
+  };
+  if (hallId) body.id = hallId;
+  await api(API + '/area/' + areaId + '/hall', { method: 'POST', body: JSON.stringify(body) });
+  toast('保存成功'); closeModal(); loadAreas();
+}
+async function delHall(areaId, hallId){ if(!confirm('确定删除？')) return; await api(API+'/area/'+areaId+'/hall/delete',{method:'POST',body:JSON.stringify({id:hallId})}); toast('已删除'); loadAreas(); }
+
+// Media Library
+function triggerMediaUpload() { document.getElementById('media-upload-input').click(); }
+async function loadMedia() {
+  const type = document.getElementById('media-type-filter')?.value || '';
+  const search = document.getElementById('media-search')?.value || '';
+  var s = pageState('media');
+  let url = BIZ_API+'/media?type='+type+'&limit='+s.size+'&page='+s.page;
+  if(search) url += '&search='+encodeURIComponent(search);
+  const res = await api(url);
+  if(res.code===0){
+    var pd = res.data;
+    var list = pd.items || [];
+    s.total = pd.total || list.length;
+    if(list.length===0){ document.getElementById('media-grid').innerHTML='<p style="grid-column:1/-1;text-align:center;color:#8D6E63;padding:40px">暂无素材</p>'; } else {
+      document.getElementById('media-grid').innerHTML = list.map(function(m) {
+        var isImg = m.type === 'image';
+        var sizeStr = m.size > 1024*1024 ? (m.size/1024/1024).toFixed(1)+'MB' : (m.size/1024).toFixed(0)+'KB';
+        var cat = m.category || '未分组';
+        var previewClick = 'previewMedia("'+escAttr(m.url)+'","'+escAttr(m.type)+'","'+escAttr(m.filename)+'")';
+        var thumb = isImg ? '<img src="'+escAttr(m.url)+'" style="width:100%;height:100%;object-fit:cover" loading="lazy">' : '<span style="font-size:36px;opacity:0.4">'+(m.type==='video'?'🎬':'📄')+'</span>';
+        var typeLabel = m.type==='image'?'🖼️ 图片':m.type==='video'?'🎬 视频':'📄 文件';
+        return '<div style="background:#fff;border:1px solid #e0d5c1;border-radius:8px;overflow:hidden;cursor:pointer;transition:all 0.2s" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'none\'"><div style="height:100px;display:flex;align-items:center;justify-content:center;background:#faf6f0;overflow:hidden" onclick="'+previewClick+'">'+thumb+'</div><div style="padding:8px"><div style="font-size:11px;color:#5D3A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escAttr(m.filename)+'">'+escAttr(m.filename)+'</div><div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:10px;color:#C9A96E">'+typeLabel+'</span><span style="font-size:10px;color:#8D6E63">'+sizeStr+'</span></div><div style="font-size:10px;color:#8D6E63;margin-top:2px;display:flex;align-items:center;gap:4px"><span>📁 '+escAttr(cat)+'</span><button class="btn btn-sm" style="font-size:9px;padding:1px 4px;background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1" onclick="event.stopPropagation();editMediaCat('+m.id+',&quot;'+escAttr(cat)+'&quot;)">改</button></div><div style="display:flex;gap:4px;margin-top:6px"><button class="btn btn-sm" style="flex:1;font-size:10px;background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1" onclick="event.stopPropagation();copyMediaUrl(&quot;'+escAttr(m.url)+'&quot;)">复制URL</button><button class="btn btn-danger btn-sm" style="font-size:10px" onclick="event.stopPropagation();delMedia('+m.id+')">删除</button></div></div></div>';
+      }).join('');
+    }
+    renderPager('media');
+  }
+}
+
+function editMediaCat(id, currentCat) {
+  setModal(`<div class="modal-title">修改素材分类</div>
+    <div class="form-group"><label>新分类名称</label><input id="media-cat-input" value="${currentCat==='未分组'?'':currentCat}" placeholder="留空为未分组"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveMediaCat(${id})">保存</button>`);
+}
+async function saveMediaCat(id) {
+  var cat = document.getElementById('media-cat-input').value || '';
+  var res = await api(API+'/media/category', { method:'POST', body: JSON.stringify({ id: id, category: cat }) });
+  toast(res.msg || '分类已更新');
+  closeModal();
+  loadMedia();
+}
+async function uploadMedia() {
+  const files = document.getElementById('media-upload-input').files;
+  if(!files.length) return;
+  for(const file of files) {
+    const fd = new FormData(); fd.append('file', file);
+    const res = await fetch(API+'/media/upload',{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.code===0) toast('✅ '+file.name+' 上传成功'); else toast('❌ '+file.name+' 失败');
+  }
+  document.getElementById('media-upload-input').value = '';
+  pageState('media').page = 1;
+  loadMedia();
+}
+function previewMedia(url, type) {
+  const isImg = type === 'image';
+  setModal(`<div class="modal-title">素材预览</div>
+    <div style="text-align:center">${isImg ? '<img src="'+url+'" style="max-width:100%;max-height:300px;border-radius:8px">' : '<video src="'+url+'" controls style="max-width:100%;max-height:300px"></video>'}</div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <input value="${url}" readonly style="flex:1;padding:8px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;background:#faf6f0" id="preview-url-input">
+      <button class="btn btn-primary btn-sm" onclick="copyMediaUrl('${url}')">复制</button>
+    </div>`);
+}
+function copyMediaUrl(url) {
+  navigator.clipboard.writeText(url).then(()=>toast('URL 已复制')).catch(()=>{
+    const input = document.getElementById('preview-url-input');
+    if(input){ input.select(); document.execCommand('copy'); toast('URL 已复制'); }
+  });
+}
+async function delMedia(id){ if(!confirm('确定删除？')) return; await api(API+'/media/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadMedia(); }
+
+// Shop
+async function loadShop() {
+  const res = await api(BIZ_API+'/shop/items');
+  if(res.code===0) {
+    document.getElementById('shop-table').innerHTML = paginate('shop', (res.data||[]), function(s) {
+      return '<tr><td>'+s.id+'</td><td>'+s.name+'</td><td>'+s.category+'</td><td>¥'+s.price+'</td><td>'+s.stock+'</td><td><button class="btn btn-primary btn-sm" onclick="showShopForm('+s.id+')">编辑</button></td></tr>';
+    }) || '<tr><td colspan="6" style="text-align:center;color:#8D6E63;padding:20px">暂无数据</td></tr>';
+    renderPager('shop');
+  }
+}
+function showShopForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}商品</div>
+    <div class="form-group"><label>名称</label><input id="sf1"></div>
+    <div class="form-row"><div class="form-group"><label>分类</label><select id="sf2"><option>念珠</option><option>香品</option><option>供具</option><option>经书</option><option>文创</option><option>饰品</option></select></div><div class="form-group"><label>价格</label><input id="sf3" type="number"></div></div>
+    <div class="form-row"><div class="form-group"><label>库存</label><input id="sf4" type="number"></div><div class="form-group"><label>图片URL</label><input id="sf5"></div></div>
+    <div class="form-group"><label>描述</label><textarea id="sf6" rows="2"></textarea></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveShopItem(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/shop/items').then(r=>{ const s=r.data?.find(x=>x.id==id); if(s){ document.getElementById('sf1').value=s.name; document.getElementById('sf2').value=s.category; document.getElementById('sf3').value=s.price; document.getElementById('sf4').value=s.stock; document.getElementById('sf5').value=s.image; document.getElementById('sf6').value=s.desc; }});
+}
+async function saveShopItem(id){ const body={ name:document.getElementById('sf1').value, category:document.getElementById('sf2').value, price:parseFloat(document.getElementById('sf3').value)||0, stock:parseInt(document.getElementById('sf4').value)||0, image:document.getElementById('sf5').value, desc:document.getElementById('sf6').value }; if(id) body.id=id; await api(API+'/shop-item',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadShop(); }
+
+// Generic Pagination State
+var _pagers = {};
+function pageState(key) {
+  if (!_pagers[key]) _pagers[key] = { page: 1, size: 10, total: 0 };
+  return _pagers[key];
+}
+function renderPager(key) {
+  var s = pageState(key);
+  var totalPages = Math.max(1, Math.ceil(s.total / s.size));
+  if (s.page > totalPages) s.page = totalPages;
+  var h = '';
+  if (s.total > 0) {
+    h += '<button class="btn btn-sm" style="background:#faf6f0" ' + (s.page<=1?'disabled':'onclick="goPage(\''+key+'\',1)"') + '>首页</button>';
+    h += '<button class="btn btn-sm" style="background:#faf6f0" ' + (s.page<=1?'disabled':'onclick="goPage(\''+key+'\','+(s.page-1)+')"') + '>‹ 上一页</button>';
+    for (var i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= s.page-2 && i <= s.page+2)) {
+        h += '<button class="btn btn-sm" style="min-width:32px;' + (i===s.page?'background:#C9A96E;color:#fff;font-weight:600':'background:#faf6f0') + '" onclick="goPage(\''+key+'\','+i+')">'+i+'</button>';
+      } else if (i === s.page-3 || i === s.page+3) {
+        h += '<span style="color:#8D6E63">…</span>';
+      }
+    }
+    h += '<button class="btn btn-sm" style="background:#faf6f0" ' + (s.page>=totalPages?'disabled':'onclick="goPage(\''+key+'\','+(s.page+1)+')"') + '>下一页 ›</button>';
+    h += '<button class="btn btn-sm" style="background:#faf6f0" ' + (s.page>=totalPages?'disabled':'onclick="goPage(\''+key+'\','+totalPages+')"') + '>末页</button>';
+    h += '<span style="margin-left:10px;color:#8D6E63;font-size:12px">共 ' + s.total + ' 条，' + s.page + '/' + totalPages + ' 页</span>';
+    h += '<span style="margin-left:14px;display:inline-flex;align-items:center;gap:6px;color:#8D6E63;font-size:12px">每页<select onchange="changeSize(\''+key+'\',this.value)" style="padding:4px 8px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;background:#faf6f0;color:#5D3A1A"><option value="10" '+(s.size==10?'selected':'')+'>10</option><option value="20" '+(s.size==20?'selected':'')+'>20</option><option value="50" '+(s.size==50?'selected':'')+'>50</option><option value="100" '+(s.size==100?'selected':'')+'>100</option></select>条</span>';
+  }
+  document.getElementById(key+'-pager').innerHTML = h;
+}
+function goPage(key, page) { var s = pageState(key); s.page = page; loadSection(key); }
+function changeSize(key, size) { var s = pageState(key); s.size = parseInt(size); s.page = 1; loadSection(key); }
+function paginate(key, all, renderFn) {
+  var s = pageState(key); s.total = all.length;
+  var start = (s.page - 1) * s.size;
+  return all.slice(start, start + s.size).map(renderFn).join('');
+}
+// Prayer loader uses paginate + renderPager directly via loadSection
+function loadSection(key) {
+  var map = { buddha: loadBuddhas, announcement: loadAnnouncements, activity: loadActivities, merit: loadMerit, release: loadReleases, shop: loadShop, prayer: loadPrayers, tmember: loadTempleMembers };
+  if (map[key]) map[key]();
+}
+
+
+
+
+function showPrayerAdd() {
+  setModal(
+    '<div style="position:relative"><span class="modal-close" onclick="closeModal()">✕</span><div class="modal-title">🏮 添加祈愿</div>' +
+    '<div class="form-group"><label>称呼</label><input id="pa-name" placeholder="请输入称呼"></div>' +
+    '<div class="form-group"><label>心愿内容 *</label><textarea id="pa-content" rows="3" placeholder="写下心愿..." required></textarea></div>' +
+    '<div class="form-group"><label>祈愿类型</label><select id="pa-type"><option value="lamp">🏮 心灯</option><option value="lotus">🪷 莲花</option></select></div>' +
+    '<button class="btn btn-primary" style="width:100%;padding:10px" onclick="savePrayerAdd()">放飞心愿</button></div>'
+  );
+}
+
+async function savePrayerAdd() {
+  var content = document.getElementById('pa-content').value;
+  if (!content) return toast('请填写心愿内容');
+  var res = await api(BIZ_API+'/prayer', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: document.getElementById('pa-name').value || '善信',
+      content: content,
+      type: document.getElementById('pa-type').value
+    })
+  });
+  toast(res.msg || '添加成功');
+  closeModal();
+  pageState('prayer').page = 1;
+  loadPrayers();
+}
+
+async function loadPrayers() {
+  var res = await api(BIZ_API+'/admin/prayers');
+  if (res.code === 0) {
+    var all = (res.data || []).sort(function(a, b) { return b.createtime - a.createtime; });
+    document.getElementById('prayers-table').innerHTML = paginate('prayer', all, function(p) {
+      var d = new Date(p.createtime);
+      var time = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      var typeMap = { lamp: '🏮 心灯', lotus: '🪷 莲花' };
+      return '<tr><td>' + p.id + '</td><td>' + escHtml(p.name || '善信') + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(p.content) + '</td><td>' + (typeMap[p.type] || p.type || '🏮 心灯') + '</td><td>' + time + '</td><td><button class="btn btn-primary btn-sm" onclick="showPrayerEdit(' + p.id + ')">编辑</button><button class="btn btn-danger btn-sm" onclick="delPrayer(' + p.id + ')">删除</button></td></tr>';
+    }) || '<tr><td colspan="6" style="text-align:center;color:#8D6E63;padding:20px">暂无祈愿记录</td></tr>';
+    renderPager('prayer');
+  }
+}
+
+// Keep old function references for backwards compat in savePrayerAdd etc.
+function goPrayerPage(page) { goPage('prayer', page); }
+function changePrayerPageSize(size) { changeSize('prayer', size); }
+
+async function showPrayerEdit(id) {
+  var res = await api(BIZ_API+'/admin/prayers');
+  var p = (res.data || []).find(function(x) { return x.id == id; });
+  if (!p) return toast('祈愿不存在');
+  var typeMap = { lamp: '🏮 心灯', lotus: '🪷 莲花' };
+  setModal(
+    '<div style="position:relative"><span class="modal-close" onclick="closeModal()">✕</span><div class="modal-title">✏️ 编辑祈愿 #' + p.id + '</div>' +
+    '<div class="form-group"><label>称呼</label><input id="pe-name" value="' + escHtml(p.name || '') + '"></div>' +
+    '<div class="form-group"><label>心愿内容</label><textarea id="pe-content" rows="3">' + escHtml(p.content) + '</textarea></div>' +
+    '<div class="form-group"><label>祈愿类型</label><select id="pe-type"><option value="lamp" ' + (p.type === 'lamp' ? 'selected' : '') + '>🏮 心灯</option><option value="lotus" ' + (p.type === 'lotus' ? 'selected' : '') + '>🪷 莲花</option></select></div>' +
+    '<button class="btn btn-primary" style="width:100%;padding:10px" onclick="savePrayerEdit(' + id + ')">保存修改</button></div>'
+  );
+}
+
+async function savePrayerEdit(id) {
+  var res = await api(BIZ_API+'/admin/prayer/update', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: id,
+      name: document.getElementById('pe-name').value,
+      content: document.getElementById('pe-content').value,
+      type: document.getElementById('pe-type').value
+    })
+  });
+  toast(res.msg || '更新成功');
+  closeModal();
+  loadPrayers();
+}
+
+async function delPrayer(id) {
+  if (!confirm('确定删除这条祈愿？')) return;
+  await api(API+'/admin/prayer/delete', { method:'POST', body: JSON.stringify({ id: id }) });
+  toast('已删除');
+  loadPrayers();
+}
+
+function setModal(html) { document.getElementById('modal-content').innerHTML=html; document.getElementById('modal').classList.add('show'); }
+function closeModal(e) { if(!e||e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('show'); }
+
+// Media Picker (global, reusable from any form)
+// Media Picker State
+var _mpCallback = null, _mpType = '', _mpPage = 1, _mpLimit = 24, _mpCat = '';
+var _mpSelected = [], _mpViewMode = 'grid', _mpCategories = {}, _mpTotal = 0;
+
+function openMediaPicker(callback, acceptType, multi) {
+  _mpCallback = callback; _mpType = acceptType || ''; _mpPage = 1; _mpCat = '';
+  _mpSelected = []; _mpViewMode = 'grid';
+  window._mediaPickerMulti = multi !== false;
+  renderMediaPicker();
+  loadMediaPickerData();
+  document.getElementById('picker-modal').classList.add('show');
+}
+
+function isSelected(id) { return _mpSelected.some(function(s) { return s.id === id; }); }
+
+function renderMediaPicker() {
+  var h = [];
+  h.push('<div class="media-picker-wrap">');
+  h.push('<div class="media-picker-sidebar">');
+  h.push('<div class="media-picker-sidebar-title">📁 素材分组</div>');
+  h.push('<div class="media-picker-cat active" onclick="pickCat(\x27\x27)"><span>全部</span><span class="count" id="mp-cat-all">0</span></div>');
+  h.push('<div id="mp-cats"></div>');
+  h.push('</div>');
+  h.push('<div class="media-picker-main">');
+  h.push('<div class="media-picker-toolbar">');
+  h.push('<div class="media-picker-tabs">');
+  h.push('<span class="media-picker-tab active" onclick="pickTypeTab(\x27\x27)">全部</span>');
+  h.push('<span class="media-picker-tab" onclick="pickTypeTab(\x27image\x27)">图片</span>');
+  h.push('<span class="media-picker-tab" onclick="pickTypeTab(\x27video\x27)">视频</span>');
+  h.push('</div>');
+  h.push('<input class="media-picker-search" placeholder="搜索文件名..." oninput="pickSearch(this.value)" id="mp-search">');
+  h.push('<button class="btn btn-sm" style="white-space:nowrap" onclick="pickToggleView()" title="切换视图" id="mp-view-btn">📋</button>');
+  h.push('<button class="btn btn-primary btn-sm" style="white-space:nowrap" onclick="triggerMpUpload()">📤 上传</button>');
+  h.push('<input type="file" id="mp-upload-input" accept="image/*,video/*" multiple onchange="mpUpload()" style="display:none">');
+  h.push('</div>');
+  h.push('<div id="mp-grid" class="media-picker-grid"></div>');
+  h.push('<div class="media-picker-footer">');
+  h.push('<div class="media-picker-pages" id="mp-pages"></div>');
+  h.push('<div class="media-picker-actions">');
+  h.push('<span class="sel-count" id="mp-sel-count">未选择</span>');
+  h.push('<button class="btn btn-sm" onclick="closePicker()">取消</button>');
+  h.push('<button class="btn btn-primary btn-sm" onclick="mpConfirm()" id="mp-confirm-btn" disabled>确定</button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+  document.getElementById('picker-content').innerHTML = h.join('');
+  // Set initial type tab
+  if (_mpType) {
+    setTimeout(function() {
+      var tabs = document.querySelectorAll('.media-picker-tab');
+      tabs.forEach(function(t, i) { t.classList.toggle('active', (_mpType === '' && i === 0) || (_mpType === 'image' && i === 1) || (_mpType === 'video' && i === 2)); });
+    }, 50);
+  }
+}
+
+async function loadMediaPickerData() {
+  var url = BIZ_API + '/media?page=' + _mpPage + '&limit=' + _mpLimit;
+  if (_mpType) url += '&type=' + _mpType;
+  if (_mpCat) url += '&category=' + encodeURIComponent(_mpCat);
+  var search = document.getElementById('mp-search'); if (search && search.value) url += '&search=' + encodeURIComponent(search.value);
+  var res = await api(url);
+  if (res.code !== 0) return;
+  var d = res.data; _mpTotal = d.total;
+  _mpCategories = d.categories || {};
+  renderPickerCats();
+  var items = d.items || [];
+  if (_mpViewMode === 'list') renderPickerList(items);
+  else renderPickerGrid(items);
+  renderPickerPagination();
+}
+
+function renderPickerCats() {
+  var allCount = 0;
+  Object.values(_mpCategories).forEach(function(v) { allCount += v; });
+  var el = document.getElementById('mp-cat-all'); if (el) el.textContent = allCount;
+  var cats = Object.keys(_mpCategories).sort();
+  var html = '';
+  cats.forEach(function(c) {
+    var active = _mpCat === c ? ' active' : '';
+    html += '<div class="media-picker-cat' + active + '" onclick="pickCat(\'' + c.replace(/'/g, "\\'") + '\')"><span>' + c + '</span><span class="count">' + _mpCategories[c] + '</span></div>';
+  });
+  var cel = document.getElementById('mp-cats'); if (cel) cel.innerHTML = html;
+}
+
+function escAttr(str) {
+  if (!str) return '';
+  return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/\\/g,'\\\\');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderPickerGrid(items) {
+  var grid = document.getElementById('mp-grid');
+  if (!grid) return;
+  grid.className = 'media-picker-grid';
+  if (!items.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#8D6E63;padding:40px">暂无素材，请上传</div>'; return; }
+  grid.innerHTML = items.map(function(m) {
+    var sel = isSelected(m.id) ? ' selected' : '';
+    var isImg = m.type === 'image';
+    var sizeStr = m.size > 1024*1024 ? (m.size/1024/1024).toFixed(1)+'MB' : (m.size/1024).toFixed(0)+'KB';
+    var name = escHtml(m.filename);
+    return '<div class="media-picker-item' + sel + '" onclick="pickToggle(' + m.id + ',\'' + m.url.replace(/'/g,"\\'") + '\',\'' + m.type + '\')">' +
+      '<div class="check">' + (isSelected(m.id) ? '✓' : '') + '</div>' +
+      '<div class="thumb">' + (isImg ? '<img src="'+m.url+'" loading="lazy">' : '<span style="font-size:32px;opacity:0.4">🎬</span>') + '</div>' +
+      '<div class="info"><div class="fname" title="'+name+'">'+name+'</div><div class="meta">'+sizeStr+'</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderPickerList(items) {
+  var grid = document.getElementById('mp-grid');
+  if (!grid) return;
+  grid.className = '';
+  grid.style.cssText = 'flex:1;overflow-y:auto;padding:4px';
+  if (!items.length) { grid.innerHTML = '<div style="text-align:center;color:#8D6E63;padding:40px">暂无素材，请上传</div>'; return; }
+  grid.innerHTML = items.map(function(m) {
+    var sel = isSelected(m.id) ? ' selected' : '';
+    var isImg = m.type === 'image';
+    var sizeStr = m.size > 1024*1024 ? (m.size/1024/1024).toFixed(1)+'MB' : (m.size/1024).toFixed(0)+'KB';
+    var name = escHtml(m.filename);
+    return '<div class="media-picker-list-item' + sel + '" onclick="pickToggle(' + m.id + ',\'' + m.url.replace(/'/g,"\\'") + '\',\'' + m.type + '\')">' +
+      '<div class="lthumb">' + (isImg ? '<img src="'+m.url+'" loading="lazy">' : '<span style="font-size:20px;opacity:0.4">🎬</span>') + '</div>' +
+      '<div class="linfo"><div class="lname">'+name+'</div><div class="lmeta">'+sizeStr+' · '+(m.type==='image'?'图片':'视频')+'</div></div>' +
+      '<span style="font-size:18px;color:'+(isSelected(m.id)?'#C9A96E':'#ccc')+'">' + (isSelected(m.id)?'●':'○') + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function renderPickerPagination() {
+  var totalPages = Math.ceil(_mpTotal / _mpLimit) || 1;
+  var pages = document.getElementById('mp-pages');
+  if (!pages) return;
+  var html = '';
+  if (totalPages <= 7) {
+    for (var i = 1; i <= totalPages; i++) html += '<button class="' + (i === _mpPage ? 'active' : '') + '" onclick="pickGoPage(' + i + ')">' + i + '</button>';
+  } else {
+    html += '<button onclick="pickGoPage(' + (_mpPage - 1) + ')" ' + (_mpPage <= 1 ? 'disabled' : '') + '>&lt;</button>';
+    for (var i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= _mpPage - 1 && i <= _mpPage + 1)) {
+        html += '<button class="' + (i === _mpPage ? 'active' : '') + '" onclick="pickGoPage(' + i + ')">' + i + '</button>';
+      } else if (i === _mpPage - 2 || i === _mpPage + 2) {
+        html += '<span>…</span>';
+      }
+    }
+    html += '<button onclick="pickGoPage(' + (_mpPage + 1) + ')" ' + (_mpPage >= totalPages ? 'disabled' : '') + '>&gt;</button>';
+  }
+  html += ' <input type="number" value="' + _mpPage + '" min="1" max="' + totalPages + '" onchange="pickGoPage(parseInt(this.value))" style="width:36px"> <span style="color:#8D6E63">/ ' + totalPages + ' 页</span>';
+  pages.innerHTML = html;
+  updatePickSelection();
+}
+
+function updatePickSelection() {
+  var count = _mpSelected.length;
+  var el = document.getElementById('mp-sel-count');
+  if (el) el.textContent = count > 0 ? '已选择 ' + count + ' 个素材' : '未选择';
+  var btn = document.getElementById('mp-confirm-btn');
+  if (btn) btn.disabled = count === 0;
+}
+
+// Picker actions
+function pickCat(cat) {
+  _mpCat = cat; _mpPage = 1;
+  document.querySelectorAll('.media-picker-cat').forEach(function(c) { c.classList.toggle('active', c.querySelector('span').textContent === cat); });
+  loadMediaPickerData();
+}
+
+function pickTypeTab(type) {
+  _mpType = type; _mpPage = 1;
+  document.querySelectorAll('.media-picker-tab').forEach(function(t, i) {
+    if ((type === '' && i === 0) || (type === 'image' && i === 1) || (type === 'video' && i === 2)) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  loadMediaPickerData();
+}
+
+var _searchTimer = null;
+function pickSearch(val) {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(function() { _mpPage = 1; loadMediaPickerData(); }, 400);
+}
+
+function pickToggleView() {
+  _mpViewMode = _mpViewMode === 'grid' ? 'list' : 'grid';
+  document.getElementById('mp-view-btn').textContent = _mpViewMode === 'grid' ? '📋' : '🔲';
+  loadMediaPickerData();
+}
+
+function pickGoPage(p) {
+  var totalPages = Math.ceil(_mpTotal / _mpLimit) || 1;
+  if (p < 1 || p > totalPages) return;
+  _mpPage = p;
+  loadMediaPickerData();
+}
+
+function pickToggle(id, url, type) {
+  if (!window._mediaPickerMulti) {
+    _mpSelected = [{ id: id, url: url, type: type }];
+    loadMediaPickerData();
+    return;
+  }
+  var idx = _mpSelected.findIndex(function(s) { return s.id === id; });
+  if (idx !== -1) _mpSelected.splice(idx, 1);
+  else _mpSelected.push({ id: id, url: url, type: type });
+  loadMediaPickerData();
+}
+
+function closePicker() {
+  document.getElementById('picker-modal').classList.remove('show');
+}
+
+function mpConfirm() {
+  if (_mpSelected.length === 0) return;
+  if (!_mpCallback) { closePicker(); return; }
+  // Directly use stored URLs - no re-fetch needed
+  var cb = _mpCallback;
+  _mpCallback = null;
+  if (_mpSelected.length === 1) {
+    cb(_mpSelected[0].url, _mpSelected[0].type);
+  } else {
+    cb(_mpSelected.map(function(s) { return s.url; }));
+  }
+  closePicker();
+}
+
+function triggerMpUpload() { document.getElementById('mp-upload-input').click(); }
+
+async function mpUpload() {
+  var files = document.getElementById('mp-upload-input').files;
+  if (!files.length) return;
+  for (var i = 0; i < files.length; i++) {
+    var fd = new FormData(); fd.append('file', files[i]);
+    await fetch(API + '/media/upload', { method: 'POST', body: fd });
+  }
+  document.getElementById('mp-upload-input').value = '';
+  toast('上传完成');
+  loadMediaPickerData();
+}
+
+// ===== 牌位管理 =====
+async function loadTabletConfigs() {
+  var res = await api(API + '/tablet-configs');
+  var tbody = document.getElementById('tablet-config-table');
+  if (res.code === 0) {
+    var data = res.data || [];
+    tbody.innerHTML = data.length > 0 ? data.map(t => '<tr><td>' + t.id + '</td><td>' + t.name + '</td><td>' + (t.type === 'ancestor' ? '往生牌位' : '延生牌位') + '</td><td>¥' + (t.price || 0) + '</td><td>' + (t.duration || '') + '</td><td><button class="btn btn-primary btn-sm" onclick="showTabletConfigForm(' + t.id + ')">编辑</button> <button class="btn btn-danger btn-sm" onclick="delTabletConfig(' + t.id + ')">删除</button></td></tr>').join('') : '<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">暂无配置</td></tr>';
+  }
+}
+function showTabletConfigForm(id) {
+  var data = { name: '', type: 'ancestor', price: 100, duration: '一年' };
+  if (id) {
+    var all = document.querySelectorAll('#tablet-config-table tr td:first-child');
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].textContent == id) {
+        var row = all[i].parentElement;
+        data.name = row.children[1].textContent;
+        data.type = row.children[2].textContent === '往生牌位' ? 'ancestor' : 'living';
+        data.price = parseFloat(row.children[3].textContent.replace('¥',''));
+        data.duration = row.children[4].textContent;
+        break;
+      }
+    }
+  }
+  setModal(
+    '<div style="position:relative"><span class="modal-close" onclick="closeModal()">✕</span><div class="modal-title">📿 ' + (id ? '编辑' : '新增') + '牌位</div>' +
+    '<div class="form-group"><label>名称</label><input id="tcf-name" value="' + data.name + '"></div>' +
+    '<div class="form-group"><label>类型</label><select id="tcf-type"><option value="ancestor"' + (data.type === 'ancestor' ? ' selected' : '') + '>往生牌位</option><option value="living"' + (data.type === 'living' ? ' selected' : '') + '>延生牌位</option></select></div>' +
+    '<div class="form-group"><label>价格（元）</label><input type="number" id="tcf-price" value="' + data.price + '" min="0"></div>' +
+    '<div class="form-group"><label>期限</label><input id="tcf-duration" value="' + data.duration + '"></div>' +
+    '<input type="hidden" id="tcf-id" value="' + (id || '') + '">' +
+    '<button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveTabletConfig()">保存</button></div>'
+  );
+}
+async function saveTabletConfig() {
+  var id = document.getElementById('tcf-id').value;
+  var body = {
+    id: id ? parseInt(id) : 0,
+    name: document.getElementById('tcf-name').value,
+    type: document.getElementById('tcf-type').value,
+    price: parseFloat(document.getElementById('tcf-price').value) || 0,
+    duration: document.getElementById('tcf-duration').value
+  };
+  var res = await api(API + '/tablet-config', { method: 'POST', body: JSON.stringify(body) });
+  toast(res.msg || '保存成功');
+  closeModal();
+  loadTabletConfigs();
+}
+async function delTabletConfig(id) {
+  if (!confirm('确定删除？')) return;
+  await api(API + '/tablet-config/delete', { method: 'POST', body: JSON.stringify({ id }) });
+  toast('已删除');
+  loadTabletConfigs();
+}
+
+// ===== 善信管理 =====
+var _tmemberTimer = null;
+function debounceTMemberSearch() {
+  clearTimeout(_tmemberTimer);
+  _tmemberTimer = setTimeout(() => { pageState('tmember').page = 1; loadTempleMembers(); }, 400);
+}
+async function loadTempleMembers() {
+  var search = document.getElementById('tmember-search').value;
+  var res = await api(API + '/members?limit=999&search=' + encodeURIComponent(search));
+  var tbody = document.getElementById('tmember-table');
+  if (res.code === 0) {
+    _tmemberAll = res.data.items || [];
+    document.getElementById('tmember-total').textContent = '共 ' + _tmemberAll.length + ' 人';
+    if (_tmemberAll.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:#999">暂无数据</td></tr>';
+      document.getElementById('tmember-pager').innerHTML = '';
+    } else {
+      tbody.innerHTML = paginate('tmember', _tmemberAll, function(u) {
+        return '<tr>' +
+          '<td style="font-size:22px">' + (u.avatar || '🙏') + '</td>' +
+          '<td style="font-weight:600">' + (u.nickname || '善信') + '</td>' +
+          '<td style="color:#666">' + (u.phone || '-') + '</td>' +
+          '<td style="color:#D4A017;font-weight:600">' + (u.merit || 0) + '</td>' +
+          '<td>' + (u.offering_count || 0) + '</td>' +
+          '<td>' + (u.order_count || 0) + '</td>' +
+          '<td style="font-size:12px;color:#999">' + (u.createtime ? new Date(u.createtime).toLocaleDateString() : '') + '</td>' +
+        '</tr>';
+      });
+      renderPager('tmember');
+    }
+  }
+}
+// 从 showSection loaders 移除手动调用，由 loadSection 处理
+_loadTempleMembers = loadTempleMembers;
+
+// 版本检查，强制刷新旧缓存
+(function(){
+// 佛像二维码
+window.showBuddhaQR = function(id) {
+  // 从表格获取佛像名称
+  var name = '佛像';
+  var rows = document.querySelectorAll('#buddha-table tr');
+  for (var i = 0; i < rows.length; i++) {
+    var cells = rows[i].querySelectorAll('td');
+    if (cells.length > 0 && cells[0].textContent.trim() == String(id)) {
+      name = cells[1].textContent.trim();
+      break;
+    }
+  }
+  var slug = ADMIN_TEMPLE_SLUG || 'dajue';
+  var url = 'https://siyu.yun78.cn/t/' + slug + '?buddha=' + id;
+  var canvasId = 'buddha-qr-canvas';
+  setModal(
+    '<div style="position:relative">' +
+      '<span class="modal-close" onclick="closeModal()">✕</span>' +
+      '<div class="modal-title">📱 ' + name + ' 扫码浏览</div>' +
+      '<div style="text-align:center;margin:16px 0">' +
+        '<div id="' + canvasId + '" style="display:inline-block;padding:12px;background:#fff;border-radius:8px"></div>' +
+      '</div>' +
+      '<div style="background:#faf6f0;padding:10px 14px;border-radius:8px;font-size:13px;word-break:break-all;margin-bottom:8px">' +
+        '<b>链接：</b><br>' +
+        '<input value="' + url + '" readonly style="width:100%;padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;margin-top:4px" onclick="this.select()">' +
+      '</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-primary" style="flex:1" onclick="copyBuddhaLink(\'' + url + '\')">📋 复制链接</button>' +
+        '<a href="' + url + '" target="_blank" class="btn" style="flex:1;background:#17a2b8;color:#fff;text-decoration:none;text-align:center;padding:10px;border-radius:8px;font-size:14px">🔗 打开页面</a>' +
+      '</div>' +
+    '</div>'
+  );
+  // 生成二维码
+  setTimeout(function() {
+    var el = document.getElementById(canvasId);
+    if (el && typeof QRCode !== 'undefined') {
+      el.innerHTML = '';
+      new QRCode(el, { text: url, width: 200, height: 200, colorDark: '#5D3A1A', colorLight: '#ffffff' });
+    }
+  }, 200);
+}
+
+// 大殿二维码
+window.showHallQR = function(hallId) {
+  var name = '殿堂';
+  // 从表格查找名称
+  var rows = document.querySelectorAll('#areas-container table tr');
+  for (var i = 0; i < rows.length; i++) {
+    var cells = rows[i].querySelectorAll('td');
+    if (cells.length > 0) {
+      var btns = rows[i].querySelectorAll('button');
+      for (var j = 0; j < btns.length; j++) {
+        if (btns[j].textContent.trim() === '📱' && btns[j].getAttribute('onclick').indexOf('showHallQR(' + hallId + ')') > -1) {
+          name = cells[0].textContent.trim();
+          break;
+        }
+      }
+    }
+  }
+  var slug = ADMIN_TEMPLE_SLUG || 'dajue';
+  var url = 'https://siyu.yun78.cn/t/' + slug + '?hall=' + hallId;
+  var canvasId = 'hall-qr-canvas';
+  setModal(
+    '<div style="position:relative">' +
+      '<span class="modal-close" onclick="closeModal()">✕</span>' +
+      '<div class="modal-title">📱 ' + name + ' 扫码浏览</div>' +
+      '<div style="text-align:center;margin:16px 0">' +
+        '<div id="' + canvasId + '" style="display:inline-block;padding:12px;background:#fff;border-radius:8px"></div>' +
+      '</div>' +
+      '<div style="background:#faf6f0;padding:10px 14px;border-radius:8px;font-size:13px;word-break:break-all;margin-bottom:8px">' +
+        '<b>链接：</b><br>' +
+        '<input value="' + url + '" readonly style="width:100%;padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;margin-top:4px" onclick="this.select()">' +
+      '</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-primary" style="flex:1" onclick="window.copyBuddhaLink(\'' + url + '\')">📋 复制链接</button>' +
+        '<a href="' + url + '" target="_blank" class="btn" style="flex:1;background:#17a2b8;color:#fff;text-decoration:none;text-align:center;padding:10px;border-radius:8px;font-size:14px">🔗 打开页面</a>' +
+      '</div>' +
+    '</div>'
+  );
+  setTimeout(function() {
+    var el = document.getElementById(canvasId);
+    if (el && typeof QRCode !== 'undefined') {
+      el.innerHTML = '';
+      new QRCode(el, { text: url, width: 200, height: 200, colorDark: '#5D3A1A', colorLight: '#ffffff' });
+    }
+  }, 200);
+};
+
+window.copyBuddhaLink = function(url) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() { toast('链接已复制'); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('链接已复制');
+  }
+}
+
+if(window._VER && sessionStorage.getItem('_admin_ver') !== window._VER) {
+    sessionStorage.setItem('_admin_ver', window._VER);
+    location.reload(true);
+  }
+})();
+
+if(token){ document.getElementById('login-box').style.display='none'; document.getElementById('layout').style.display='flex'; loadDashboard(); }
+</script>
+</body>
+</html>

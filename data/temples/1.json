@@ -1,0 +1,1765 @@
+{
+  "nextId": {
+    "buddha": 6,
+    "offering_record": 0,
+    "tablet": 0,
+    "prayer": 3,
+    "release": 4,
+    "donation": 0,
+    "activity": 4,
+    "activity_reg": 0,
+    "shop_item": 8,
+    "order": 0,
+    "cart": 0,
+    "user": 1,
+    "announcement": 3,
+    "tour_spot": 10,
+    "area": 4,
+    "hall": 7,
+    "media": 11
+  },
+  "temple": {
+    "name": "大觉禅寺",
+    "slogan": "一方净土，万般自在",
+    "intro": "大觉寺（Dajue Temple），又称大觉禅寺，位于北京市海淀区苏家坨镇大觉寺路9号。始建于辽咸雍四年（1068年），称清水院，是金章宗时期的西山八大水院之一，元朝时期重修，改称灵泉寺，明宣德三年（1428年）重建，1992年4月10日作为大觉寺博物馆正式对外开放。\n大觉寺占地面积约9500平方米，坐西朝东，依山势而建，主要建筑由中路寺院、南路行宫和北路僧房组成。中路为六进院落，包括山门、碑亭、功德池、钟鼓楼、天王殿、大雄宝殿、无量寿佛殿、大悲堂、舍利塔、龙潭、龙王堂。北路是僧房，南路行宫有戒台殿、四宜堂、憩云轩、领要亭等。后部是一处寺庙园林。大觉寺的辽代石碑是较为重要的实物资料，对研究契丹藏有着较为重要的价值。\n1979年8月21日，大觉寺被北京市人民政府公布为北京市第二批市级文物保护单位。2006年5月25日，大觉寺被中华人民共和国国务院公布为第六批全国重点文物保护单位。",
+    "address": "京市海淀区苏家坨镇大觉寺路9号",
+    "phone": "010-88888888",
+    "open_time": "06:00 - 18:00",
+    "banner": [
+      "/uploads/1781305148002_rsnyj5qub.webp",
+      "/uploads/1781305147998_pla5z5r7o.webp",
+      "/uploads/1781305147991_cdf1guc44.webp"
+    ]
+  },
+  "buddhas": [
+    {
+      "id": 1,
+      "name": "释迦牟尼佛",
+      "hall": "大雄宝殿",
+      "image": "/uploads/1781407477549_w2w3ga89v.png",
+      "intro": "佛教创始人，娑婆世界教主。",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781407477549_w2w3ga89v.png",
+        "/uploads/1781411658667_460pcd9vv.jpeg"
+      ],
+      "description": "释迦牟尼佛‌是佛教的创始人，本名为乔达摩·悉达多，成道后被尊称为“释迦族的圣人”。",
+      "video": "",
+      "location": "大雄宝殿",
+      "sort": 1
+    },
+    {
+      "id": 2,
+      "name": "阿弥陀佛",
+      "hall": "西方三圣殿",
+      "image": "/uploads/1781407737524_h82487teh.png",
+      "intro": "西方极乐世界教主，接引念佛众生",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781407737524_h82487teh.png"
+      ],
+      "description": "西方极乐世界教主，接引念佛众生",
+      "video": "",
+      "location": "西方三圣殿",
+      "sort": 2
+    },
+    {
+      "id": 3,
+      "name": "药师佛",
+      "hall": "药师殿",
+      "image": "/uploads/1781408949724_56evtxpjo.png",
+      "intro": "东方净琉璃世界教主，消灾延寿",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781408949724_56evtxpjo.png"
+      ],
+      "description": "东方净琉璃世界教主，消灾延寿",
+      "video": "",
+      "location": "药师殿",
+      "sort": 3
+    },
+    {
+      "id": 4,
+      "name": "观世音菩萨",
+      "hall": "观音殿",
+      "image": "/uploads/1781408968294_vofnk0hmu.png",
+      "intro": "大慈大悲，救苦救难",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781408968294_vofnk0hmu.png"
+      ],
+      "description": "大慈大悲，救苦救难",
+      "video": "",
+      "location": "观音殿",
+      "sort": 4
+    },
+    {
+      "id": 5,
+      "name": "地藏王菩萨",
+      "hall": "地藏殿",
+      "image": "/uploads/1781408985982_vev9udryi.png",
+      "intro": "地狱不空，誓不成佛",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781408985982_vev9udryi.png"
+      ],
+      "description": "地狱不空，誓不成佛",
+      "video": "",
+      "location": "地藏殿",
+      "sort": 5
+    },
+    {
+      "id": 6,
+      "name": "文殊菩萨",
+      "hall": "文殊殿",
+      "image": "/uploads/1781408998749_xepee6yen.png",
+      "intro": "大智文殊，智慧第一",
+      "offering_price": [
+        10,
+        50,
+        100,
+        200
+      ],
+      "images": [
+        "/uploads/1781408998749_xepee6yen.png"
+      ],
+      "description": "大智文殊，智慧第一",
+      "video": "",
+      "location": "文殊殿",
+      "sort": 6
+    }
+  ],
+  "offering_types": [
+    {
+      "id": 1,
+      "name": "供灯",
+      "icon": "🕯️",
+      "desc": "点燃智慧之灯，照亮菩提之路"
+    },
+    {
+      "id": 2,
+      "name": "供花",
+      "icon": "💐",
+      "desc": "以花供佛，庄严道场"
+    },
+    {
+      "id": 3,
+      "name": "供果",
+      "icon": "🍎",
+      "desc": "供养鲜果，积累福德"
+    },
+    {
+      "id": 4,
+      "name": "供香",
+      "icon": "🪔",
+      "desc": "一炷心香，通达诸佛"
+    }
+  ],
+  "offering_records": [
+    {
+      "id": 1,
+      "buddha_id": 1,
+      "offering_type": 1,
+      "amount": 10,
+      "message": "",
+      "user_name": "老刘",
+      "user_phone": "13342308777",
+      "createtime": 1781428604034
+    },
+    {
+      "id": 1,
+      "buddha_id": 1,
+      "offering_type": 1,
+      "amount": 10,
+      "message": "",
+      "user_name": "善信",
+      "user_phone": "",
+      "createtime": 1781431222502
+    },
+    {
+      "id": 1,
+      "buddha_id": 1,
+      "offering_type": 1,
+      "amount": 10,
+      "message": "",
+      "user_name": "善信",
+      "user_phone": "",
+      "createtime": 1781431272279
+    },
+    {
+      "id": 1,
+      "buddha_id": 1,
+      "offering_type": 1,
+      "amount": 10,
+      "message": "阿弥陀佛",
+      "user_name": "老刘",
+      "user_phone": "13342308777",
+      "createtime": 1781431285787
+    }
+  ],
+  "tablets": [],
+  "prayers": [
+    {
+      "id": 1,
+      "name": "善信1",
+      "content": "测试心愿1",
+      "type": "lamp",
+      "createtime": 1781415384953,
+      "updatetime": 1781418256756
+    },
+    {
+      "id": 2,
+      "name": "海田治生态农业",
+      "content": "愿更多的人能吃到海田治的健康蔬菜",
+      "type": "lotus",
+      "createtime": 1781417125592
+    },
+    {
+      "id": 3,
+      "name": "海田治老刘",
+      "content": "愿国泰民安",
+      "type": "lamp",
+      "createtime": 1781418374198
+    },
+    {
+      "id": 4,
+      "name": "海田治老刘",
+      "content": "阿弥陀佛",
+      "type": "lamp",
+      "createtime": 1781418716701
+    }
+  ],
+  "releases": [
+    {
+      "id": 1,
+      "name": "锦鲤",
+      "animal": "鱼",
+      "image": "🐟",
+      "price": 50,
+      "desc": "放生锦鲤，年年有余"
+    },
+    {
+      "id": 2,
+      "name": "观音鸟",
+      "animal": "鸟",
+      "image": "🐦",
+      "price": 30,
+      "desc": "放生飞鸟，还其自由"
+    },
+    {
+      "id": 3,
+      "name": "灵龟",
+      "animal": "龟",
+      "image": "🐢",
+      "price": 80,
+      "desc": "放生灵龟，增福延寿"
+    },
+    {
+      "id": 4,
+      "name": "泥鳅",
+      "animal": "鱼",
+      "image": "🐍",
+      "price": 20,
+      "desc": "放生泥鳅，慈悲护生"
+    }
+  ],
+  "release_records": [
+    {
+      "id": 5,
+      "animal_id": 1,
+      "animal_name": "锦鲤",
+      "quantity": 1,
+      "amount": 50,
+      "name": "善信",
+      "phone": "",
+      "dedication": "愿以此功德，普及于一切，我等与众生，皆共成佛道。",
+      "createtime": 1781437863824
+    }
+  ],
+  "merit_projects": [
+    {
+      "id": 1,
+      "name": "寺庙修缮",
+      "image": "🏛️",
+      "desc": "护持道场，修缮殿堂，让三宝之地更加庄严",
+      "target": 500000,
+      "current": 186500,
+      "price_options": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 2,
+      "name": "经书助印",
+      "image": "📖",
+      "desc": "助印佛经，广结法缘，让更多人接触佛法智慧",
+      "target": 200000,
+      "current": 95200,
+      "price_options": [
+        30,
+        60,
+        100,
+        300,
+        500
+      ]
+    },
+    {
+      "id": 3,
+      "name": "斋僧供众",
+      "image": "🍚",
+      "desc": "供养僧众饮食，培植福田，广修布施波罗蜜",
+      "target": 100000,
+      "current": 42100,
+      "price_options": [
+        20,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": 4,
+      "name": "放生护生",
+      "image": "🐟",
+      "desc": "随喜放生，救护生命，长养慈悲心",
+      "target": 300000,
+      "current": 128300,
+      "price_options": [
+        30,
+        50,
+        100,
+        200,
+        500
+      ]
+    },
+    {
+      "id": 5,
+      "name": "佛像贴金",
+      "image": "✨",
+      "desc": "为佛像贴金，庄严佛身，功德无量",
+      "target": 800000,
+      "current": 245000,
+      "price_options": [
+        100,
+        200,
+        500,
+        1000,
+        5000
+      ]
+    }
+  ],
+  "donations": [],
+  "merit_rank": [
+    {
+      "name": "陈**",
+      "amount": 50000,
+      "project": "佛像贴金"
+    },
+    {
+      "name": "李**",
+      "amount": 30000,
+      "project": "寺庙修缮"
+    },
+    {
+      "name": "王**",
+      "amount": 20000,
+      "project": "经书助印"
+    },
+    {
+      "name": "张**",
+      "amount": 15000,
+      "project": "放生护生"
+    },
+    {
+      "name": "赵**",
+      "amount": 10000,
+      "project": "斋僧供众"
+    }
+  ],
+  "activities": [
+    {
+      "id": 1,
+      "title": "端午祈福法会",
+      "date": "2026-06-15",
+      "time": "09:00-11:00",
+      "location": "大雄宝殿",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "desc": "端午节大型祈福法会，由方丈亲自主持",
+      "status": "upcoming",
+      "participants": 0,
+      "max_participants": 200
+    },
+    {
+      "id": 2,
+      "title": "观音成道日法会",
+      "date": "2026-07-22",
+      "time": "08:00-16:00",
+      "location": "观音殿",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "desc": "恭迎观世音菩萨成道日，诵经礼忏",
+      "status": "upcoming",
+      "participants": 0,
+      "max_participants": 300
+    },
+    {
+      "id": 3,
+      "title": "七月十五盂兰盆会",
+      "date": "2026-08-28",
+      "time": "10:00-15:00",
+      "location": "大雄宝殿",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "desc": "盂兰盆节报恩法会，超度历代宗亲",
+      "status": "upcoming",
+      "participants": 0,
+      "max_participants": 500
+    },
+    {
+      "id": 4,
+      "title": "中秋供灯祈福",
+      "date": "2026-09-15",
+      "time": "19:00-21:00",
+      "location": "全寺",
+      "image": "/uploads/1781304640613_c6peqi9si.webp",
+      "desc": "中秋之夜供灯祈福，千盏明灯照亮夜空",
+      "status": "upcoming",
+      "participants": 0,
+      "max_participants": 1000
+    }
+  ],
+  "activity_registrations": [],
+  "shop_items": [
+    {
+      "id": 1,
+      "name": "小叶紫檀手串",
+      "category": "念珠",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "price": 388,
+      "stock": 50,
+      "desc": "印度小叶紫檀，108颗，手工打磨"
+    },
+    {
+      "id": 2,
+      "name": "沉香线香",
+      "category": "香品",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "price": 168,
+      "stock": 100,
+      "desc": "天然沉香，安神静心，每盒30支"
+    },
+    {
+      "id": 3,
+      "name": "铜质莲花灯",
+      "category": "供具",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "price": 298,
+      "stock": 30,
+      "desc": "纯铜手工打造，莲花造型酥油灯"
+    },
+    {
+      "id": 4,
+      "name": "心经描红本",
+      "category": "经书",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "price": 58,
+      "stock": 200,
+      "desc": "楷书描红，静心抄经，修身养性"
+    },
+    {
+      "id": 5,
+      "name": "檀木书签",
+      "category": "文创",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "price": 88,
+      "stock": 80,
+      "desc": "黑檀木精雕，莲华纹饰，典雅实用"
+    },
+    {
+      "id": 6,
+      "name": "白玉莲花吊坠",
+      "category": "饰品",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "price": 588,
+      "stock": 20,
+      "desc": "和田白玉雕刻，莲花造型，配纯银链"
+    },
+    {
+      "id": 7,
+      "name": "金刚经抄经套装",
+      "category": "经书",
+      "image": "/uploads/1781304640613_c6peqi9si.webp",
+      "price": 128,
+      "stock": 60,
+      "desc": "含描红本、毛笔、墨汁，全套抄经工具"
+    },
+    {
+      "id": 8,
+      "name": "崖柏香炉",
+      "category": "供具",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "price": 368,
+      "stock": 25,
+      "desc": "太行崖柏根雕，天然纹理，大气古朴"
+    }
+  ],
+  "carts": [],
+  "orders": [],
+  "users": [
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781159651825",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781159651829
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781159984065",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781159984074
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161695171",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161695181
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161698658",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161698662
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161858861",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161858865
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161859787",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161859789
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161873495",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161873497
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161874057",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161874058
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161874243",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161874243
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781161874443",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781161874445
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781165027045",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781165027049
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781165246133",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781165246148
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781226206488",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781226206514
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781228129318",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781228129325
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781304663622",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781304663645
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781304686496",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781304686503
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781305357278",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781305357283
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781306155358",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781306155392
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781306189085",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781306189104
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781306568480",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781306568495
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781306568534",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781306568536
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781307280939",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781307280962
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781307926047",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781307926058
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781308441024",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781308441091
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781308441032",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781308441107
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389626129",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389626150
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389626989",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389627000
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389627665",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389627672
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389627868",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389627873
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389673479",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389673487
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389756405",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389756413
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781389776270",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781389776274
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781390071004",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781390071049
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781390071015",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781390071057
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392363289",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392363298
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392401892",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392401897
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392460076",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392460084
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392465278",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392465298
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392632817",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392632825
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392657554",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392657561
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392816908",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392816915
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392890231",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392890238
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392906766",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392906773
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781392987830",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781392987833
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781393004828",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781393004848
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781393413537",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781393413547
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781393413581",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781393413587
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781393495397",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781393495484
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781393520315",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781393520333
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781394012495",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781394012504
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781394108784",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781394108786
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781394225484",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781394225494
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781395634423",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781395634433
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781395634468",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781395634482
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781395660829",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781395660845
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781400091967",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781400092005
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781400108823",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781400108829
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781401803410",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781401803423
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781402370425",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781402370449
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781402588035",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781402588051
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781403705351",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781403705392
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781406434795",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781406434796
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781407748803",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781407748810
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781409010154",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781409010157
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781409918990",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781409919012
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781411667459",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781411667463
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781411767403",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781411767418
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781411778847",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781411778857
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781412016465",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781412016490
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781412189538",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781412189555
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781412456017",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781412456026
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781412734192",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781412734212
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781412984505",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781412984521
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413212980",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413212999
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413499126",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413499131
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413622757",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413623792
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413633774",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413633903
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413650003",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413650120
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781413654286",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781413654438
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781414665574",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781414665584
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781415143706",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781415143723
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781415268329",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781415268346
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781416980841",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781416980876
+    },
+    {
+      "id": 1,
+      "nickname": "善信",
+      "phone": "guest_1_1781418509150",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781418509158
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781420122630",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781420122653
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781422050818",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781422050833
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781422051712",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781422051720
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781422157731",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781422157745
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781422166023",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781422166033
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781428576165",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781428576183
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781429260090",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781429260101
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781431217906",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781431217925
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781431268380",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781431268394
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781437159348",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781437159360
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781437837902",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781437837910
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781437842622",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781437842625
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781437870855",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781437870857
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438204515",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438204521
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438205520",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438205527
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438205705",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438205711
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438205888",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438205901
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438206035",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438206039
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438209728",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438209735
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781438302984",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781438302997
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781440117887",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781440117904
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781450065454",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781450065466
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781450075882",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781450075886
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781450811734",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781450811744
+    },
+    {
+      "id": 2,
+      "nickname": "善信",
+      "phone": "guest_1_1781462543989",
+      "avatar": "",
+      "merit": 0,
+      "createtime": 1781462543997
+    }
+  ],
+  "announcements": [
+    {
+      "id": 1,
+      "title": "关于端午法会通知",
+      "content": "本寺将于6月15日举行端午祈福法会，欢迎广大信众踊跃参加。",
+      "time": "2026-06-10"
+    },
+    {
+      "id": 2,
+      "title": "寺院修缮募捐启事",
+      "content": "大雄宝殿修缮工程正在进行中，望十方善信随喜功德，共襄盛举。",
+      "time": "2026-06-05"
+    },
+    {
+      "id": 3,
+      "title": "观音殿开放时间调整",
+      "content": "即日起观音殿开放时间延长至18:30，方便信众参拜。",
+      "time": "2026-06-01"
+    }
+  ],
+  "tour_spots": [
+    {
+      "id": 1,
+      "name": "山门",
+      "hall": "山门广场",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "desc": "大觉禅寺始建于唐代，历经千年风雨，是著名的佛教圣地。寺内古木"
+    },
+    {
+      "id": 2,
+      "name": "钟楼",
+      "hall": "钟楼",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "desc": "晨钟暮鼓，警醒世人"
+    },
+    {
+      "id": 3,
+      "name": "鼓楼",
+      "hall": "鼓楼",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "desc": "法鼓声声，催人精进"
+    },
+    {
+      "id": 4,
+      "name": "藏经楼",
+      "hall": "藏经楼",
+      "image": "/uploads/1781305148002_rsnyj5qub.webp",
+      "desc": "法宝荟萃，智慧宝藏"
+    },
+    {
+      "id": 5,
+      "name": "释迦牟尼佛",
+      "hall": "大雄宝殿",
+      "image": "/uploads/1781164292422_1vpzquf6l.png",
+      "desc": "佛教创始人，娑婆世界教主"
+    },
+    {
+      "id": 6,
+      "name": "阿弥陀佛",
+      "hall": "西方三圣殿",
+      "image": "/uploads/1781304640613_c6peqi9si.webp",
+      "desc": "西方极乐世界教主，接引念佛众生"
+    },
+    {
+      "id": 7,
+      "name": "药师佛",
+      "hall": "药师殿",
+      "image": "/uploads/1781304650776_e58u0q2tw.webp",
+      "desc": "东方净琉璃世界教主，消灾延寿"
+    },
+    {
+      "id": 8,
+      "name": "观世音菩萨",
+      "hall": "观音殿",
+      "image": "/uploads/1781304655208_z1b31qjka.webp",
+      "desc": "大慈大悲，救苦救难"
+    },
+    {
+      "id": 9,
+      "name": "地藏王菩萨",
+      "hall": "地藏殿",
+      "image": "/uploads/1781305147991_cdf1guc44.webp",
+      "desc": "地狱不空，誓不成佛"
+    },
+    {
+      "id": 10,
+      "name": "文殊菩萨",
+      "hall": "文殊殿",
+      "image": "/uploads/1781305147998_pla5z5r7o.webp",
+      "desc": "大智文殊，智慧第一"
+    }
+  ],
+  "areas": [
+    {
+      "id": 1,
+      "name": "前殿区",
+      "desc": "寺庙入口及前殿区域",
+      "sort": 0,
+      "halls": [
+        {
+          "id": 1,
+          "name": "山门",
+          "desc": "步入山门，即入净土",
+          "image": "/uploads/1781305147991_cdf1guc44.webp",
+          "video": "",
+          "buddha_ids": [
+            1,
+            2
+          ],
+          "sort": 0,
+          "images": [
+            "/uploads/1781305147991_cdf1guc44.webp"
+          ]
+        },
+        {
+          "id": 2,
+          "name": "天王殿",
+          "desc": "四大天王护持道场",
+          "image": "/uploads/1781305148002_rsnyj5qub.webp",
+          "video": "",
+          "buddha_ids": [],
+          "sort": 1,
+          "images": [
+            "/uploads/1781164292422_1vpzquf6l.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "主殿区",
+      "desc": "寺院核心大殿区域",
+      "sort": 1,
+      "halls": [
+        {
+          "id": 3,
+          "name": "大雄宝殿",
+          "desc": "供奉释迦牟尼佛，寺院核心",
+          "image": "/uploads/1781304650776_e58u0q2tw.webp",
+          "video": "",
+          "buddha_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "sort": 0,
+          "images": [
+            "/uploads/1781304650776_e58u0q2tw.webp"
+          ]
+        },
+        {
+          "id": 4,
+          "name": "观音殿",
+          "desc": "大慈大悲救苦救难",
+          "image": "/uploads/1781304655208_z1b31qjka.webp",
+          "video": "",
+          "buddha_ids": [
+            4
+          ],
+          "sort": 1,
+          "images": [
+            "/uploads/1781305147991_cdf1guc44.webp"
+          ]
+        },
+        {
+          "id": 5,
+          "name": "地藏殿",
+          "desc": "地狱不空，誓不成佛",
+          "image": "/uploads/1781305147998_pla5z5r7o.webp",
+          "video": "",
+          "buddha_ids": [
+            5
+          ],
+          "sort": 2,
+          "images": [
+            "/uploads/1781305148002_rsnyj5qub.webp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "后院区",
+      "desc": "寺院后方区域",
+      "sort": 2,
+      "halls": [
+        {
+          "id": 6,
+          "name": "藏经楼",
+          "desc": "法宝荟萃，智慧宝藏",
+          "image": "/uploads/1781304640613_c6peqi9si.webp",
+          "video": "",
+          "buddha_ids": [
+            1
+          ],
+          "sort": 0,
+          "images": [
+            "/uploads/1781304640613_c6peqi9si.webp"
+          ]
+        },
+        {
+          "id": 7,
+          "name": "钟鼓楼",
+          "desc": "晨钟暮鼓，警醒世人",
+          "image": "/uploads/1781304650776_e58u0q2tw.webp",
+          "video": "",
+          "buddha_ids": [],
+          "sort": 1,
+          "images": [
+            "/uploads/1781304655208_z1b31qjka.webp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "山门区",
+      "desc": "寺院正门",
+      "sort": 0,
+      "halls": []
+    }
+  ],
+  "media": [
+    {
+      "id": 1,
+      "filename": "山门.webp",
+      "url": "/uploads/1781305147991_cdf1guc44.webp",
+      "type": "image",
+      "size": 184730,
+      "category": "",
+      "createtime": 1781305147994
+    },
+    {
+      "id": 2,
+      "filename": "无量寿佛殿.webp",
+      "url": "/uploads/1781305147998_pla5z5r7o.webp",
+      "type": "image",
+      "size": 638432,
+      "category": "",
+      "createtime": 1781305147999
+    },
+    {
+      "id": 3,
+      "filename": "银杏树.webp",
+      "url": "/uploads/1781305148002_rsnyj5qub.webp",
+      "type": "image",
+      "size": 168138,
+      "category": "",
+      "createtime": 1781305148003
+    },
+    {
+      "id": 4,
+      "filename": "B01　释迦牟尼佛副本.jpg",
+      "url": "/uploads/1781406420253_rl5coknhh.jpg",
+      "type": "image",
+      "size": 1976897,
+      "category": "",
+      "createtime": 1781406420261
+    },
+    {
+      "id": 5,
+      "filename": "释迦牟尼佛.png",
+      "url": "/uploads/1781407477549_w2w3ga89v.png",
+      "type": "image",
+      "size": 1543550,
+      "category": "",
+      "createtime": 1781407477573
+    },
+    {
+      "id": 6,
+      "filename": "阿弥陀佛.png",
+      "url": "/uploads/1781407737524_h82487teh.png",
+      "type": "image",
+      "size": 989292,
+      "category": "",
+      "createtime": 1781407737536
+    },
+    {
+      "id": 7,
+      "filename": "药师佛.png",
+      "url": "/uploads/1781408949724_56evtxpjo.png",
+      "type": "image",
+      "size": 1403608,
+      "category": "",
+      "createtime": 1781408949732
+    },
+    {
+      "id": 8,
+      "filename": "观世音菩萨.png",
+      "url": "/uploads/1781408968294_vofnk0hmu.png",
+      "type": "image",
+      "size": 1399998,
+      "category": "",
+      "createtime": 1781408968314
+    },
+    {
+      "id": 9,
+      "filename": "地藏王菩萨.png",
+      "url": "/uploads/1781408985982_vev9udryi.png",
+      "type": "image",
+      "size": 1024212,
+      "category": "",
+      "createtime": 1781408985986
+    },
+    {
+      "id": 10,
+      "filename": "文殊菩萨.png",
+      "url": "/uploads/1781408998749_xepee6yen.png",
+      "type": "image",
+      "size": 1173402,
+      "category": "",
+      "createtime": 1781408998756
+    },
+    {
+      "id": 11,
+      "filename": "释迦牟尼佛.jpeg",
+      "url": "/uploads/1781411658667_460pcd9vv.jpeg",
+      "type": "image",
+      "size": 85917,
+      "category": "",
+      "createtime": 1781411658679
+    }
+  ],
+  "payment": {
+    "enabled": true,
+    "wxpay": {
+      "mch_id": "1616363522",
+      "serial_no": "570E5E6514E3D67401F8CA377D79E0C38A0761D9",
+      "api_v3_key": "53c3b92ed914a3a054ffa8173dbbbd91",
+      "cert_pem": "-----BEGIN CERTIFICATE-----\nMIIEITCCAwmgAwIBAgIUVw5eZRTj1nQB+Mo3fXngw4oHYdkwDQYJKoZIhvcNAQEL\nBQAwXjELMAkGA1UEBhMCQ04xEzARBgNVBAoTClRlbnBheS5jb20xHTAbBgNVBAsT\nFFRlbnBheS5jb20gQ0EgQ2VudGVyMRswGQYDVQQDExJUZW5wYXkuY29tIFJvb3Qg\nQ0EwHhcNMjYwNjE0MDg0NzU5WhcNMzEwNjEzMDg0NzU5WjB7MRMwEQYDVQQDDAox\nNjE2MzYzNTIyMRswGQYDVQQKDBLlvq7kv6HllYbmiLfns7vnu58xJzAlBgNVBAsM\nHuiQpeWPo+S6keS4iuenkeaKgOaciemZkOWFrOWPuDELMAkGA1UEBhMCQ04xETAP\nBgNVBAcMCFNoZW5aaGVuMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA\nwye+mJWao+zN+gjMfrN8o45/KD5voCUylFzTnb/9Xt2qNXo36EYjINplp95Q29eE\nIxuZKfOuoR1TvcIkxqPCKSVk5hUbhoK6sXNhD48OztpTQvZ79Csvks597MWP+HmP\nnM/uxtptm2V5opJp/uONT/zIniloejCMbl+kkLyabJ6aT022D4T6nD4OI7nSKNyw\nQ8uUBdDgDuPzhTRjDcCyGpy8M4sy6TK6UhwicXeS9L1Gvq84GCFNxCnKigOPBpkl\ngDh12e/5SaM0h5G61QbneaSGDFoCmgxaGkeSG2Bqx/BqRX3SYYwvi6YGVKalHaSs\nNODKT7SUSYrp38Rcv089mwIDAQABo4G5MIG2MAkGA1UdEwQCMAAwCwYDVR0PBAQD\nAgP4MIGbBgNVHR8EgZMwgZAwgY2ggYqggYeGgYRodHRwOi8vZXZjYS5pdHJ1cy5j\nb20uY24vcHVibGljL2l0cnVzY3JsP0NBPTFCRDQyMjBFNTBEQkMwNEIwNkFEMzk3\nNTQ5ODQ2QzAxQzNFOEVCRDImc2c9SEFDQzQ3MUI2NTQyMkUxMkIyN0E5RDMzQTg3\nQUQxQ0RGNTkyNkUxNDAzNzEwDQYJKoZIhvcNAQELBQADggEBAIhZ38Lel4F9bbRV\nCAEJ4KjBxMPCiyQw1r2Hghc9l5vuh47VZ/cmOEqiPfdKzHFHQRKPfWQZcTkWicXT\nE7/QzQm/RSokV6FXz81/4bxlTmwW8MYRiGjyFRjfiBak/WgNtNt4ZVkRiRJloPxf\ngvcVLFT/15JIc52GL8GbwRJc0cZ0aozFrjCOYdxpkvHaYK+WCiH6JhAjkCa47AEU\nSZrOh+qZI+dvFaOPiu0lpFOCfR6z7/SekvJEONaieNdHg+u0dU5itKIIEFEj6EWi\nPYrIyrYGnwwPHGS3HjK6ay1OR2BtyUmX4dAfb9zG2IWSuv6EwA+wTb2bvFSAE8aR\nmTVV/C4=\n-----END CERTIFICATE-----\n",
+      "key_pem": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDDJ76YlZqj7M36\nCMx+s3yjjn8oPm+gJTKUXNOdv/1e3ao1ejfoRiMg2mWn3lDb14QjG5kp866hHVO9\nwiTGo8IpJWTmFRuGgrqxc2EPjw7O2lNC9nv0Ky+Szn3sxY/4eY+cz+7G2m2bZXmi\nkmn+441P/MieKWh6MIxuX6SQvJpsnppPTbYPhPqcPg4judIo3LBDy5QF0OAO4/OF\nNGMNwLIanLwzizLpMrpSHCJxd5L0vUa+rzgYIU3EKcqKA48GmSWAOHXZ7/lJozSH\nkbrVBud5pIYMWgKaDFoaR5IbYGrH8GpFfdJhjC+LpgZUpqUdpKw04MpPtJRJiunf\nxFy/Tz2bAgMBAAECggEAPP54CHKBoYhKnEIRv+vTIb9QqMBS3QejNlGI5j3yL6sy\nHoKzZIo/Qm5f5UaLmRpTtzFR/pWl1781xBIgsmDON1PzpCGmt7S2Ku33wQgiRa5g\n5YXqGddBiC23l7/rjmpX41fttgLgzPe7O39tV3fBW+WSwjQI7l+sFHcaFQ6NaTLg\nbxlf/ocW3AOitHE3rqeqW65pS37lvqCda2dVNSnN1i+Q35zyC0BHYQgq8b3WoKpz\nGxx/dpyfPaarAZt35+jt4YIYy0O+vZutFAFTrW0PEyxz4dLp7ud324ooJPVlzM4L\nxUD+4uqrqG5uhwjwE0VqjhCduUVn3tKuSnOZUeLPuQKBgQD3jOh7+ShJU34JzDiL\ncr+RyV8pbKE6YRXijTM1RgD/9SpNwQhGgaTTSKScj6FGTCVqu5CclOABeJgCoEFN\nx70jxwpcSeCqSULaApGu3OYScCW6jrmq1j5GyvtFIWevOBTMfZ6596cBNUbeJxTa\nrUjte/ZbaC8gJgv+dGInJzRE3QKBgQDJ0QIXGy9xvgBvoAhnpUlv+XUwvtprTlB/\nIJ0/kktDUAklZ+CzldsiH9tValhGmmgk7pcLjrPLrFGlA8lcIwpgp2ujFou9hLOo\nZkyztdQpgmIsYrU0j07Cck4kUYbqM9xb6WHJdryEbGrX3xZx6WjVMCI3FsZ3pdUR\nbLwcjeSI1wKBgQCY35PSu5N9dOoo8s0YkMxtI4Z49nS6sKnrNnehNpH3f1eYnNSX\ndghr0jiV1r0pxGx29U3g5K9ROT/mn0C039yV850aUSVFA+kc6Ok+q3wJduhVxT4z\nmgrrfP6fOnnlYyS1A/65qY6g2F3jYw8l3E1lG2CQIk6388cEZKsYssU8oQKBgQCV\nfaV/uhpltWkbRj6Tj6KbN/wvtF+UNrl3wY/ZRCNN5B4yQAT44ZslZtWQKqri+YMF\nQFpQLE9QIf+ELQ7dmfMY70rSzmOKaZ6uscBFKf3TFYpk+GTjXvfnHsZ1LpKyLuIe\njvxpP/OaX7iw2MYGcO+/Yt0lU1CF1ifCtXmN6SkMlwKBgBHlIjDAmReRY/wruPq0\ngqxJMg1xjXm/FbZWZ1DYK1P8v3pWNgGdQDkXxpRO3hCsjz7afuRN2f9PeATnjqYk\nL9kzPjD960Wj+dy1zAdW/RoZo3F59uEI9z9rh+I2iZSDUkPPoahmFN2B4cUqKd6B\nxTjm1M6wykuSNP7pd4krdHpW\n-----END PRIVATE KEY-----\n",
+      "h5": {
+        "enabled": true,
+        "appid": "wx_h5_test",
+        "scene_name": "大觉禅寺",
+        "notify_domain": "https://dajue.siyu.com"
+      },
+      "wechat_mp": {
+        "enabled": true,
+        "appid": "wx0b8fab0f081d4374",
+        "appsecret": "bd5ce3dbf35518b3e01dcb5f9c0db6a7",
+        "oauth_redirect": ""
+      },
+      "miniprogram": {
+        "enabled": false,
+        "appid": "wx_miniapp_test",
+        "appsecret": "0uCZC7setGpByaB+NjhnYMdVVbAe4n6mf7Ui2V7RvHcULCFmiLKW8rHH9jyllgX0PQNfDgZO6v9xp7SiCNntRcaQRl95Ug/C6dRt9C122dVixlNQgtLB6yRGm2dN6kVaj7qPvVWq+H0H/tXcPTWnTvJf6Ou3SbyFdPxl5siP55H2+Xb76WrleBCc0NlJvmpSJh9JepLiAX8=",
+        "original_id": ""
+      },
+      "created_at": 1781425678773,
+      "updated_at": 1781431254759
+    }
+  }
+}

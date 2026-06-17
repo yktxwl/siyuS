@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寺语 · 寺庙管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC',sans-serif;background:#f5f0e8;color:#3e2723}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:200px;background:linear-gradient(180deg,#3e2723,#5d3a1a);color:#fff;padding:20px 0;flex-shrink:0}
+.sidebar h2{text-align:center;font-size:16px;color:#C9A96E;margin-bottom:4px;letter-spacing:3px}
+.sidebar h2 small{display:block;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;margin-bottom:20px}
+.sidebar a{display:block;padding:12px 20px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all 0.2s}
+.sidebar a:hover,.sidebar a.active{color:#C9A96E;background:rgba(201,169,110,0.1);border-left-color:#C9A96E}
+.main{flex:1;padding:24px;max-width:1100px}
+.panel{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.panel h3{font-size:16px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #e0d5c1;color:#5D3A1A}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s}
+.btn-primary{background:#C9A96E;color:#fff}.btn-danger{background:#C62828;color:#fff}.btn-sm{padding:4px 10px;font-size:12px}.btn+.btn{margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th,table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0ebe0}
+table th{background:#faf6f0;font-weight:600;color:#5D3A1A}table tr:hover{background:#faf6f0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;justify-content:center;align-items:center}
+.modal.show{display:flex}.modal-content{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:16px;color:#5D3A1A}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 24px;border-radius:25px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.stat-card .num{font-size:24px;font-weight:700;color:#8B0000}.stat-card .label{font-size:12px;color:#8D6E63;margin-top:2px}
+.section{display:none}.section.active{display:block}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;color:#6D4C41;font-weight:600;margin-bottom:4px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:8px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;background:#faf6f0}
+.form-row{display:flex;gap:10px}.form-row .form-group{flex:1}
+.login-box{max-width:380px;margin:100px auto;background:#fff;border-radius:12px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.login-box h2{text-align:center;margin-bottom:24px;color:#5D3A1A}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.top-bar h1{font-size:20px;color:#5D3A1A}
+.top-bar span{font-size:13px;color:#8D6E63}
+</style>
+</head>
+<body>
+
+<div class="login-box" id="login-box">
+  <h2>🔐 <span id="login-title">寺庙管理</span></h2>
+  <div class="form-group"><label>用户名</label><input type="text" id="login-user"></div>
+  <div class="form-group"><label>密码</label><input type="password" id="login-pass"></div>
+  <button class="btn btn-primary" style="width:100%;padding:12px;font-size:15px" onclick="login()">登录</button>
+  <p style="text-align:center;font-size:12px;color:#8D6E63;margin-top:12px"><a href="/" style="color:#C9A96E">返回首页</a></p>
+</div>
+
+<div class="layout" id="layout" style="display:none">
+  <aside class="sidebar">
+    <h2 id="sidebar-name">寺庙<small>管理后台</small></h2>
+    <a href="#dashboard" class="active" onclick="showSection('dashboard')">📊 数据面板</a>
+    <a href="#settings" onclick="showSection('settings')">🏛️ 基本信息</a>
+    <a href="#buddhas" onclick="showSection('buddhas')">🙏 佛像管理</a>
+    <a href="#announcements" onclick="showSection('announcements')">📢 法讯公告</a>
+    <a href="#activities" onclick="showSection('activities')">📅 法会活动</a>
+    <a href="#merit" onclick="showSection('merit')">❤️ 功德项目</a>
+    <a href="#releases" onclick="showSection('releases')">🕊️ 放生护生</a>
+    <a href="#tour" onclick="showSection('tour')">🗺️ 导览管理</a>
+    <a href="#areas" onclick="showSection('areas')">🏛️ 区域管理</a>
+    <a href="#media" onclick="showSection('media')">🖼️ 素材库</a>
+    <a href="#shop" onclick="showSection('shop')">🛍️ 法物流通</a>
+    <a href="#" onclick="logout()" style="margin-top:30px">🚪 退出登录</a>
+  </aside>
+  <main class="main">
+    <div class="toast" id="toast"></div>
+
+    <!-- Dashboard -->
+    <div class="section active" id="sec-dashboard">
+      <div class="top-bar"><h1>📊 数据面板</h1><span id="temple-name-display"></span></div>
+      <div class="stats-grid" id="dash-stats"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section" id="sec-settings">
+      <div class="top-bar"><h1>🏛️ 基本信息</h1></div>
+      <div class="panel"><form id="settings-form" onsubmit="saveSettings(event)">
+        <div class="form-row"><div class="form-group"><label>寺庙名称</label><input id="st-name" required></div><div class="form-group"><label>标语</label><input id="st-slogan"></div></div>
+        <div class="form-row"><div class="form-group"><label>地址</label><input id="st-address"></div><div class="form-group"><label>电话</label><input id="st-phone"></div></div>
+        <div class="form-row"><div class="form-group"><label>开放时间</label><input id="st-open_time"></div><div class="form-group"><label>Banner URL(逗号分隔)</label><input id="st-banner"></div></div>
+        <div class="form-group"><label>简介</label><textarea id="st-intro" rows="3"></textarea></div>
+        <button class="btn btn-primary" style="width:100%;padding:10px">保存设置</button>
+      </form></div>
+    </div>
+
+    <!-- Buddhas -->
+    <div class="section" id="sec-buddhas">
+      <div class="top-bar"><h1>🙏 佛像管理</h1><button class="btn btn-primary" onclick="showBuddhaForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>殿堂</th><th>简介</th><th>操作</th></tr></thead><tbody id="buddha-table"></tbody></table></div>
+    </div>
+
+    <!-- Announcements -->
+    <div class="section" id="sec-announcements">
+      <div class="top-bar"><h1>📢 法讯公告</h1><button class="btn btn-primary" onclick="showAnnForm()">+ 发布</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>标题</th><th>内容</th><th>日期</th><th>操作</th></tr></thead><tbody id="ann-table"></tbody></table></div>
+    </div>
+
+    <!-- Activities -->
+    <div class="section" id="sec-activities">
+      <div class="top-bar"><h1>📅 法会活动</h1><button class="btn btn-primary" onclick="showActForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>标题</th><th>日期</th><th>地点</th><th>人数</th><th>操作</th></tr></thead><tbody id="act-table"></tbody></table></div>
+    </div>
+
+    <!-- Merit -->
+    <div class="section" id="sec-merit">
+      <div class="top-bar"><h1>❤️ 功德项目</h1><button class="btn btn-primary" onclick="showMeritForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>目标</th><th>已筹</th><th>进度</th><th>操作</th></tr></thead><tbody id="merit-table"></tbody></table></div>
+    </div>
+
+    <!-- Releases -->
+    <div class="section" id="sec-releases">
+      <div class="top-bar"><h1>🕊️ 放生护生</h1><button class="btn btn-primary" onclick="showReleaseForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>类型</th><th>价格</th><th>描述</th><th>操作</th></tr></thead><tbody id="rel-table"></tbody></table></div>
+    </div>
+
+    <!-- Tour -->
+    <div class="section" id="sec-tour">
+      <div class="top-bar"><h1>🗺️ 导览管理</h1><button class="btn btn-primary" onclick="showTourSpotForm()">+ 添加景点</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>位置</th><th>描述</th><th>排序</th><th>操作</th></tr></thead><tbody id="tour-table"></tbody></table></div>
+    </div>
+
+    <!-- Areas -->
+    <div class="section" id="sec-areas">
+      <div class="top-bar"><h1>🏛️ 区域管理</h1><button class="btn btn-primary" onclick="showAreaForm()">+ 添加区域</button></div>
+      <div id="areas-container"></div>
+    </div>
+
+    <!-- Media Library -->
+    <div class="section" id="sec-media">
+      <div class="top-bar">
+        <h1>🖼️ 素材库</h1>
+        <div style="display:flex;gap:8px">
+          <select id="media-type-filter" onchange="loadMedia()" style="padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;background:#faf6f0">
+            <option value="">全部类型</option><option value="image">图片</option><option value="video">视频</option><option value="file">文件</option>
+          </select>
+          <input type="text" id="media-search" placeholder="搜索文件名..." oninput="loadMedia()" style="padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;width:160px">
+          <button class="btn btn-primary" onclick="triggerMediaUpload()">+ 上传素材</button>
+          <input type="file" id="media-upload-input" accept="image/*,video/*" multiple onchange="uploadMedia()" style="display:none">
+        </div>
+      </div>
+      <div class="panel">
+        <div id="media-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px"></div>
+      </div>
+    </div>
+
+    <!-- Shop -->
+    <div class="section" id="sec-shop">
+      <div class="top-bar"><h1>🛍️ 法物流通</h1><button class="btn btn-primary" onclick="showShopForm()">+ 添加</button></div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>价格</th><th>库存</th><th>操作</th></tr></thead><tbody id="shop-table"></tbody></table></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="modal" onclick="closeModal(event)"><div class="modal-content" id="modal-content" onclick="event.stopPropagation()"></div></div>
+
+<script>
+window.onerror = function(msg, url, line) {
+  document.getElementById('login-title').textContent = 'JS ERR: ' + msg + ' line:' + line;
+  return true;
+};
+const TID = window.ADMIN_TEMPLE_ID || 1;
+const TSLUG = window.ADMIN_TEMPLE_SLUG || 'dajue';
+const TNAME = window.ADMIN_TEMPLE_NAME || '寺庙';
+const API = '/api/temple/' + TID + '/admin';
+const BIZ_API = '/api/temple/' + TID;
+let token = localStorage.getItem('temple_token_' + TID) || '';
+
+document.getElementById('login-title').textContent = TNAME + ' · 管理后台';
+console.log('JS loaded OK');
+document.getElementById('sidebar-name').innerHTML = TNAME + '<small>管理后台</small>';
+document.getElementById('temple-name-display') && (document.getElementById('temple-name-display').textContent = TNAME);
+
+async function api(url, opt={}) {
+  const res = await fetch(url, { headers: {'Content-Type':'application/json',...opt.headers}, ...opt });
+  return res.json();
+}
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+name)?.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  document.querySelector('.sidebar a[href="#'+name+'"]')?.classList.add('active');
+  const loaders = { dashboard:loadDashboard, settings:loadSettings, buddhas:loadBuddhas, announcements:loadAnnouncements, activities:loadActivities, merit:loadMerit, releases:loadReleases, tour:loadTourSpots, areas:loadAreas, media:loadMedia, shop:loadShop };
+  if(loaders[name]) loaders[name]();
+}
+async function login() {
+  const res = await api('/api/temple/'+TID+'/admin/login', { method:'POST', body:JSON.stringify({ username:document.getElementById('login-user').value, password:document.getElementById('login-pass').value }) });
+  if(res.code===0){ token=res.data.token; localStorage.setItem('temple_token_'+TID,token); document.getElementById('login-box').style.display='none'; document.getElementById('layout').style.display='flex'; loadDashboard(); }
+  else toast(res.msg||'登录失败');
+}
+function logout(){ token=''; localStorage.removeItem('temple_token_'+TID); document.getElementById('login-box').style.display='block'; document.getElementById('layout').style.display='none'; }
+
+async function loadDashboard() {
+  const res = await api(API+'/stats');
+  if(res.code===0){ const d=res.data;
+    document.getElementById('dash-stats').innerHTML=`
+      <div class="stat-card"><div class="num">${d.total_offerings}</div><div class="label">供奉次数</div></div>
+      <div class="stat-card"><div class="num">${d.total_tablets}</div><div class="label">牌位登记</div></div>
+      <div class="stat-card"><div class="num">${d.total_prayers}</div><div class="label">祈愿数量</div></div>
+      <div class="stat-card"><div class="num">${d.total_releases}</div><div class="label">放生次数</div></div>
+      <div class="stat-card"><div class="num">¥${d.donation_amount.toLocaleString()}</div><div class="label">功德总额</div></div>
+      <div class="stat-card"><div class="num">¥${d.order_amount.toLocaleString()}</div><div class="label">商城总额</div></div>
+      <div class="stat-card"><div class="num">${d.total_users}</div><div class="label">用户数量</div></div>
+      <div class="stat-card"><div class="num">${d.total_orders}</div><div class="label">订单数量</div></div>
+    `;
+  }
+}
+
+async function loadSettings() {
+  const res = await api(BIZ_API+'/info');
+  if(res.code===0){ const d=res.data;
+    document.getElementById('st-name').value=d.name||''; document.getElementById('st-slogan').value=d.slogan||'';
+    document.getElementById('st-address').value=d.address||''; document.getElementById('st-phone').value=d.phone||'';
+    document.getElementById('st-open_time').value=d.open_time||''; document.getElementById('st-intro').value=d.intro||'';
+    document.getElementById('st-banner').value=(d.banner||[]).join(',');
+  }
+}
+async function saveSettings(e) {
+  e.preventDefault();
+  const body = {
+    name:document.getElementById('st-name').value, slogan:document.getElementById('st-slogan').value,
+    address:document.getElementById('st-address').value, phone:document.getElementById('st-phone').value,
+    open_time:document.getElementById('st-open_time').value, intro:document.getElementById('st-intro').value,
+    banner:document.getElementById('st-banner').value.split(',').map(s=>s.trim()).filter(Boolean)
+  };
+  const res = await api(API+'/temple', { method:'POST', body:JSON.stringify(body) });
+  toast(res.msg||'保存成功');
+}
+
+// Buddhas
+async function loadBuddhas() {
+  const res = await api(BIZ_API+'/buddhas');
+  if(res.code===0) document.getElementById('buddha-table').innerHTML=(res.data||[]).map(b=>
+    `<tr><td>${b.id}</td><td>${b.name}</td><td>${b.hall}</td><td>${b.intro}</td><td><button class="btn btn-primary btn-sm" onclick="showBuddhaForm(${b.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="delBuddha(${b.id})">删除</button></td></tr>`
+  ).join('');
+}
+function showBuddhaForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}佛像</div>
+    <div class="form-group"><label>名称</label><input id="mf1" required></div>
+    <div class="form-group"><label>殿堂</label><input id="mf2"></div>
+    <div class="form-group"><label>图片URL</label><input id="mf3"></div>
+    <div class="form-group"><label>简介</label><textarea id="mf4" rows="2"></textarea></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveBuddha(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/buddhas').then(r=>{ const b=r.data?.find(x=>x.id==id); if(b){ document.getElementById('mf1').value=b.name; document.getElementById('mf2').value=b.hall; document.getElementById('mf3').value=b.image; document.getElementById('mf4').value=b.intro; }});
+}
+async function saveBuddha(id) {
+  const body={ name:document.getElementById('mf1').value, hall:document.getElementById('mf2').value, image:document.getElementById('mf3').value, intro:document.getElementById('mf4').value, offering_price:[10,50,100,200] };
+  if(id) body.id=id;
+  const res = await api(API+'/buddha', { method:'POST', body:JSON.stringify(body) });
+  toast(res.msg||'保存成功'); closeModal(); loadBuddhas();
+}
+async function delBuddha(id){ if(confirm('确定删除？')){ await api(API+'/buddha/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadBuddhas(); }}
+
+// Announcements
+async function loadAnnouncements() {
+  const res = await api(BIZ_API+'/announcements');
+  if(res.code===0) document.getElementById('ann-table').innerHTML=(res.data||[]).map(a=>
+    `<tr><td>${a.id}</td><td>${a.title}</td><td>${a.content}</td><td>${a.time}</td><td><button class="btn btn-primary btn-sm" onclick="showAnnForm(${a.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="delAnn(${a.id})">删除</button></td></tr>`
+  ).join('');
+}
+function showAnnForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'发布'}公告</div>
+    <div class="form-group"><label>标题</label><input id="af1"></div>
+    <div class="form-group"><label>内容</label><textarea id="af2" rows="3"></textarea></div>
+    <div class="form-group"><label>日期</label><input id="af3" type="date"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveAnn(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/announcements').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('af1').value=a.title; document.getElementById('af2').value=a.content; document.getElementById('af3').value=a.time; }});
+}
+async function saveAnn(id){ const body={ title:document.getElementById('af1').value, content:document.getElementById('af2').value, time:document.getElementById('af3').value }; if(id) body.id=id; await api(API+'/announcement',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadAnnouncements(); }
+async function delAnn(id){ if(confirm('确定删除？')){ await api(API+'/announcement/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadAnnouncements(); }}
+
+// Activities
+async function loadActivities() {
+  const res = await api(BIZ_API+'/activities');
+  if(res.code===0) document.getElementById('act-table').innerHTML=(res.data||[]).map(a=>
+    `<tr><td>${a.id}</td><td>${a.title}</td><td>${a.date}</td><td>${a.location}</td><td>${a.participants}/${a.max_participants}</td><td><button class="btn btn-primary btn-sm" onclick="showActForm(${a.id})">编辑</button></td></tr>`
+  ).join('');
+}
+function showActForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}活动</div>
+    <div class="form-group"><label>标题</label><input id="acf1"></div>
+    <div class="form-row"><div class="form-group"><label>日期</label><input id="acf2" type="date"></div><div class="form-group"><label>时间</label><input id="acf3"></div></div>
+    <div class="form-group"><label>地点</label><input id="acf4"></div>
+    <div class="form-group"><label>图片URL</label><input id="acf5"></div>
+    <div class="form-group"><label>描述</label><textarea id="acf6" rows="2"></textarea></div>
+    <div class="form-group"><label>最大人数</label><input id="acf7" type="number" value="100"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveAct(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/activities').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('acf1').value=a.title; document.getElementById('acf2').value=a.date; document.getElementById('acf3').value=a.time; document.getElementById('acf4').value=a.location; document.getElementById('acf5').value=a.image; document.getElementById('acf6').value=a.desc; document.getElementById('acf7').value=a.max_participants; }});
+}
+async function saveAct(id){ const body={ title:document.getElementById('acf1').value, date:document.getElementById('acf2').value, time:document.getElementById('acf3').value, location:document.getElementById('acf4').value, image:document.getElementById('acf5').value, desc:document.getElementById('acf6').value, max_participants:parseInt(document.getElementById('acf7').value)||100, status:'upcoming' }; if(id) body.id=id; await api(API+'/activity',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadActivities(); }
+
+// Merit
+async function loadMerit() {
+  const res = await api(BIZ_API+'/merit-projects');
+  if(res.code===0) document.getElementById('merit-table').innerHTML=(res.data||[]).map(p=>{ const pc=p.target>0?Math.round(p.current/p.target*100):0; return `<tr><td>${p.id}</td><td>${p.name}</td><td>¥${p.target.toLocaleString()}</td><td>¥${p.current.toLocaleString()}</td><td>${pc}%</td><td><button class="btn btn-primary btn-sm" onclick="showMeritForm(${p.id})">编辑</button></td></tr>`; }).join('');
+}
+function showMeritForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}功德项目</div>
+    <div class="form-group"><label>名称</label><input id="mrf1"></div>
+    <div class="form-group"><label>图标(emoji)</label><input id="mrf2"></div>
+    <div class="form-group"><label>描述</label><textarea id="mrf3" rows="2"></textarea></div>
+    <div class="form-row"><div class="form-group"><label>目标金额</label><input id="mrf4" type="number"></div><div class="form-group"><label>已筹金额</label><input id="mrf5" type="number"></div></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveMerit(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/merit-projects').then(r=>{ const m=r.data?.find(x=>x.id==id); if(m){ document.getElementById('mrf1').value=m.name; document.getElementById('mrf2').value=m.image; document.getElementById('mrf3').value=m.desc; document.getElementById('mrf4').value=m.target; document.getElementById('mrf5').value=m.current; }});
+}
+async function saveMerit(id){ const body={ name:document.getElementById('mrf1').value, image:document.getElementById('mrf2').value, desc:document.getElementById('mrf3').value, target:parseFloat(document.getElementById('mrf4').value)||0, current:parseFloat(document.getElementById('mrf5').value)||0, price_options:[50,100,200,500,1000] }; if(id) body.id=id; await api(API+'/merit-project',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadMerit(); }
+
+// Releases
+async function loadReleases() {
+  const res = await api(BIZ_API+'/releases');
+  if(res.code===0) document.getElementById('rel-table').innerHTML=(res.data||[]).map(r=>
+    `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.animal}</td><td>¥${r.price}</td><td>${r.desc}</td><td><button class="btn btn-primary btn-sm" onclick="showReleaseForm(${r.id})">编辑</button></td></tr>`
+  ).join('');
+}
+function showReleaseForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}放生物种</div>
+    <div class="form-row"><div class="form-group"><label>名称</label><input id="rf1"></div><div class="form-group"><label>类型</label><input id="rf2"></div></div>
+    <div class="form-row"><div class="form-group"><label>图标</label><input id="rf3"></div><div class="form-group"><label>价格</label><input id="rf4" type="number"></div></div>
+    <div class="form-group"><label>描述</label><input id="rf5"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveRelease(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/releases').then(r=>{ const x=r.data?.find(z=>z.id==id); if(x){ document.getElementById('rf1').value=x.name; document.getElementById('rf2').value=x.animal; document.getElementById('rf3').value=x.image; document.getElementById('rf4').value=x.price; document.getElementById('rf5').value=x.desc; }});
+}
+async function saveRelease(id){ const body={ name:document.getElementById('rf1').value, animal:document.getElementById('rf2').value, image:document.getElementById('rf3').value, price:parseFloat(document.getElementById('rf4').value)||0, desc:document.getElementById('rf5').value }; if(id) body.id=id; await api(API+'/release',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadReleases(); }
+
+// Area Management
+let currentAreaId = null;
+
+async function loadAreas() {
+  currentAreaId = null;
+  const res = await api(BIZ_API+'/areas');
+  if(res.code===0){
+    const areas = res.data || [];
+    if(areas.length===0){ document.getElementById('areas-container').innerHTML='<div class="panel"><p style="text-align:center;color:#8D6E63;padding:20px">暂无区域，请添加</p></div>'; return; }
+    document.getElementById('areas-container').innerHTML = areas.map(a => `<div class="panel" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:8px 0" onclick="toggleArea(${a.id})">
+        <div><b style="font-size:15px;color:#5D3A1A">🏛️ ${a.name}</b><span style="font-size:12px;color:#8D6E63;margin-left:10px">${a.desc||''}</span><span style="font-size:12px;color:#C9A96E;margin-left:10px">${(a.halls||[]).length} 个大殿</span></div>
+        <div><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showAreaForm(${a.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delArea(${a.id})">删除</button></div>
+      </div>
+      <div id="area-halls-${a.id}" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-top:10px;border-top:1px solid #e0d5c1">
+          <b style="font-size:13px;color:#6D4C41">大殿列表</b>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showHallForm(${a.id})">+ 添加大殿</button>
+        </div>
+        <table><thead><tr><th>名称</th><th>描述</th><th>图片</th><th>视频</th><th>佛像</th><th>排序</th><th>操作</th></tr></thead><tbody>
+        ${(a.halls||[]).sort((x,y)=>(x.sort||0)-(y.sort||0)).map(h => `<tr>
+          <td>${h.name}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.desc||''}</td>
+          <td>${h.image?'<span style="color:green">✓</span>':'<span style="color:#ccc">—</span>'}</td>
+          <td>${h.video?'<span style="color:green">✓</span>':'<span style="color:#ccc">—</span>'}</td>
+          <td>${(h.buddha_ids||[]).length}尊</td><td>${h.sort||0}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showHallForm(${a.id},${h.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delHall(${a.id},${h.id})">删除</button></td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+    </div>`).join('');
+  }
+}
+function toggleArea(id){ const el=document.getElementById('area-halls-'+id); if(el) el.style.display=el.style.display==='block'?'none':'block'; }
+
+function showAreaForm(id) {
+  setModal(`<div class="modal-title">${id?'编辑':'添加'}区域</div>
+    <div class="form-group"><label>名称</label><input id="ar-name" required></div>
+    <div class="form-group"><label>描述</label><input id="ar-desc"></div>
+    <div class="form-group"><label>排序</label><input id="ar-sort" type="number" value="0"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveArea(${id||0})">保存</button>`);
+  if(id) api(BIZ_API+'/areas').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('ar-name').value=a.name; document.getElementById('ar-desc').value=a.desc||''; document.getElementById('ar-sort').value=a.sort||0; }});
+}
+async function saveArea(id){ const body={ name:document.getElementById('ar-name').value, desc:document.getElementById('ar-desc').value, sort:parseInt(document.getElementById('ar-sort').value)||0 }; if(id) body.id=id; await api(API+'/area',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadAreas(); }
+async function delArea(id){ if(!confirm('删除区域将同时删除其下所有大殿，确定？')) return; await api(API+'/area/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadAreas(); }
+
+async function showHallForm(areaId, hallId) {
+  const buddhaRes = await api(BIZ_API+'/buddhas');
+  const buddhas = buddhaRes.data || [];
+  setModal(`<div class="modal-title">${hallId?'编辑':'添加'}大殿</div>
+    <div class="form-group"><label>名称 *</label><input id="hl-name" required></div>
+    <div class="form-group"><label>描述</label><textarea id="hl-desc" rows="2"></textarea></div>
+    <div class="form-group"><label>图片</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="file" id="hl-image-file" accept="image/*" onchange="uploadHallImage()" style="font-size:12px;flex:1">
+        <button class="btn btn-sm" type="button" style="background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1;white-space:nowrap" onclick="event.stopPropagation();pickHallImage()">从素材库选</button>
+      </div>
+      <input type="hidden" id="hl-image" value=""><div id="hl-image-preview" style="margin-top:6px"></div></div>
+    <div class="form-group"><label>视频URL</label><input id="hl-video" placeholder="https://..."></div>
+    <div class="form-group"><label>关联佛像</label>
+      <div style="max-height:150px;overflow-y:auto;border:1px solid #e0d5c1;border-radius:6px;padding:8px;background:#faf6f0">
+        ${buddhas.map(b => `<label style="display:flex;align-items:center;gap:6px;padding:4px 0;cursor:pointer;font-size:13px"><input type="checkbox" value="${b.id}" class="hl-buddha">${b.name} (${b.hall})</label>`).join('')}
+      </div>
+    </div>
+    <div class="form-group"><label>排序</label><input id="hl-sort" type="number" value="0"></div>
+    <input type="hidden" id="hl-area-id" value="${areaId}">
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveHall(${hallId||0})">保存</button>`);
+  if(hallId) api(BIZ_API+'/areas').then(r=>{ const a=r.data?.find(x=>x.id==areaId); const h=a?.halls?.find(x=>x.id==hallId); if(h){
+    document.getElementById('hl-name').value=h.name; document.getElementById('hl-desc').value=h.desc||'';
+    document.getElementById('hl-image').value=h.image||''; document.getElementById('hl-video').value=h.video||'';
+    document.getElementById('hl-sort').value=h.sort||0;
+    if(h.image) document.getElementById('hl-image-preview').innerHTML='<img src="'+h.image+'" style="max-width:120px;max-height:80px;border-radius:4px">';
+    (h.buddha_ids||[]).forEach(bid => { const cb=document.querySelector('.hl-buddha[value="'+bid+'"]'); if(cb) cb.checked=true; });
+  }});
+}
+function pickHallImage() {
+  openMediaPicker(function(url) {
+    document.getElementById('hl-image').value = url;
+    document.getElementById('hl-image-preview').innerHTML = '<img src="'+url+'" style="max-width:120px;max-height:80px;border-radius:4px">';
+  }, 'image');
+}
+async function uploadHallImage() {
+  const file = document.getElementById('hl-image-file').files[0]; if(!file) return;
+  const fd = new FormData(); fd.append('file', file);
+  const res = await fetch('/api/upload',{method:'POST',body:fd}); const data = await res.json();
+  if(data.code===0){ document.getElementById('hl-image').value=data.data.url; document.getElementById('hl-image-preview').innerHTML='<img src="'+data.data.url+'" style="max-width:120px;max-height:80px;border-radius:4px">'; }
+  else toast('上传失败');
+}
+async function saveHall(hallId) {
+  const areaId = parseInt(document.getElementById('hl-area-id').value);
+  const buddha_ids = Array.from(document.querySelectorAll('.hl-buddha:checked')).map(cb=>parseInt(cb.value));
+  const body = { name:document.getElementById('hl-name').value, desc:document.getElementById('hl-desc').value, image:document.getElementById('hl-image').value, video:document.getElementById('hl-video').value, buddha_ids, sort:parseInt(document.getElementById('hl-sort').value)||0 };
+  if(hallId) body.id = hallId;
+  await api(API+'/area/'+areaId+'/hall',{method:'POST',body:JSON.stringify(body)});
+  toast('保存成功'); closeModal(); loadAreas();
+}
+async function delHall(areaId, hallId){ if(!confirm('确定删除？')) return; await api(API+'/area/'+areaId+'/hall/delete',{method:'POST',body:JSON.stringify({id:hallId})}); toast('已删除'); loadAreas(); }
+
+// Tour Spots
+async function loadTourSpots() {
+  const res = await api(BIZ_API+'/tour-spots');
+  if(res.code===0) document.getElementById('tour-table').innerHTML=(res.data||[]).map(s=>
+    `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.hall}</td><td>${s.desc}</td><td>${s.sort||0}</td><td><button class="btn btn-primary btn-sm" onclick="showTourSpotForm(${s.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="delTourSpot(${s.id})">删除</button></td></tr>`
+  ).join('');
+}
+function showTourSpotForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}景点</div>
+    <div class="form-group"><label>名称</label><input id="tf1"></div>
+    <div class="form-group"><label>位置</label><input id="tf2"></div>
+    <div class="form-group"><label>图片URL</label><input id="tf3"></div>
+    <div class="form-group"><label>描述</label><textarea id="tf4" rows="2"></textarea></div>
+    <div class="form-group"><label>排序</label><input id="tf5" type="number" value="0"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveTourSpot(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/tour-spots').then(r=>{ const s=r.data?.find(x=>x.id==id); if(s){ document.getElementById('tf1').value=s.name; document.getElementById('tf2').value=s.hall; document.getElementById('tf3').value=s.image; document.getElementById('tf4').value=s.desc; document.getElementById('tf5').value=s.sort||0; }});
+}
+async function saveTourSpot(id){ const body={ name:document.getElementById('tf1').value, hall:document.getElementById('tf2').value, image:document.getElementById('tf3').value, desc:document.getElementById('tf4').value, sort:parseInt(document.getElementById('tf5').value)||0 }; if(id) body.id=id; await api(API+'/tour-spot',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadTourSpots(); }
+async function delTourSpot(id){ if(confirm('确定删除？')){ await api(API+'/tour-spot/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadTourSpots(); }}
+
+// Media Library
+function triggerMediaUpload() { document.getElementById('media-upload-input').click(); }
+async function loadMedia() {
+  const type = document.getElementById('media-type-filter')?.value || '';
+  const search = document.getElementById('media-search')?.value || '';
+  let url = BIZ_API+'/media?type='+type;
+  if(search) url += '&search='+encodeURIComponent(search);
+  const res = await api(url);
+  if(res.code===0){
+    const list = res.data || [];
+    if(list.length===0){ document.getElementById('media-grid').innerHTML='<p style="grid-column:1/-1;text-align:center;color:#8D6E63;padding:40px">暂无素材</p>'; return; }
+    document.getElementById('media-grid').innerHTML = list.map(m => {
+      const isImg = m.type === 'image';
+      const sizeStr = m.size > 1024*1024 ? (m.size/1024/1024).toFixed(1)+'MB' : (m.size/1024).toFixed(0)+'KB';
+      return `<div style="background:#fff;border:1px solid #e0d5c1;border-radius:8px;overflow:hidden;cursor:pointer;transition:all 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+        <div style="height:100px;display:flex;align-items:center;justify-content:center;background:#faf6f0;overflow:hidden" onclick="previewMedia('${m.url}','${m.type}','${m.filename}')">
+          ${isImg ? '<img src="'+m.url+'" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.src=\\'data:image/svg+xml,\\<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22>\\<text y=%2230%22 x=%2250%%22 text-anchor=%22middle%22 font-size=%2220%22>🎬\\</text>\\</svg>\\'">' : '<span style="font-size:36px;opacity:0.4">'+ (m.type==='video'?'🎬':'📄') +'</span>'}
+        </div>
+        <div style="padding:8px">
+          <div style="font-size:11px;color:#5D3A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.filename}">${m.filename}</div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-size:10px;color:#C9A96E">${m.type==='image'?'🖼️ 图片':m.type==='video'?'🎬 视频':'📄 文件'}</span>
+            <span style="font-size:10px;color:#8D6E63">${sizeStr}</span>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:6px">
+            <button class="btn btn-sm" style="flex:1;font-size:10px;background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1" onclick="event.stopPropagation();copyMediaUrl('${m.url}')">复制URL</button>
+            <button class="btn btn-danger btn-sm" style="font-size:10px" onclick="event.stopPropagation();delMedia(${m.id})">删除</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+async function uploadMedia() {
+  const files = document.getElementById('media-upload-input').files;
+  if(!files.length) return;
+  for(const file of files) {
+    const fd = new FormData(); fd.append('file', file);
+    const res = await fetch(API+'/media/upload',{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.code===0) toast('✅ '+file.name+' 上传成功'); else toast('❌ '+file.name+' 失败');
+  }
+  document.getElementById('media-upload-input').value = '';
+  loadMedia();
+}
+function previewMedia(url, type) {
+  const isImg = type === 'image';
+  setModal(`<div class="modal-title">素材预览</div>
+    <div style="text-align:center">${isImg ? '<img src="'+url+'" style="max-width:100%;max-height:300px;border-radius:8px">' : '<video src="'+url+'" controls style="max-width:100%;max-height:300px"></video>'}</div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <input value="${url}" readonly style="flex:1;padding:8px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;background:#faf6f0" id="preview-url-input">
+      <button class="btn btn-primary btn-sm" onclick="copyMediaUrl('${url}')">复制</button>
+    </div>`);
+}
+function copyMediaUrl(url) {
+  navigator.clipboard.writeText(url).then(()=>toast('URL 已复制')).catch(()=>{
+    const input = document.getElementById('preview-url-input');
+    if(input){ input.select(); document.execCommand('copy'); toast('URL 已复制'); }
+  });
+}
+async function delMedia(id){ if(!confirm('确定删除？')) return; await api(API+'/media/delete',{method:'POST',body:JSON.stringify({id})}); toast('已删除'); loadMedia(); }
+
+// Shop
+async function loadShop() {
+  const res = await api(BIZ_API+'/shop/items');
+  if(res.code===0) document.getElementById('shop-table').innerHTML=(res.data||[]).map(s=>
+    `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.category}</td><td>¥${s.price}</td><td>${s.stock}</td><td><button class="btn btn-primary btn-sm" onclick="showShopForm(${s.id})">编辑</button></td></tr>`
+  ).join('');
+}
+function showShopForm(id) {
+  setModal(`
+    <div class="modal-title">${id?'编辑':'添加'}商品</div>
+    <div class="form-group"><label>名称</label><input id="sf1"></div>
+    <div class="form-row"><div class="form-group"><label>分类</label><select id="sf2"><option>念珠</option><option>香品</option><option>供具</option><option>经书</option><option>文创</option><option>饰品</option></select></div><div class="form-group"><label>价格</label><input id="sf3" type="number"></div></div>
+    <div class="form-row"><div class="form-group"><label>库存</label><input id="sf4" type="number"></div><div class="form-group"><label>图片URL</label><input id="sf5"></div></div>
+    <div class="form-group"><label>描述</label><textarea id="sf6" rows="2"></textarea></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveShopItem(${id||0})">保存</button>
+  `);
+  if(id) api(BIZ_API+'/shop/items').then(r=>{ const s=r.data?.find(x=>x.id==id); if(s){ document.getElementById('sf1').value=s.name; document.getElementById('sf2').value=s.category; document.getElementById('sf3').value=s.price; document.getElementById('sf4').value=s.stock; document.getElementById('sf5').value=s.image; document.getElementById('sf6').value=s.desc; }});
+}
+async function saveShopItem(id){ const body={ name:document.getElementById('sf1').value, category:document.getElementById('sf2').value, price:parseFloat(document.getElementById('sf3').value)||0, stock:parseInt(document.getElementById('sf4').value)||0, image:document.getElementById('sf5').value, desc:document.getElementById('sf6').value }; if(id) body.id=id; await api(API+'/shop-item',{method:'POST',body:JSON.stringify(body)}); toast('保存成功'); closeModal(); loadShop(); }
+
+function setModal(html) { document.getElementById('modal-content').innerHTML=html; document.getElementById('modal').classList.add('show'); }
+function closeModal(e) { if(!e||e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('show'); }
+
+// Media Picker (global, reusable from any form)
+function openMediaPicker(callback, acceptType) {
+  api(BIZ_API+'/media?type='+(acceptType||'')).then(res => {
+    const list = (res.data||[]).slice(0, 30);
+    setModal(`<div class="modal-title">🖼️ 选择素材</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;max-height:380px;overflow-y:auto">
+        ${list.map(m => `<div style="cursor:pointer;border:2px solid transparent;border-radius:6px;overflow:hidden" onclick="selectMediaItem('${m.url}','${m.type}', callback)" onmouseover="this.style.borderColor='#C9A96E'" onmouseout="this.style.borderColor='transparent'">
+          ${m.type==='image' ? '<img src="'+m.url+'" style="width:100%;height:80px;object-fit:cover" loading="lazy">' : '<div style="height:80px;display:flex;align-items:center;justify-content:center;background:#faf6f0"><span style="font-size:30px;opacity:0.4">🎬</span></div>'}
+          <div style="font-size:10px;padding:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.filename}</div>
+        </div>`).join('')}
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between">
+        <button class="btn btn-sm" onclick="closeModal()">取消</button>
+        <span style="font-size:12px;color:#8D6E63">${list.length} 个素材</span>
+      </div>`);
+    window._mediaPickerCallback = callback;
+  });
+}
+function selectMediaItem(url, type, callback) {
+  if (window._mediaPickerCallback) window._mediaPickerCallback(url, type);
+  closeModal();
+}
+
+if(token){ document.getElementById('login-box').style.display='none'; document.getElementById('layout').style.display='flex'; loadDashboard(); }
+</script>
+</body>
+</html>

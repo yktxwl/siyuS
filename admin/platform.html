@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寺语 · 平台管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC',sans-serif;background:#f5f0e8;color:#3e2723}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:linear-gradient(180deg,#3e2723,#5d3a1a);color:#fff;padding:20px 0;flex-shrink:0}
+.sidebar h2{text-align:center;font-size:18px;color:#C9A96E;margin-bottom:24px;letter-spacing:4px}
+.sidebar h2 small{display:block;font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-top:4px}
+.sidebar a{display:block;padding:12px 24px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;border-left:3px solid transparent;transition:all 0.2s}
+.sidebar a:hover,.sidebar a.active{color:#C9A96E;background:rgba(201,169,110,0.1);border-left-color:#C9A96E}
+.main{flex:1;padding:24px;max-width:1200px}
+.panel{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.panel h3{font-size:16px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #e0d5c1;color:#5D3A1A}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s}
+.btn-primary{background:#C9A96E;color:#fff}.btn-danger{background:#C62828;color:#fff}.btn-sm{padding:4px 10px;font-size:12px}.btn+.btn{margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+table th,table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0ebe0}
+table th{background:#faf6f0;font-weight:600;color:#5D3A1A}table tr:hover{background:#faf6f0}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;justify-content:center;align-items:center}
+.modal.show{display:flex}.modal-content{background:#fff;border-radius:12px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:16px;color:#5D3A1A}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 24px;border-radius:25px;font-size:14px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.stat-card .num{font-size:26px;font-weight:700;color:#8B0000}.stat-card .label{font-size:13px;color:#8D6E63;margin-top:4px}
+.section{display:none}.section.active{display:block}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;color:#6D4C41;font-weight:600;margin-bottom:4px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:8px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:13px;background:#faf6f0}
+.form-row{display:flex;gap:10px}.form-row .form-group{flex:1}
+.status-badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.status-active{background:#E8F5E9;color:#2E7D32}.status-inactive{background:#FFEBEE;color:#C62828}
+.login-box{max-width:380px;margin:100px auto;background:#fff;border-radius:12px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.login-box h2{text-align:center;margin-bottom:24px;color:#5D3A1A}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div class="login-box" id="login-box">
+  <h2>🔐 寺语 · 平台管理</h2>
+  <div class="form-group"><label>用户名</label><input type="text" id="login-user" value="admin"></div>
+  <div class="form-group"><label>密码</label><input type="password" id="login-pass" value="123456"></div>
+  <button class="btn btn-primary" style="width:100%;padding:12px;font-size:15px" onclick="login()">登录</button>
+  <p style="text-align:center;font-size:12px;color:#8D6E63;margin-top:12px"><a href="/" style="color:#C9A96E">返回首页</a></p>
+</div>
+
+<div class="layout" id="layout" style="display:none">
+  <aside class="sidebar">
+    <h2>寺 语<small>平台管理中心</small></h2>
+    <a href="#dashboard" class="active" onclick="showSection('dashboard')">📊 数据总览</a>
+    <a href="#temples" onclick="showSection('temples')">🛕 寺庙管理</a>
+    <a href="#channels" onclick="showSection('channels')">📡 渠道管理</a>
+    <a href="#payment" onclick="showSection('payment')">💳 支付管理</a>
+    <a href="#members" onclick="showSection('members')">👥 善信管理</a>
+    <a href="#system" onclick="showSection('system')">⚙️ 系统管理</a>
+    <a href="#" onclick="logout()" style="margin-top:40px">🚪 退出登录</a>
+  </aside>
+  <main class="main">
+    <div class="toast" id="toast"></div>
+
+    <div class="section active" id="sec-dashboard">
+      <h2 style="margin-bottom:20px;color:#5D3A1A">📊 跨寺数据总览</h2>
+      <div class="stats-grid" id="dashboard-stats"></div>
+      <div class="panel"><h3>各寺数据明细</h3><table><thead><tr><th>寺庙</th><th>状态</th><th>供奉</th><th>功德</th><th>订单</th><th>用户</th><th>操作</th></tr></thead><tbody id="temple-detail-table"></tbody></table></div>
+    </div>
+
+    <div class="section" id="sec-temples">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h2 style="color:#5D3A1A">🛕 寺庙管理</h2>
+        <button class="btn btn-primary" onclick="showTempleForm()">+ 创建寺庙</button>
+      </div>
+      <div class="panel"><table><thead><tr><th>ID</th><th>名称</th><th>标识</th><th>地区</th><th>联系人</th><th>状态</th><th>操作</th></tr></thead><tbody id="temple-table"></tbody></table></div>
+    </div>
+
+    <div class="section" id="sec-system">
+      <h2 style="margin-bottom:20px;color:#5D3A1A">⚙️ 系统管理</h2>
+      <!-- Sub tabs -->
+      <div style="display:flex;gap:0;margin-bottom:20px;border-radius:8px;overflow:hidden;border:1px solid #e0d5c1">
+        <span class="sys-tab active" onclick="showSysTab('config')" style="flex:1;text-align:center;padding:10px;cursor:pointer;font-size:14px;font-weight:600;background:#fff;color:#5D3A1A;border-right:1px solid #e0d5c1">🏛️ 平台配置</span>
+        <span class="sys-tab" onclick="showSysTab('storage')" style="flex:1;text-align:center;padding:10px;cursor:pointer;font-size:14px;font-weight:600;background:#faf6f0;color:#8D6E63;border-right:1px solid #e0d5c1">💾 存储设置</span>
+        <span class="sys-tab" onclick="showSysTab('admins')" style="flex:1;text-align:center;padding:10px;cursor:pointer;font-size:14px;font-weight:600;background:#faf6f0;color:#8D6E63;border-right:1px solid #e0d5c1">👤 管理员管理</span>
+        <span class="sys-tab" onclick="showSysTab('ai')" style="flex:1;text-align:center;padding:10px;cursor:pointer;font-size:14px;font-weight:600;background:#faf6f0;color:#8D6E63">🤖 AI 设置</span>
+      </div>
+      <!-- Config panel -->
+      <div class="panel" id="sys-config-panel">
+        <form onsubmit="saveConfig(event)">
+          <div class="form-row"><div class="form-group"><label>平台名称</label><input id="cfg-name" required></div><div class="form-group"><label>平台标语</label><input id="cfg-slogan"></div></div>
+          <div class="form-group"><label>平台描述</label><textarea id="cfg-desc" rows="3"></textarea></div>
+          <!-- Logo upload -->
+          <div class="form-group">
+            <label>平台 Logo</label>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+              <img id="cfg-logo-preview" src="" style="width:60px;height:60px;border-radius:8px;object-fit:contain;border:1px solid #e0d5c1;background:#faf6f0;display:none" alt="Logo">
+              <div style="flex:1">
+                <input type="file" id="cfg-logo-file" accept="image/*" onchange="uploadLogo()" style="font-size:12px">
+                <small style="color:#8D6E63;display:block;margin-top:4px">支持 JPG/PNG/GIF/WebP，建议 200x200</small>
+              </div>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group"><label>底部版权信息</label><input id="cfg-copyright"></div><div class="form-group"><label>备案号</label><input id="cfg-icp" placeholder="如：浙ICP备2024XXXXXX号-1"></div></div>
+          <button class="btn btn-primary" style="margin-top:8px;width:100%;padding:10px">保存配置</button>
+        </form>
+      </div>
+
+      <!-- Storage panel -->
+      <div class="panel" id="sys-storage-panel" style="display:none">
+        <h3>💾 存储设置</h3>
+        <!-- Status -->
+        <div class="storage-status" id="storage-status" style="background:#faf6f0;border-radius:8px;padding:14px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+          <div><span style="color:#8D6E63">存储方式：</span><b id="stg-type-display">本地存储</b></div>
+          <div><span style="color:#8D6E63">存储路径：</span><b id="stg-path-display">uploads/</b></div>
+          <div><span style="color:#8D6E63">上传限制：</span><b id="stg-size-display">10MB</b></div>
+          <div><span style="color:#8D6E63">支持格式：</span><b id="stg-formats-display">jpg,jpeg,png,gif,webp</b></div>
+        </div>
+        <!-- Form -->
+        <form onsubmit="saveStorage(event)">
+          <div class="form-group"><label>存储方式</label>
+            <div style="display:flex;gap:12px;margin-top:6px">
+              <label class="radio-card" onclick="document.querySelector('input[value=local]').click()" style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;transition:all 0.2s;background:#fff;white-space:nowrap">
+                <input type="radio" name="stg-type" value="local" onchange="toggleStorageType()" style="width:16px;height:16px;accent-color:#C9A96E;flex-shrink:0">
+                <span style="font-size:14px;font-weight:500;color:#5D3A1A">本地存储</span>
+              </label>
+              <label class="radio-card" onclick="document.querySelector('input[value=cos]').click()" style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;transition:all 0.2s;background:#fff;white-space:nowrap">
+                <input type="radio" name="stg-type" value="cos" onchange="toggleStorageType()" style="width:16px;height:16px;accent-color:#C9A96E;flex-shrink:0">
+                <span style="font-size:14px;font-weight:500;color:#5D3A1A">腾讯云COS</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-group"><label>上传大小限制(MB)</label><input id="stg-size" type="number"></div><div class="form-group"><label>允许格式(逗号分隔)</label><input id="stg-formats"></div></div>
+          <div id="cos-fields" style="display:none">
+            <div class="form-row"><div class="form-group"><label>Bucket</label><input id="stg-bucket"></div><div class="form-group"><label>Region</label><input id="stg-region" value="ap-guangzhou"></div></div>
+            <div class="form-row"><div class="form-group"><label>SecretId</label><input id="stg-secret-id"></div><div class="form-group"><label>SecretKey</label><input id="stg-secret-key" type="password"></div></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button class="btn btn-primary" style="flex:1;padding:10px">保存设置</button>
+            <button class="btn btn-sm" type="button" style="background:#8D6E63;color:#fff;padding:10px 20px" onclick="testConnection()">🔗 测试连接</button>
+          </div>
+        </form>
+      </div>
+      <!-- AI panel -->
+      <div class="panel" id="sys-ai-panel" style="display:none">
+        <h3>🤖 AI 语音讲解设置</h3>
+        <p style="font-size:13px;color:#8D6E63;margin-bottom:14px">配置 AI 语音合成引擎，用于区域和佛像的语音讲解功能</p>
+        <form onsubmit="saveAiTts(event)">
+          <div class="form-group"><label>语音引擎</label>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <label class="radio-card" onclick="document.querySelector('input[value=web-speech]').click()" style="flex:1;min-width:90px;padding:10px 8px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;text-align:center">
+                <input type="radio" name="ai-provider" value="web-speech" onchange="toggleAiProvider()" style="display:none">
+                <div style="font-size:20px">🌐</div>
+                <div style="font-size:11px;margin-top:4px">浏览器内置</div>
+              </label>
+              <label class="radio-card" onclick="document.querySelector('input[value=tencent]').click()" style="flex:1;min-width:90px;padding:10px 8px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;text-align:center">
+                <input type="radio" name="ai-provider" value="tencent" onchange="toggleAiProvider()" style="display:none">
+                <div style="font-size:20px">☁️</div>
+                <div style="font-size:11px;margin-top:4px">腾讯云 TTS</div>
+              </label>
+              <label class="radio-card" onclick="document.querySelector('input[value=edge-tts]').click()" style="flex:1;min-width:90px;padding:10px 8px;border:2px solid #e0d5c1;border-radius:8px;cursor:pointer;text-align:center">
+                <input type="radio" name="ai-provider" value="edge-tts" onchange="toggleAiProvider()" style="display:none">
+                <div style="font-size:20px">🔊</div>
+                <div style="font-size:11px;margin-top:4px">Edge TTS</div>
+              </label>
+            </div>
+          </div>
+
+          <div id="tencent-tts-fields" style="display:none">
+            <div style="font-size:13px;font-weight:600;color:#5D3A1A;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid #e0d5c1">☁️ 腾讯云 TTS 密钥</div>
+            <div style="background:#fff8e6;border:1px solid #ffe0a0;border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#8D6E63">
+              <span style="color:#B8963D;font-weight:600">⚠️</span> TTS 使用独立的密钥配置，不与 COS 存储共享，避免资源包统计错误
+            </div>
+            <div class="form-row"><div class="form-group"><label>AppId</label><input id="ai-app-id"></div><div class="form-group"><label>SecretId</label><input id="ai-secret-id"></div></div>
+            <div class="form-group"><label>SecretKey</label><input id="ai-secret-key" type="password"></div>
+            <div class="form-group"><label>Region</label>
+              <select id="ai-region">
+                <option value="ap-guangzhou">广州 (ap-guangzhou)</option>
+                <option value="ap-beijing">北京 (ap-beijing)</option>
+                <option value="ap-shanghai">上海 (ap-shanghai)</option>
+                <option value="ap-nanjing">南京 (ap-nanjing)</option>
+                <option value="ap-chengdu">成都 (ap-chengdu)</option>
+                <option value="ap-hongkong">香港 (ap-hongkong)</option>
+              </select>
+            </div>
+
+            <div style="font-size:13px;font-weight:600;color:#5D3A1A;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #e0d5c1">🎙️ 音色设置</div>
+            <div class="form-group"><label>默认音色</label>
+              <select id="ai-voice">
+                <optgroup label="精品音色">
+                  <option value="101001">智瑜 · 女声 · 情感</option>
+                  <option value="101004">智云 · 男声 · 通用</option>
+                  <option value="101011">智燕 · 女声 · 新闻</option>
+                  <option value="101013">智辉 · 男声 · 新闻</option>
+                  <option value="101015">智萌 · 男童声</option>
+                  <option value="101016">智甜 · 女童声</option>
+                  <option value="101019">智彤 · 女声</option>
+                  <option value="101021">智瑞 · 男声</option>
+                  <option value="101026">智希 · 女声</option>
+                  <option value="101027">智梅 · 女声</option>
+                  <option value="101030">智柯 · 男声</option>
+                  <option value="101050">WeJack · 英文男声</option>
+                  <option value="101054">智友 · 男声</option>
+                  <option value="101055">智付 · 男声</option>
+                </optgroup>
+                <optgroup label="大模型音色">
+                  <option value="501001">智兰 · 女声</option>
+                  <option value="501002">智菊 · 女声</option>
+                  <option value="501003">智宇 · 男声</option>
+                  <option value="501004">月华 · 女声</option>
+                  <option value="501005">飞镜 · 男声</option>
+                  <option value="501006">千嶂 · 男声</option>
+                  <option value="501007">浅草 · 女声</option>
+                  <option value="501008">WeJames · 英文男声</option>
+                  <option value="501009">WeWinny · 英文女声</option>
+                </optgroup>
+                <optgroup label="超自然大模型音色">
+                  <option value="502001">智小柔 · 女声</option>
+                  <option value="502003">智小敏 · 女声</option>
+                  <option value="502004">智小满 · 女声</option>
+                  <option value="502005">智小解 · 男声</option>
+                  <option value="502006">智小悟 · 男声</option>
+                  <option value="502007">智小虎 · 男声</option>
+                  <option value="603003">随和老李 · 男声</option>
+                  <option value="603004">温柔小柠 · 女声</option>
+                  <option value="603005">知心大林 · 男声</option>
+                  <option value="603006">沉稳青叔 · 男声</option>
+                  <option value="603007">邻家女孩 · 女声</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group"><label>语速</label><input id="ai-speed" type="range" min="-2" max="2" step="0.1" value="0" oninput="document.getElementById('ai-speed-val').textContent=this.value"><span id="ai-speed-val">0</span></div>
+            <div class="form-group"><label>音量</label><input id="ai-volume" type="range" min="0" max="10" step="1" value="5" oninput="document.getElementById('ai-volume-val').textContent=this.value"><span id="ai-volume-val">5</span></div>
+          </div>
+
+          <div class="form-group" style="margin-top:16px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+              <input type="checkbox" id="ai-auto-play" style="width:18px;height:18px">
+              <span>自动朗读：打开内容页后自动播放</span>
+            </label>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn btn-primary" style="flex:2;padding:10px">💾 保存 AI 设置</button>
+            <button type="button" class="btn btn-sm" style="flex:1;padding:10px;background:#faf6f0;color:#5D3A1A;border:1px solid #e0d5c1" onclick="previewAiVoice()">🔊 试听效果</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Admin panel -->
+      <div class="panel" id="sys-admin-panel" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3 style="border:none;margin:0;padding:0">管理员列表</h3>
+          <button class="btn btn-primary btn-sm" onclick="showAdminForm()">+ 添加</button>
+        </div>
+        <table><thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>角色</th><th>创建时间</th><th>操作</th></tr></thead><tbody id="admin-table"></tbody></table>
+      </div>
+    </div>
+
+    <!-- 渠道管理 -->
+    <div class="section" id="sec-channels">
+      <h2 style="margin-bottom:20px;color:#5D3A1A">📡 渠道管理</h2>
+      <p style="font-size:13px;color:#8D6E63;margin-bottom:16px">配置不同终端的展示和访问参数</p>
+      <!-- H5 -->
+      <div class="panel"><h3>🌐 H5 端</h3>
+        <form onsubmit="saveChannel(event,'h5')">
+          <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="ch-h5-enabled" style="width:18px;height:18px"></div>
+          <div class="form-row"><div class="form-group"><label>站点名称</label><input id="ch-h5-name"></div><div class="form-group"><label>域名</label><input id="ch-h5-domain" placeholder="https://example.com"></div></div>
+          <button class="btn btn-primary" style="padding:10px">保存 H5 配置</button>
+        </form>
+      </div>
+      <!-- 公众号 -->
+      <div class="panel"><h3>💬 微信公众号</h3>
+        <form onsubmit="saveChannel(event,'wechat_mp')">
+          <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="ch-mp-enabled" style="width:18px;height:18px"></div>
+          <div class="form-row"><div class="form-group"><label>公众号名称</label><input id="ch-mp-name"></div><div class="form-group"><label>AppID</label><input id="ch-mp-appid"></div></div>
+          <div class="form-group"><label>AppSecret</label><input id="ch-mp-appsecret" type="password"></div>
+          <button class="btn btn-primary" style="padding:10px">保存公众号配置</button>
+        </form>
+      </div>
+      <!-- 小程序 -->
+      <div class="panel"><h3>📱 微信小程序</h3>
+        <form onsubmit="saveChannel(event,'miniprogram')">
+          <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="ch-mp2-enabled" style="width:18px;height:18px"></div>
+          <div class="form-row"><div class="form-group"><label>小程序名称</label><input id="ch-mp2-name"></div><div class="form-group"><label>AppID</label><input id="ch-mp2-appid"></div></div>
+          <div class="form-group"><label>AppSecret</label><input id="ch-mp2-appsecret" type="password"></div>
+          <button class="btn btn-primary" style="padding:10px">保存小程序配置</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 支付管理 -->
+    <div class="section" id="sec-payment">
+      <h2 style="margin-bottom:20px;color:#5D3A1A">💳 支付管理</h2>
+      <p style="font-size:13px;color:#8D6E63;margin-bottom:16px">配置微信支付参数</p>
+      <div class="panel"><h3>💚 微信支付</h3>
+        <form onsubmit="savePayment(event)">
+          <div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="pay-enabled" style="width:18px;height:18px"></div>
+          <div class="form-row"><div class="form-group"><label>商户号 (MchID)</label><input id="pay-mchid"></div><div class="form-group"><label>API 密钥 (API Key)</label><input id="pay-apikey" type="password"></div></div>
+          <div class="form-row"><div class="form-group"><label>应用 AppID</label><input id="pay-appid"></div><div class="form-group"><label>回调通知 URL</label><input id="pay-notify" placeholder="https://example.com/pay/notify"></div></div>
+          <button class="btn btn-primary" style="padding:10px;width:100%">保存微信支付配置</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="section" id="sec-members">
+      <h2 style="margin-bottom:20px;color:#5D3A1A">👥 善信管理</h2>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select id="member-temple-filter" onchange="loadMembers(1)" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px">
+          <option value="">全部寺庙</option>
+        </select>
+        <input id="member-search" placeholder="搜索昵称/手机号" onkeyup="debounceSearch()" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;flex:1;min-width:150px">
+        <span style="font-size:13px;color:#8D6E63" id="member-total">共 0 人</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#faf6f0;text-align:left">
+              <th style="padding:10px 12px">头像</th>
+              <th style="padding:10px 12px">昵称</th>
+              <th style="padding:10px 12px">手机号</th>
+              <th style="padding:10px 12px">所属寺庙</th>
+              <th style="padding:10px 12px">功德值</th>
+              <th style="padding:10px 12px">注册时间</th>
+              <th style="padding:10px 12px">操作</th>
+            </tr>
+          </thead>
+          <tbody id="member-table-body">
+            <tr><td colspan="7" style="padding:40px;text-align:center;color:#999">加载中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="member-pagination" style="display:flex;justify-content:center;gap:8px;margin-top:16px"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="modal" onclick="closeModal(event)"><div class="modal-content" id="modal-content" onclick="event.stopPropagation()"></div></div>
+
+<script>
+let token = localStorage.getItem('plat_token') || '';
+async function api(url, opt={}) {
+  const res = await fetch(url, { headers: {'Content-Type':'application/json',...opt.headers}, ...opt });
+  return res.json();
+}
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+name)?.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  document.querySelector('.sidebar a[href="#'+name+'"]')?.classList.add('active');
+  if(name==='dashboard') loadDashboard(); else if(name==='temples') loadTemples(); else if(name==='channels') loadChannels(); else if(name==='payment') loadPayment(); else if(name==='members') loadMembers(1); else if(name==='system') loadConfig();
+}
+async function login() {
+  const res = await api('/api/platform/login', { method:'POST', body:JSON.stringify({ username:document.getElementById('login-user').value, password:document.getElementById('login-pass').value }) });
+  if(res.code===0){ token=res.data.token; localStorage.setItem('plat_token',token); document.getElementById('login-box').style.display='none'; document.getElementById('layout').style.display='flex'; loadDashboard(); }
+  else toast(res.msg||'登录失败');
+}
+function logout(){ token=''; localStorage.removeItem('plat_token'); document.getElementById('login-box').style.display='block'; document.getElementById('layout').style.display='none'; }
+async function loadDashboard() {
+  const res = await api('/api/platform/stats');
+  if(res.code===0){ const d=res.data;
+    document.getElementById('dashboard-stats').innerHTML=`
+      <div class="stat-card"><div class="num">${d.active_temples}/${d.temple_count}</div><div class="label">活跃寺庙</div></div>
+      <div class="stat-card"><div class="num">${d.total_offerings}</div><div class="label">总供奉</div></div>
+      <div class="stat-card"><div class="num">${d.total_prayers}</div><div class="label">总祈愿</div></div>
+      <div class="stat-card"><div class="num">${d.total_releases}</div><div class="label">总放生</div></div>
+      <div class="stat-card"><div class="num">¥${d.donation_amount.toLocaleString()}</div><div class="label">功德总额</div></div>
+      <div class="stat-card"><div class="num">¥${d.order_amount.toLocaleString()}</div><div class="label">商城总额</div></div>
+      <div class="stat-card"><div class="num">${d.total_users}</div><div class="label">总用户</div></div>
+      <div class="stat-card"><div class="num">${d.total_orders}</div><div class="label">总订单</div></div>
+    `;
+    document.getElementById('temple-detail-table').innerHTML=(d.temples_detail||[]).map(t=>`
+      <tr><td><a href="/admin/${t.slug}" style="color:#8B0000;font-weight:600">${t.name}</a></td>
+      <td><span class="status-badge status-${t.status}">${t.status==='active'?'运营中':'已停用'}</span></td>
+      <td>${t.offerings}</td><td>${t.donations}</td><td>${t.orders}</td><td>${t.users}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="window.open('/t/${t.slug}')">查看</button></td></tr>
+    `).join('');
+  }
+}
+async function loadTemples() {
+  const res = await api('/api/platform/temples');
+  if(res.code===0) document.getElementById('temple-table').innerHTML=(res.data||[]).map(t=>`
+    <tr><td>${t.id}</td><td>${t.name}</td><td>${t.slug}</td><td>${t.province||''} ${t.city||''}</td><td>${t.contact_person||''}</td>
+    <td><span class="status-badge status-${t.status}">${t.status==='active'?'运营中':'已停用'}</span></td>
+    <td><button class="btn btn-primary btn-sm" onclick="editTemple(${t.id})">编辑</button>
+    <button class="btn btn-sm" style="background:#5D3A1A;color:#fff" onclick="window.open('/admin/${t.slug}')">管理</button>
+    <button class="btn btn-sm" style="background:#17a2b8;color:#fff" onclick="showTempleQR('${t.slug}','${t.name}')">📱</button></td></tr>
+  `).join('');
+}
+function showTempleForm(id) {
+  var html = '<div class="modal-title" style="margin-bottom:0">' + (id ? '编辑' : '创建') + '寺庙</div>' +
+    '<div style="display:flex;gap:0;margin:12px 0;border-radius:6px;overflow:hidden;border:1px solid #e0d5c1">' +
+      '<span class="temple-tab active" data-tab="basic" onclick="switchTempleTab(this,\'basic\')" style="flex:1;text-align:center;padding:8px;cursor:pointer;font-size:12px;font-weight:600;background:#fff;color:#5D3A1A;border-right:1px solid #e0d5c1">📋 基本信息</span>' +
+      '<span class="temple-tab" data-tab="payment" onclick="switchTempleTab(this,\'payment\')" style="flex:1;text-align:center;padding:8px;cursor:pointer;font-size:12px;font-weight:600;background:#faf6f0;color:#8D6E63">💳 支付配置</span>' +
+    '</div>' +
+    '<div id="temple-tab-basic">' +
+      '<div class="form-row"><div class="form-group"><label>名称 *</label><input id="tf-name"></div><div class="form-group"><label>标识 *</label><input id="tf-slug" ' + (id ? 'readonly' : '') + '></div></div>' +
+      '<div class="form-row"><div class="form-group"><label>标语</label><input id="tf-slogan"></div><div class="form-group"><label>省份</label><input id="tf-province"></div></div>' +
+      '<div class="form-row"><div class="form-group"><label>城市</label><input id="tf-city"></div><div class="form-group"><label>地址</label><input id="tf-address"></div></div>' +
+      '<div class="form-row"><div class="form-group"><label>电话</label><input id="tf-phone"></div><div class="form-group"><label>联系人</label><input id="tf-contact"></div></div>' +
+      '<div class="form-row"><div class="form-group"><label>管理账号</label><input id="tf-admin-user"></div><div class="form-group"><label>管理密码</label><input id="tf-admin-pass" type="password" placeholder="' + (id ? '留空不修改' : '默认123456') + '"></div></div>' +
+      '<div class="form-group"><label>状态</label><select id="tf-status"><option value="active">运营中</option><option value="inactive">已停用</option></select></div>' +
+    '</div>' +
+    '<div id="temple-tab-payment" style="display:none">' +
+      '<div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">☑ 启用微信支付</label><input type="checkbox" id="tp-enabled" style="width:18px;height:18px"></div>' +
+      '<div style="font-size:12px;font-weight:600;color:#5D3A1A;margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #e0d5c1">🔐 商户信息（三个渠道共用）</div>' +
+      '<div class="form-row"><div class="form-group"><label>商户号 (MchID)</label><input id="tp-mchid" placeholder="1600000001"></div><div class="form-group"><label>API v3 密钥</label><input id="tp-apiv3key" type="text" placeholder="32位密钥"></div></div>' +
+      '<div class="form-group"><label>证书序列号 (Serial No)</label><input id="tp-serialno" placeholder="从微信支付商户平台获取"></div>' +
+      '<div class="form-row"><div class="form-group"><label>API 证书 (PEM)</label><textarea id="tp-cert" rows="3" placeholder="-----BEGIN CERTIFICATE-----..."></textarea></div><div class="form-group"><label>商户私钥 (PEM)</label><textarea id="tp-key" rows="3" placeholder="-----BEGIN PRIVATE KEY-----..."></textarea></div></div>' +
+      '<div style="font-size:12px;font-weight:600;color:#5D3A1A;margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #e0d5c1">🌐 H5 端</div>' +
+      '<div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="tp-h5-enabled" style="width:16px;height:16px"></div>' +
+      '<div class="form-row"><div class="form-group"><label>H5 AppID</label><input id="tp-h5-appid"></div><div class="form-group"><label>场景名称</label><input id="tp-h5-scenename" placeholder="如：大觉禅寺"></div></div>' +
+      '<div class="form-group"><label>回调域名</label><input id="tp-h5-domain" placeholder="https://dajue.siyu.com"></div>' +
+      '<div style="font-size:12px;font-weight:600;color:#5D3A1A;margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #e0d5c1">💬 公众号</div>' +
+      '<div style="background:#FFF3CD;color:#856404;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:10px">' +
+        '⚠️ 必须先在 <a href=\"https://pay.weixin.qq.com\" target=\"_blank\" style=\"color:#D4A017\">微信商户平台→产品中心→开发配置→支付授权目录</a> 添加：<br>' +
+        '<b style=\"color:#D4A017\">https://siyu.yun78.cn/</b>（末尾有 /，域名级别配置最保险）</div>' +
+      '<div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="tp-mp-enabled" style="width:16px;height:16px"></div>' +
+      '<div class="form-row"><div class="form-group"><label>公众号 AppID</label><input id="tp-mp-appid"></div><div class="form-group"><label>AppSecret</label><input id="tp-mp-secret" type="text"></div></div>' +
+      '<div style="font-size:12px;font-weight:600;color:#5D3A1A;margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #e0d5c1">📱 小程序</div>' +
+      '<div class="form-group" style="display:flex;align-items:center;gap:10px"><label style="margin:0">启用</label><input type="checkbox" id="tp-mp2-enabled" style="width:16px;height:16px"></div>' +
+      '<div class="form-row"><div class="form-group"><label>小程序 AppID</label><input id="tp-mp2-appid"></div><div class="form-group"><label>AppSecret</label><input id="tp-mp2-secret" type="text"></div></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;margin-top:12px">' +
+      '<button class="btn btn-primary" style="flex:1;padding:10px" onclick="saveTemple2(' + (id || 0) + ')">💾 保存寺庙</button>' +
+      (id ? '<button class="btn btn-sm" style="background:#5D3A1A;color:#fff;padding:10px 16px" onclick="testPayment(' + id + ')">🔗 测试支付连接</button>' : '') +
+    '</div>';
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal').classList.add('show');
+
+  if (id) {
+    api('/api/platform/temples').then(r => {
+      var t = r.data?.find(x => x.id == id);
+      if (t) {
+        document.getElementById('tf-name').value = t.name;
+        document.getElementById('tf-slug').value = t.slug;
+        document.getElementById('tf-slogan').value = t.slogan || '';
+        document.getElementById('tf-province').value = t.province || '';
+        document.getElementById('tf-city').value = t.city || '';
+        document.getElementById('tf-address').value = t.address || '';
+        document.getElementById('tf-phone').value = t.phone || '';
+        document.getElementById('tf-contact').value = t.contact_person || '';
+        document.getElementById('tf-admin-user').value = t.admin_username || '';
+        document.getElementById('tf-status').value = t.status;
+      }
+    });
+    // 加载支付配置
+    api('/api/platform/temple/' + id + '/payment').then(r => {
+      if (r.code === 0) {
+        var d = r.data;
+        var w = d.wxpay || {};
+        document.getElementById('tp-enabled').checked = d.enabled || false;
+        document.getElementById('tp-mchid').value = w.mch_id || '';
+        document.getElementById('tp-apiv3key').value = w.api_v3_key || '';
+        document.getElementById('tp-serialno').value = w.serial_no || '';
+        document.getElementById('tp-cert').value = w.cert_pem || '';
+        document.getElementById('tp-key').value = w.key_pem || '';
+        if (w.h5) {
+          document.getElementById('tp-h5-enabled').checked = w.h5.enabled || false;
+          document.getElementById('tp-h5-appid').value = w.h5.appid || '';
+          document.getElementById('tp-h5-scenename').value = w.h5.scene_name || '';
+          document.getElementById('tp-h5-domain').value = w.h5.notify_domain || '';
+        }
+        if (w.wechat_mp) {
+          document.getElementById('tp-mp-enabled').checked = w.wechat_mp.enabled || false;
+          document.getElementById('tp-mp-appid').value = w.wechat_mp.appid || '';
+          document.getElementById('tp-mp-secret').value = w.wechat_mp.appsecret || '';
+        }
+        if (w.miniprogram) {
+          document.getElementById('tp-mp2-enabled').checked = w.miniprogram.enabled || false;
+          document.getElementById('tp-mp2-appid').value = w.miniprogram.appid || '';
+          document.getElementById('tp-mp2-secret').value = w.miniprogram.appsecret || '';
+        }
+      }
+    });
+  }
+}
+
+// 切换寺庙编辑 Tab
+function switchTempleTab(el, tab) {
+  document.querySelectorAll('.temple-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+    t.style.background = t.dataset.tab === tab ? '#fff' : '#faf6f0';
+    t.style.color = t.dataset.tab === tab ? '#5D3A1A' : '#8D6E63';
+  });
+  document.getElementById('temple-tab-basic').style.display = tab === 'basic' ? 'block' : 'none';
+  document.getElementById('temple-tab-payment').style.display = tab === 'payment' ? 'block' : 'none';
+}
+
+// 保存寺庙 + 支付配置
+async function saveTemple2(id) {
+  var basicBody = {
+    name: document.getElementById('tf-name').value,
+    slug: document.getElementById('tf-slug').value,
+    slogan: document.getElementById('tf-slogan').value,
+    province: document.getElementById('tf-province').value,
+    city: document.getElementById('tf-city').value,
+    address: document.getElementById('tf-address').value,
+    phone: document.getElementById('tf-phone').value,
+    contact_person: document.getElementById('tf-contact').value,
+    admin_username: document.getElementById('tf-admin-user').value,
+    status: document.getElementById('tf-status').value
+  };
+  var pass = document.getElementById('tf-admin-pass').value;
+  if (pass) basicBody.admin_password = pass;
+
+  // 保存基本信息
+  var res1 = await api((id ? '/api/platform/temple/' + id : '/api/platform/temple'), {
+    method: id ? 'PUT' : 'POST',
+    body: JSON.stringify(basicBody)
+  });
+  if (res1.code !== 0) { toast(res1.msg || '保存失败'); return; }
+
+  // 如果有创建新寺庙，获取新ID
+  var templeId = id || (res1.data && res1.data.id);
+  if (!templeId) { toast('保存失败'); return; }
+
+  // 保存支付配置
+  var payBody = {
+    enabled: document.getElementById('tp-enabled').checked,
+    mch_id: document.getElementById('tp-mchid').value,
+    api_v3_key: document.getElementById('tp-apiv3key').value,
+    serial_no: document.getElementById('tp-serialno').value,
+    cert_pem: document.getElementById('tp-cert').value,
+    key_pem: document.getElementById('tp-key').value,
+    h5_enabled: document.getElementById('tp-h5-enabled').checked,
+    h5_appid: document.getElementById('tp-h5-appid').value,
+    h5_scene_name: document.getElementById('tp-h5-scenename').value,
+    h5_notify_domain: document.getElementById('tp-h5-domain').value,
+    mp_enabled: document.getElementById('tp-mp-enabled').checked,
+    mp_appid: document.getElementById('tp-mp-appid').value,
+    mp_appsecret: document.getElementById('tp-mp-secret').value,
+    miniprogram_enabled: document.getElementById('tp-mp2-enabled').checked,
+    miniprogram_appid: document.getElementById('tp-mp2-appid').value,
+    miniprogram_appsecret: document.getElementById('tp-mp2-secret').value
+  };
+
+  var res2 = await api('/api/platform/temple/' + templeId + '/payment', {
+    method: 'PUT',
+    body: JSON.stringify(payBody)
+  });
+
+  toast(res2.msg || '保存成功');
+  closeModal();
+  loadTemples();
+  loadDashboard();
+}
+
+// 测试支付连接
+async function testPayment(templeId) {
+  var btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ 测试中...';
+  var res = await api('/api/platform/temple/' + templeId + '/payment/test', { method: 'POST' });
+  toast((res.code === 0 ? '✅ ' : '❌ ') + (res.msg || '测试完成'));
+  btn.disabled = false;
+  btn.textContent = '🔗 测试支付连接';
+}
+
+function editTemple(id){ showTempleForm(id); }
+
+// System management
+function showSysTab(name) {
+  const tabs = document.querySelectorAll('.sys-tab');
+  const order = { config: 0, storage: 1, admins: 2, ai: 3 };
+  tabs.forEach((t, i) => {
+    t.classList.toggle('active', i === order[name]);
+    t.style.background = i === order[name] ? '#fff' : '#faf6f0';
+    t.style.color = i === order[name] ? '#5D3A1A' : '#8D6E63';
+  });
+  document.getElementById('sys-config-panel').style.display = name === 'config' ? 'block' : 'none';
+  document.getElementById('sys-storage-panel').style.display = name === 'storage' ? 'block' : 'none';
+  document.getElementById('sys-admin-panel').style.display = name === 'admins' ? 'block' : 'none';
+  document.getElementById('sys-ai-panel').style.display = name === 'ai' ? 'block' : 'none';
+  if (name === 'admins') loadAdmins();
+  if (name === 'ai') loadAiSettings();
+}
+
+function toggleAiProvider() {
+  var val = document.querySelector('input[name="ai-provider"]:checked')?.value || 'web-speech';
+  document.querySelectorAll('.radio-card').forEach(card => {
+    var checked = card.querySelector('input')?.checked;
+    card.style.borderColor = checked ? '#C9A96E' : '#e0d5c1';
+    card.style.background = checked ? 'rgba(201,169,110,0.06)' : '#fff';
+  });
+  document.getElementById('tencent-tts-fields').style.display = val === 'tencent' ? 'block' : 'none';
+}
+
+async function loadAiSettings() {
+  var res = await api('/api/platform/ai/tts-config');
+  if (res.code === 0) {
+    var c = res.data;
+    document.querySelectorAll('input[name="ai-provider"]').forEach(r => r.checked = r.value === (c.provider || 'web-speech'));
+    document.getElementById('ai-speed').value = c.speed || 0;
+    document.getElementById('ai-speed-val').textContent = c.speed || 0;
+    document.getElementById('ai-volume').value = c.volume || 5;
+    document.getElementById('ai-volume-val').textContent = c.volume || 5;
+    document.getElementById('ai-app-id').value = c.appId || '';
+    document.getElementById('ai-secret-id').value = c.secretId || '';
+    document.getElementById('ai-secret-key').value = c.secretKey || '';
+    document.getElementById('ai-region').value = c.region || 'ap-guangzhou';
+    document.getElementById('ai-voice').value = c.voice || '101001';
+    document.getElementById('ai-auto-play').checked = !!c.autoPlay;
+    toggleAiProvider();
+  }
+}
+
+async function saveAiTts(e) {
+  e.preventDefault();
+  var provider = document.querySelector('input[name="ai-provider"]:checked')?.value || 'web-speech';
+  var body = {
+    provider: provider,
+    speed: parseFloat(document.getElementById('ai-speed').value) || 0,
+    volume: parseInt(document.getElementById('ai-volume').value) || 5,
+    autoPlay: document.getElementById('ai-auto-play').checked
+  };
+  if (provider === 'tencent') {
+    body.appId = document.getElementById('ai-app-id').value;
+    body.secretId = document.getElementById('ai-secret-id').value;
+    body.secretKey = document.getElementById('ai-secret-key').value;
+    body.region = document.getElementById('ai-region').value;
+    body.voice = parseInt(document.getElementById('ai-voice').value) || 101001;
+  }
+  var res = await api('/api/platform/ai/tts-config', { method: 'PUT', body: JSON.stringify(body) });
+  toast(res.msg || 'AI 设置已保存');
+}
+
+async function previewAiVoice() {
+  var btn = event.target;
+  btn.textContent = '⏳ 合成中...';
+  btn.disabled = true;
+  try {
+    var res = await api('/api/platform/tts/test', { method: 'POST', body: JSON.stringify({ text: '欢迎使用寺语智慧寺院管理平台，语音讲解功能已就绪。' }) });
+    if (res.code !== 0) {
+      toast('❌ ' + (res.msg || '试听失败'));
+      btn.textContent = '🔊 试听效果';
+      btn.disabled = false;
+      return;
+    }
+    var audio = new Audio('data:audio/mp3;base64,' + res.data.audio);
+    audio.onended = function() { btn.textContent = '🔊 试听效果'; btn.disabled = false; };
+    audio.onerror = function() { toast('❌ 播放失败'); btn.textContent = '🔊 试听效果'; btn.disabled = false; };
+    audio.play();
+  } catch (e) {
+    toast('❌ 请求失败');
+    btn.textContent = '🔊 试听效果';
+    btn.disabled = false;
+  }
+}
+async function loadConfig() {
+  const res = await api('/api/platform/config');
+  if(res.code===0){ const c=res.data;
+    document.getElementById('cfg-name').value=c.platform_name||''; document.getElementById('cfg-slogan').value=c.platform_slogan||'';
+    document.getElementById('cfg-desc').value=c.platform_desc||'';
+    // Logo
+    const logo = c.platform_logo || '';
+    const lp = document.getElementById('cfg-logo-preview');
+    if (logo) { lp.src = logo; lp.style.display = 'block'; } else { lp.style.display = 'none'; }
+    // Copyright & ICP
+    document.getElementById('cfg-copyright').value = c.copyright || '';
+    document.getElementById('cfg-icp').value = c.icp || '';
+    // Storage config
+    const s = c.storage || {};
+    const radioVal = s.type || 'local';
+    document.querySelectorAll('input[name="stg-type"]').forEach(r => r.checked = r.value === radioVal);
+    document.getElementById('stg-size').value = s.upload_max_size || 10;
+    document.getElementById('stg-formats').value = s.allowed_formats || 'jpg,jpeg,png,gif,webp';
+    document.getElementById('stg-bucket').value = s.cos_bucket || '';
+    document.getElementById('stg-region').value = s.cos_region || 'ap-guangzhou';
+    document.getElementById('stg-secret-id').value = s.cos_secret_id || '';
+    document.getElementById('stg-secret-key').value = s.cos_secret_key || '';
+    toggleStorageType();
+    updateStorageStatus(s);
+  }
+  showSysTab('config');
+}
+function updateStorageStatus(s) {
+  const typeMap = { local: '本地存储', cos: '腾讯云COS' };
+  document.getElementById('stg-type-display').textContent = typeMap[s.type] || '本地存储';
+  document.getElementById('stg-path-display').textContent = s.local_path || 'uploads/';
+  document.getElementById('stg-size-display').textContent = (s.upload_max_size || 10) + 'MB';
+  document.getElementById('stg-formats-display').textContent = s.allowed_formats || 'jpg,jpeg,png,gif,webp';
+}
+function toggleStorageType() {
+  const type = document.querySelector('input[name="stg-type"]:checked')?.value || 'local';
+  document.getElementById('cos-fields').style.display = type === 'cos' ? 'block' : 'none';
+  // Update radio card styling
+  document.querySelectorAll('.radio-card').forEach(card => {
+    const checked = card.querySelector('input')?.checked;
+    card.style.borderColor = checked ? '#C9A96E' : '#e0d5c1';
+    card.style.background = checked ? 'rgba(201,169,110,0.06)' : '#fff';
+    card.style.boxShadow = checked ? '0 0 0 3px rgba(201,169,110,0.15)' : 'none';
+  });
+}
+async function saveConfig(e) {
+  e.preventDefault();
+  const res = await api('/api/platform/config',{method:'PUT',body:JSON.stringify({
+    platform_name:document.getElementById('cfg-name').value,
+    platform_slogan:document.getElementById('cfg-slogan').value,
+    platform_desc:document.getElementById('cfg-desc').value,
+    copyright:document.getElementById('cfg-copyright').value,
+    icp:document.getElementById('cfg-icp').value
+  })});
+  toast(res.msg||'保存成功');
+}
+
+async function uploadLogo() {
+  const file = document.getElementById('cfg-logo-file').files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res = await fetch('/api/platform/upload-logo', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.code === 0) {
+      const lp = document.getElementById('cfg-logo-preview');
+      lp.src = data.data.url + '?t=' + Date.now();
+      lp.style.display = 'block';
+      toast('Logo 上传成功');
+    } else toast(data.msg || '上传失败');
+  } catch(e) { toast('上传失败'); }
+}
+async function saveStorage(e) {
+  e.preventDefault();
+  const type = document.querySelector('input[name="stg-type"]:checked')?.value || 'local';
+  const storage = {
+    type,
+    local_path: 'uploads/',
+    upload_max_size: parseInt(document.getElementById('stg-size').value) || 10,
+    allowed_formats: document.getElementById('stg-formats').value,
+    cos_enabled: type === 'cos',
+    cos_bucket: document.getElementById('stg-bucket').value,
+    cos_region: document.getElementById('stg-region').value,
+    cos_secret_id: document.getElementById('stg-secret-id').value,
+    cos_secret_key: document.getElementById('stg-secret-key').value
+  };
+  const res = await api('/api/platform/config',{method:'PUT',body:JSON.stringify({ storage })});
+  if(res.code===0) { toast('存储设置保存成功'); updateStorageStatus(storage); }
+  else toast(res.msg||'保存失败');
+}
+async function testConnection() {
+  const type = document.querySelector('input[name="stg-type"]:checked')?.value || 'local';
+  const body = { type };
+  if (type === 'cos') {
+    body.cos_bucket = document.getElementById('stg-bucket').value;
+    body.cos_region = document.getElementById('stg-region').value;
+    body.cos_secret_id = document.getElementById('stg-secret-id').value;
+    body.cos_secret_key = document.getElementById('stg-secret-key').value;
+  }
+  toast('连接测试中...');
+  const res = await api('/api/platform/storage/test', { method: 'POST', body: JSON.stringify(body) });
+  if (res.code === 0) toast('✅ ' + res.msg);
+  else toast('❌ ' + res.msg);
+}
+async function loadAdmins() {
+  const res = await api('/api/platform/admins');
+  if(res.code===0) document.getElementById('admin-table').innerHTML=(res.data||[]).map(a=>`
+    <tr><td>${a.id}</td><td>${a.username}</td><td>${a.nickname}</td><td>${a.role==='super_admin'?'超级管理员':a.role}</td><td>${new Date(a.createtime).toLocaleDateString('zh-CN')}</td><td><button class="btn btn-primary btn-sm" onclick="editAdmin(${a.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="delAdmin(${a.id})">删除</button></td></tr>
+  `).join('');
+}
+function showAdminForm(id) {
+  setAdminModal(`
+    <div class="modal-title">${id?'编辑':'添加'}管理员</div>
+    <div class="form-group"><label>用户名 *</label><input id="amf1"></div>
+    <div class="form-group"><label>昵称</label><input id="amf2"></div>
+    <div class="form-group"><label>密码${id?'（留空不修改）':''}</label><input id="amf3" type="password"></div>
+    <button class="btn btn-primary" style="width:100%;padding:10px" onclick="saveAdmin(${id||0})">保存</button>
+  `);
+  if(id) api('/api/platform/admins').then(r=>{ const a=r.data?.find(x=>x.id==id); if(a){ document.getElementById('amf1').value=a.username; document.getElementById('amf2').value=a.nickname; }});
+}
+function setAdminModal(html) { document.getElementById('modal-content').innerHTML=html; document.getElementById('modal').classList.add('show'); }
+async function saveAdmin(id) {
+  const body = { username:document.getElementById('amf1').value, nickname:document.getElementById('amf2').value };
+  const pass = document.getElementById('amf3').value; if(pass) body.password = pass;
+  const res = await api(id?'/api/platform/admin/'+id:'/api/platform/admin', { method:id?'PUT':'POST', body:JSON.stringify(body) });
+  toast(res.msg||'保存成功'); closeModal(); loadAdmins();
+}
+async function delAdmin(id) {
+  if(!confirm('确定删除该管理员？')) return;
+  const res = await api('/api/platform/admin/'+id, { method:'DELETE' });
+  toast(res.msg||'删除成功'); loadAdmins();
+}
+function editAdmin(id){ showAdminForm(id); }
+
+function closeModal(e){ if(!e||e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('show'); }
+
+// Channel Management
+async function loadChannels() {
+  var res = await api('/api/platform/channels');
+  if(res.code===0) {
+    var d = res.data;
+    // H5
+    var h5 = d.h5 || {};
+    document.getElementById('ch-h5-enabled').checked = h5.enabled || false;
+    document.getElementById('ch-h5-name').value = h5.name || '';
+    document.getElementById('ch-h5-domain').value = h5.domain || '';
+    // 公众号
+    var mp = d.wechat_mp || {};
+    document.getElementById('ch-mp-enabled').checked = mp.enabled || false;
+    document.getElementById('ch-mp-name').value = mp.name || '';
+    document.getElementById('ch-mp-appid').value = mp.appid || '';
+    document.getElementById('ch-mp-appsecret').value = mp.appsecret || '';
+    // 小程序
+    var mp2 = d.miniprogram || {};
+    document.getElementById('ch-mp2-enabled').checked = mp2.enabled || false;
+    document.getElementById('ch-mp2-name').value = mp2.name || '';
+    document.getElementById('ch-mp2-appid').value = mp2.appid || '';
+    document.getElementById('ch-mp2-appsecret').value = mp2.appsecret || '';
+  }
+}
+
+async function saveChannel(e, type) {
+  e.preventDefault();
+  var body = {};
+  if(type==='h5') {
+    body.h5 = {
+      enabled: document.getElementById('ch-h5-enabled').checked,
+      name: document.getElementById('ch-h5-name').value,
+      domain: document.getElementById('ch-h5-domain').value
+    };
+  } else if(type==='wechat_mp') {
+    body.wechat_mp = {
+      enabled: document.getElementById('ch-mp-enabled').checked,
+      name: document.getElementById('ch-mp-name').value,
+      appid: document.getElementById('ch-mp-appid').value,
+      appsecret: document.getElementById('ch-mp-appsecret').value
+    };
+  } else if(type==='miniprogram') {
+    body.miniprogram = {
+      enabled: document.getElementById('ch-mp2-enabled').checked,
+      name: document.getElementById('ch-mp2-name').value,
+      appid: document.getElementById('ch-mp2-appid').value,
+      appsecret: document.getElementById('ch-mp2-appsecret').value
+    };
+  }
+  var res = await api('/api/platform/channels', { method:'PUT', body:JSON.stringify(body) });
+  toast(res.msg || '配置已保存');
+}
+
+// Payment Management
+async function loadPayment() {
+  var res = await api('/api/platform/payment');
+  if(res.code===0) {
+    var d = (res.data && res.data.wechat_pay) ? res.data.wechat_pay : {};
+    document.getElementById('pay-enabled').checked = d.enabled || false;
+    document.getElementById('pay-mchid').value = d.mch_id || '';
+    document.getElementById('pay-apikey').value = d.api_key || '';
+    document.getElementById('pay-appid').value = d.appid || '';
+    document.getElementById('pay-notify').value = d.notify_url || '';
+  }
+}
+
+async function savePayment(e) {
+  e.preventDefault();
+  var body = {
+    wechat_pay: {
+      enabled: document.getElementById('pay-enabled').checked,
+      mch_id: document.getElementById('pay-mchid').value,
+      api_key: document.getElementById('pay-apikey').value,
+      appid: document.getElementById('pay-appid').value,
+      notify_url: document.getElementById('pay-notify').value
+    }
+  };
+  var res = await api('/api/platform/payment', { method:'PUT', body:JSON.stringify(body) });
+  toast(res.msg || '支付配置已保存');
+}
+
+var _memberSearchTimer = null;
+function debounceSearch() {
+  clearTimeout(_memberSearchTimer);
+  _memberSearchTimer = setTimeout(() => loadMembers(1), 400);
+}
+async function loadMembers(page) {
+  var sel = document.getElementById('member-temple-filter');
+  // 初始化寺庙下拉
+  if (sel.options.length <= 1) {
+    var tres = await api('/api/platform/temples');
+    if (tres.code === 0) {
+      tres.data.forEach(t => { var o = document.createElement('option'); o.value = t.id; o.textContent = t.name; sel.appendChild(o); });
+    }
+  }
+  var params = new URLSearchParams({
+    page: page || 1,
+    limit: 15,
+    temple_id: sel.value,
+    search: document.getElementById('member-search').value
+  });
+  var res = await api('/api/platform/members?' + params.toString());
+  var tbody = document.getElementById('member-table-body');
+  if (res.code === 0) {
+    var d = res.data;
+    document.getElementById('member-total').textContent = '共 ' + d.total + ' 人';
+    if (d.items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:#999">暂无数据</td></tr>';
+    } else {
+      tbody.innerHTML = d.items.map(u => '<tr style="border-bottom:1px solid #eee">' +
+        '<td style="padding:10px 12px;font-size:24px">' + (u.avatar || '🙏') + '</td>' +
+        '<td style="padding:10px 12px;font-weight:600">' + (u.nickname || '善信') + '</td>' +
+        '<td style="padding:10px 12px;color:#666">' + (u.phone || '-') + '</td>' +
+        '<td style="padding:10px 12px;font-size:12px">' + (u.temple_name || '') + '</td>' +
+        '<td style="padding:10px 12px;color:#D4A017;font-weight:600">' + (u.merit || 0) + '</td>' +
+        '<td style="padding:10px 12px;font-size:12px;color:#999">' + (u.createtime ? new Date(u.createtime).toLocaleDateString() : '') + '</td>' +
+        '<td style="padding:10px 12px"><button onclick="showMemberDetail(' + u.temple_id + ',' + u.id + ')" style="padding:4px 10px;background:#5D3A1A;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">详情</button></td>' +
+      '</tr>').join('');
+    }
+    // 分页 (统一风格)
+    var pg = document.getElementById('member-pagination');
+    pg.innerHTML = renderPagination(d.page, d.total, d.limit, 'loadMembers');
+  }
+}
+async function showMemberDetail(templeId, userId) {
+  var res = await api('/api/temple/' + templeId + '/member/' + userId);
+  if (res.code === 0) {
+    var u = res.data;
+    document.getElementById('modal-content').innerHTML =
+      '<div style="position:relative">' +
+        '<span class="modal-close" onclick="closeModal(event)">✕</span>' +
+        '<div style="text-align:center;margin-bottom:16px">' +
+          '<div style="font-size:48px;margin-bottom:8px">' + (u.avatar || '🙏') + '</div>' +
+          '<h3>' + (u.nickname || '善信') + '</h3>' +
+          '<div style="font-size:13px;color:#999">' + (u.phone || '未设置手机号') + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+          '<div style="padding:12px;background:#faf6f0;border-radius:8px;text-align:center"><div style="font-size:22px;font-weight:700;color:#5D3A1A">' + u.offering_count + '</div><div style="font-size:12px;color:#999">供奉次数</div></div>' +
+          '<div style="padding:12px;background:#faf6f0;border-radius:8px;text-align:center"><div style="font-size:22px;font-weight:700;color:#D4A017">' + u.merit + '</div><div style="font-size:12px;color:#999">功德值</div></div>' +
+          '<div style="padding:12px;background:#faf6f0;border-radius:8px;text-align:center"><div style="font-size:22px;font-weight:700;color:#5D3A1A">' + u.order_count + '</div><div style="font-size:12px;color:#999">订单数</div></div>' +
+          '<div style="padding:12px;background:#faf6f0;border-radius:8px;text-align:center"><div style="font-size:22px;font-weight:700;color:#D4A017">¥' + ((u.paid_amount || 0) / 100).toFixed(2) + '</div><div style="font-size:12px;color:#999">已支付金额</div></div>' +
+        '</div>' +
+        '<div style="margin-top:12px;font-size:12px;color:#999;text-align:center">注册时间：' + (u.createtime ? new Date(u.createtime).toLocaleString() : '') + '</div>' +
+      '</div>';
+    document.getElementById('modal').classList.add('show');
+  }
+  else toast(res.msg || '获取失败');
+}
+
+// 统一分页组件
+function renderPagination(page, total, limit, fnName) {
+  var tp = Math.ceil(total / limit) || 1;
+  if (tp <= 1) return '';
+  var h = '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;font-size:12px">';
+  h += '<button onclick="' + fnName + '(1)" ' + (page <= 1 ? 'disabled' : '') + ' style="padding:6px 10px;border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;cursor:pointer">首页</button>';
+  h += '<button onclick="' + fnName + '(' + (page - 1) + ')" ' + (page <= 1 ? 'disabled' : '') + ' style="padding:6px 10px;border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;cursor:pointer">＜上一页</button>';
+  var s = Math.max(1, page - 2), e = Math.min(tp, page + 2);
+  if (s > 1) h += '<span style="color:#999">…</span>';
+  for (var i = s; i <= e; i++) {
+    h += '<button onclick="' + fnName + '(' + i + ')" style="padding:6px 12px;border:1px solid ' + (i === page ? '#5D3A1A' : '#ddd') + ';background:' + (i === page ? '#5D3A1A' : '#fff') + ';color:' + (i === page ? '#fff' : '#333') + ';border-radius:6px;cursor:pointer;min-width:32px">' + i + '</button>';
+  }
+  if (e < tp) h += '<span style="color:#999">…</span>';
+  h += '<button onclick="' + fnName + '(' + (page + 1) + ')" ' + (page >= tp ? 'disabled' : '') + ' style="padding:6px 10px;border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;cursor:pointer">下一页＞</button>';
+  h += '<button onclick="' + fnName + '(' + tp + ')" ' + (page >= tp ? 'disabled' : '') + ' style="padding:6px 10px;border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;cursor:pointer">末页</button>';
+  h += '<span style="color:#999;margin-left:4px">共 ' + total + ' 条，' + page + '/' + tp + ' 页</span>';
+  h += '</div>';
+  return h;
+}
+
+function showTempleQR(slug, name) {
+  var url = 'https://siyu.yun78.cn/t/' + slug;
+  var canvasId = 'temple-qr-canvas';
+  document.getElementById('modal-content').innerHTML =
+    '<div style="position:relative">' +
+      '<span class="modal-close" onclick="closeModal(event)">✕</span>' +
+      '<div class="modal-title">📱 ' + name + ' 扫码进入</div>' +
+      '<div style="text-align:center;margin:16px 0">' +
+        '<div id="' + canvasId + '" style="display:inline-block;padding:12px;background:#fff;border-radius:8px"></div>' +
+      '</div>' +
+      '<div style="background:#faf6f0;padding:10px 14px;border-radius:8px;font-size:13px;word-break:break-all;margin-bottom:8px">' +
+        '<b>链接：</b><br>' +
+        '<input value="' + url + '" readonly style="width:100%;padding:6px 10px;border:1px solid #e0d5c1;border-radius:6px;font-size:12px;margin-top:4px" onclick="this.select()">' +
+      '</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-primary" style="flex:1" onclick="navigator.clipboard.writeText(\'' + url + '\');toast(\'链接已复制\')">📋 复制链接</button>' +
+        '<a href="' + url + '" target="_blank" class="btn" style="flex:1;background:#17a2b8;color:#fff;text-decoration:none;text-align:center;padding:10px;border-radius:8px;font-size:14px">🔗 打开页面</a>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('modal').classList.add('show');
+  setTimeout(function() {
+    var el = document.getElementById(canvasId);
+    if (el && typeof QRCode !== 'undefined') {
+      el.innerHTML = '';
+      new QRCode(el, { text: url, width: 200, height: 200, colorDark: '#5D3A1A', colorLight: '#ffffff' });
+    }
+  }, 200);
+}
+
+if(token){ document.getElementById('login-box').style.display='none'; document.getElementById('layout').style.display='flex'; loadDashboard(); }
+</script>
+</body>
+</html>

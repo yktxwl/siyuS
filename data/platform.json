@@ -1,0 +1,80 @@
+{
+  "nextId": {
+    "temple": 2
+  },
+  "config": {
+    "platform_name": "寺语",
+    "platform_slogan": "智慧寺院管理平台",
+    "platform_desc": "寺语平台为各寺庙提供数字化导览与祈福管理解决方案。",
+    "platform_logo": "/uploads/1781164292422_1vpzquf6l.png",
+    "copyright": "© 寺语 · 智慧寺院管理平台",
+    "icp": "",
+    "storage": {
+      "type": "cos",
+      "local_path": "uploads/",
+      "upload_max_size": 10,
+      "allowed_formats": "jpg,jpeg,png,gif,webp",
+      "cos_enabled": true,
+      "cos_bucket": "lhy-1259438020",
+      "cos_region": "ap-beijing",
+      "cos_secret_id": "YOUR_COS_SECRET_ID",
+      "cos_secret_key": "YOUR_COS_SECRET_KEY"
+    },
+    "ai_tts": {
+      "provider": "tencent",
+      "speed": 0,
+      "pitch": 1,
+      "volume": 5,
+      "autoPlay": false,
+      "appId": "1259438020",
+      "secretId": "YOUR_TENCENT_SECRET_ID",
+      "secretKey": "YOUR_TENCENT_SECRET_KEY",
+      "region": "ap-beijing",
+      "voice": 101001
+    }
+  },
+  "super_admins": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "e10adc3949ba59abbe56e057f20f883e",
+      "nickname": "平台管理员",
+      "role": "super_admin",
+      "createtime": 1700000000000
+    }
+  ],
+  "temples": [
+    {
+      "id": 1,
+      "slug": "dajue",
+      "name": "大觉禅寺",
+      "slogan": "一方净土，万般自在",
+      "province": "浙江省",
+      "city": "杭州市",
+      "address": "京市海淀区苏家坨镇大觉寺路9号",
+      "phone": "010-88888888",
+      "contact_person": "释永明",
+      "status": "active",
+      "admin_username": "dajue",
+      "admin_password": "e10adc3949ba59abbe56e057f20f883e",
+      "createtime": 1700000000000,
+      "updatetime": 1781431254726
+    },
+    {
+      "id": 2,
+      "slug": "putuo",
+      "name": "普陀寺",
+      "slogan": "海天佛国，观音道场",
+      "province": "浙江省",
+      "city": "舟山市",
+      "address": "舟山市普陀山",
+      "phone": "0580-66666666",
+      "contact_person": "释慧明",
+      "status": "active",
+      "admin_username": "putuo",
+      "admin_password": "e10adc3949ba59abbe56e057f20f883e",
+      "createtime": 1700000000000,
+      "updatetime": 1700000000000
+    }
+  ]
+}

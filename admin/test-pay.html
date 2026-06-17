@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>支付调试面板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f5f0e8;padding:16px;color:#333}
+h2{font-size:18px;margin-bottom:12px;color:#5D3A1A}
+.card{background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{padding:10px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-primary{background:#5D3A1A;color:#fff}
+.btn-success{background:#28a745;color:#fff}
+.btn-warning{background:#ffc107;color:#333}
+.btn:disabled{opacity:.5}
+label{font-size:13px;font-weight:600;display:block;margin-bottom:4px;color:#666}
+input,select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;width:100%}
+pre{background:#1e1e1e;color:#0f0;padding:12px;border-radius:8px;font-size:12px;overflow-x:auto;max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.step{padding:6px 10px;border-radius:6px;margin:4px 0;font-size:13px}
+.step-ok{background:#d4edda;color:#155724}
+.step-err{background:#f8d7da;color:#721c24}
+.step-info{background:#d1ecf1;color:#0c5460}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.badge-red{background:#dc3545;color:#fff}
+.badge-green{background:#28a745;color:#fff}
+</style>
+</head>
+<body>
+<h2>🛠 支付调试面板</h2>
+
+<div class="card">
+  <label>环境检测</label>
+  <div id="env-info"></div>
+</div>
+
+<div class="card">
+  <label>测试寺庙</label>
+  <select id="temple-select">
+    <option value="1">大觉禅寺 (temple 1)</option>
+    <option value="2">普陀寺 (temple 2)</option>
+  </select>
+</div>
+
+<div class="card">
+  <label>步骤 1：获取 OpenID（公众号 OAuth）</label>
+  <button class="btn btn-primary" onclick="testGetOpenid()">获取 OpenID</button>
+  <div id="openid-result"></div>
+</div>
+
+<div class="card">
+  <label>步骤 2：统一下单</label>
+  <div class="row" style="margin-bottom:8px">
+    <input id="pay-amount" type="number" value="0.01" placeholder="金额(元)" style="width:100px">
+    <input id="pay-desc" value="测试支付" placeholder="描述" style="flex:1">
+    <select id="pay-channel" style="width:auto">
+      <option value="wechat_mp">公众号 JSAPI</option>
+      <option value="h5">H5</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" onclick="testUnifiedOrder()">发起下单</button>
+  <div id="order-result"></div>
+</div>
+
+<div class="card">
+  <label>步骤 3：调起支付</label>
+  <button class="btn btn-success" id="btn-invoke-pay" onclick="testInvokePay()" disabled>调起微信支付</button>
+  <div id="pay-result"></div>
+</div>
+
+<div class="card">
+  <label>步骤 4：查询支付结果</label>
+  <div class="row">
+    <input id="query-order-no" placeholder="订单号">
+    <button class="btn btn-warning" onclick="testQueryOrder()">查询</button>
+  </div>
+  <div id="query-result"></div>
+</div>
+
+<script>
+const TEMPLE_ID = 1;
+const API_BASE = '/api/temple/' + TEMPLE_ID;
+
+// 环境检测
+var PAY_ENV = 'h5';
+(function(){
+  var ua = navigator.userAgent || '';
+  if (/miniprogram/i.test(ua)) PAY_ENV = 'miniprogram';
+  else if (/MicroMessenger/i.test(ua)) PAY_ENV = 'wechat_mp';
+  var el = document.getElementById('env-info');
+  el.innerHTML = '<div class="step step-info">UserAgent: ' + ua.substring(0,100) + '...</div>' +
+    '<div class="step ' + (PAY_ENV==='wechat_mp'?'step-ok':'step-err') + '">检测环境: <b>' + PAY_ENV + '</b> ' + 
+    (PAY_ENV==='wechat_mp'?'✅ 在微信中':'❌ 不在微信中，请用微信打开') + '</div>' +
+    '<div class="step step-info">当前URL: ' + window.location.href + '</div>';
+})();
+
+// 自动处理 OAuth 回调
+(async function autoHandleCode(){
+  var p = new URLSearchParams(window.location.search);
+  var code = p.get('code');
+  if (code && PAY_ENV === 'wechat_mp') {
+    var el = document.getElementById('env-info');
+    el.innerHTML += '<div class="step step-info">🔄 检测到 OAuth code，正在换取 openid...</div>';
+    try {
+      var tid = parseInt(document.getElementById('temple-select').value);
+      var res = await api('/api/temple/' + tid + '/pay/oauth-callback?code=' + code);
+      el.innerHTML += '<pre>' + JSON.stringify(res, null, 2).substring(0, 300) + '</pre>';
+      if (res.code === 0 && res.data && res.data.openid) {
+        localStorage.setItem('wx_openid_' + tid + '_wechat_mp', res.data.openid);
+        el.innerHTML += '<div class="step step-ok">✅ openid 已获取: ' + res.data.openid.substring(0,10) + '...</div>';
+        // 清理 URL
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      } else {
+        el.innerHTML += '<div class="step step-err">❌ 换取 openid 失败: ' + JSON.stringify(res) + '</div>';
+      }
+    } catch(e) {
+      el.innerHTML += '<div class="step step-err">❌ 异常: ' + e.message + '</div>';
+    }
+  }
+})();
+
+async function api(url, opts) {
+  opts = opts || {};
+  var res = await fetch(url, {
+    method: opts.method || 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  return await res.json();
+}
+
+var lastPayData = null;
+
+async function testGetOpenid() {
+  var el = document.getElementById('openid-result');
+  el.innerHTML = '<div class="step step-info">⏳ 获取中...</div>';
+  try {
+    var res = await api(API_BASE + '/pay/oauth-url?redirect=' + encodeURIComponent(window.location.href));
+    el.innerHTML = '<pre>' + JSON.stringify(res, null, 2) + '</pre>';
+    if (res.code === 0 && res.data && res.data.oauth_url) {
+      el.innerHTML += '<div class="step step-ok">✅ 即将跳转微信授权...</div>' +
+        '<button class="btn btn-primary" onclick="window.location.href=\'' + res.data.oauth_url + '\'">去授权</button>';
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="step step-err">❌ ' + e.message + '</div>';
+  }
+}
+
+async function testUnifiedOrder() {
+  var el = document.getElementById('order-result');
+  el.innerHTML = '<div class="step step-info">⏳ 下单中...</div>';
+  var tid = parseInt(document.getElementById('temple-select').value);
+  var channel = document.getElementById('pay-channel').value;
+  var tradeType = channel === 'h5' ? 'h5' : 'jsapi';
+  var openid = localStorage.getItem('wx_openid_' + tid + '_' + (channel==='h5'?'h5':'wechat_mp')) || '';
+  
+  try {
+    var res = await api('/api/temple/' + tid + '/pay/unified-order', {
+      method: 'POST',
+      body: {
+        order_type: 'offering',
+        biz_ref_id: 1,
+        trade_type: tradeType,
+        channel: channel,
+        amount: Math.round(parseFloat(document.getElementById('pay-amount').value || 0.01) * 100),
+        description: document.getElementById('pay-desc').value,
+        user_id: 1,
+        openid: openid,
+        extra: {}
+      }
+    });
+    el.innerHTML = '<pre>' + JSON.stringify(res, null, 2) + '</pre>';
+    if (res.code === 0 && res.data) {
+      lastPayData = res.data;
+      document.getElementById('btn-invoke-pay').disabled = false;
+      document.getElementById('query-order-no').value = res.data.order_no || '';
+      el.innerHTML += '<div class="step step-ok">✅ 下单成功！订单号: ' + res.data.order_no + '</div>';
+    } else {
+      el.innerHTML += '<div class="step step-err">❌ ' + (res.msg || '下单失败') + '</div>';
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="step step-err">❌ ' + e.message + '</div>';
+  }
+}
+
+function testInvokePay() {
+  if (!lastPayData) return alert('请先下单');
+  var el = document.getElementById('pay-result');
+  var data = lastPayData;
+
+  if (data.mweb_url) {
+    // H5
+    el.innerHTML = '<div class="step step-info">⏳ H5 支付跳转...</div>';
+    window.location.href = data.mweb_url + '&redirect_url=' + encodeURIComponent(window.location.origin + '/t/dajue?pay_done=1');
+    return;
+  }
+
+  // JSAPI
+  el.innerHTML = '<div class="step step-info">⏳ 调起 WeixinJSBridge...</div>';
+  var invokePay = function() {
+    if (typeof WeixinJSBridge === 'undefined') {
+      el.innerHTML = '<div class="step step-err">❌ WeixinJSBridge 未定义！请确认在微信浏览器中打开</div>';
+      return;
+    }
+    el.innerHTML += '<div class="step step-info">WeixinJSBridge 已就绪，传入参数:</div>';
+    el.innerHTML += '<pre>' + JSON.stringify({
+      appId: data.appId,
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType
+    }, null, 2) + '</pre>';
+
+    WeixinJSBridge.invoke('getBrandWCPayRequest', {
+      appId: data.appId,
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType,
+      paySign: data.paySign
+    }, function(wxRes) {
+      el.innerHTML += '<div class="step step-info">回调: <pre>' + JSON.stringify(wxRes, null, 2) + '</pre></div>';
+      if (wxRes.err_msg === 'get_brand_wcpay_request:ok') {
+        el.innerHTML += '<div class="step step-ok">✅ 支付成功！</div>';
+      } else if (wxRes.err_msg && wxRes.err_msg.indexOf('cancel') > -1) {
+        el.innerHTML += '<div class="step step-err">用户取消支付</div>';
+      } else {
+        el.innerHTML += '<div class="step step-err">❌ 支付失败: ' + (wxRes.err_msg || '未知') + '</div>';
+      }
+    });
+  };
+
+  if (typeof WeixinJSBridge === 'undefined') {
+    el.innerHTML += '<div class="step step-info">等待 WeixinJSBridgeReady...</div>';
+    document.addEventListener('WeixinJSBridgeReady', invokePay, false);
+    setTimeout(function() {
+      if (typeof WeixinJSBridge === 'undefined') {
+        el.innerHTML += '<div class="step step-err">❌ 5秒超时，WeixinJSBridge 未加载</div>';
+      }
+    }, 5000);
+  } else {
+    invokePay();
+  }
+}
+
+async function testQueryOrder() {
+  var no = document.getElementById('query-order-no').value;
+  if (!no) return alert('请输入订单号');
+  var el = document.getElementById('query-result');
+  try {
+    var res = await api(API_BASE + '/pay/order/' + no);
+    el.innerHTML = '<pre>' + JSON.stringify(res, null, 2) + '</pre>';
+    if (res.code === 0 && res.data) {
+      var s = res.data.status;
+      el.innerHTML += '<div class="step ' + (s==='paid'?'step-ok':'step-info') + '">状态: <b>' + s + '</b></div>';
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="step step-err">❌ ' + e.message + '</div>';
+  }
+}
+</script>
+</body>
+</html>
